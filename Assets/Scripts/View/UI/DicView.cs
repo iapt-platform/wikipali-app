@@ -9,6 +9,7 @@ using static DictManager;
 public class DicView : MonoBehaviour
 {
     public Button searchBtn;
+    public Button delBtn;
     //用户输入的查词
     public InputField userInput;
     public Button itemDicBtn;
