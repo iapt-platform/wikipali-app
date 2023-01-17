@@ -369,9 +369,17 @@ namespace Imdork.SQLite
         /// <summary>
         /// 模糊查询，查词用
         /// </summary>
-        public SqliteDataReader SelectLike(string tableName, string inputStr)
+        public SqliteDataReader SelectLike(string tableName, string inputStr,string word,int limit)
         {
-            string query = "SELECT `id`,`word`,`note` FROM " + "'" + tableName + "'" + " WHERE word LIKE " + "'" + inputStr + "'";
+            string query = "SELECT `id`,`word`,`note` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit "+ limit.ToString();
+            return ExecuteQuery(query);
+        }
+        /// <summary>
+        /// 匹配查询，查词用
+        /// </summary>
+        public SqliteDataReader SelectSame(string tableName, string inputStr, string word, int limit)
+        {
+            string query = "SELECT `id`,`word`,`note` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         #endregion
