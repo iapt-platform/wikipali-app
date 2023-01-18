@@ -371,7 +371,7 @@ namespace Imdork.SQLite
         /// </summary>
         public SqliteDataReader SelectLike(string tableName, string inputStr,string word,int limit)
         {
-            string query = "SELECT `id`,`word`,`note` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit "+ limit.ToString();
+            string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit "+ limit.ToString();
             return ExecuteQuery(query);
         }
         /// <summary>
@@ -379,7 +379,7 @@ namespace Imdork.SQLite
         /// </summary>
         public SqliteDataReader SelectSame(string tableName, string inputStr, string word, int limit)
         {
-            string query = "SELECT `id`,`word`,`note` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
+            string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         #endregion

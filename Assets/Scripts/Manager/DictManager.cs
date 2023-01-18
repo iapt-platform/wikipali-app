@@ -72,6 +72,7 @@ public class DictManager : MonoBehaviour
                         id = pairs[i]["id"].ToString(),
                         word = pairs[i]["word"].ToString(),
                         meaning = pairs[i]["note"].ToString(),
+                        dicID = pairs[i]["dict_id"].ToString(),
                     };
 
                     matchedWordList.Add(m);
