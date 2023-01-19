@@ -366,12 +366,13 @@ namespace Imdork.SQLite
             string query = "SELECT * FROM " + "'" + tableName + "'";
             return ExecuteQuery(query);
         }
+        #region 功能性扩展
         /// <summary>
         /// 模糊查询，查词用
         /// </summary>
-        public SqliteDataReader SelectLike(string tableName, string inputStr,string word,int limit)
+        public SqliteDataReader SelectLike(string tableName, string inputStr, string word, int limit)
         {
-            string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit "+ limit.ToString();
+            string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         /// <summary>
@@ -382,6 +383,15 @@ namespace Imdork.SQLite
             string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
+        /// <summary>
+        /// 匹配查询词典名
+        /// </summary>
+        public SqliteDataReader SelectDic(string uuid, string id = "uuid", string tableName = "dict")
+        {
+            string query = "SELECT `dictname` FROM " + "'" + tableName + "'" + " WHERE " + id + " = " + "'" + uuid + "'";
+            return ExecuteQuery(query);
+        }
+        #endregion
         #endregion
 
         #region  升序查询/降序查询/查询表行数/查询表全部数据

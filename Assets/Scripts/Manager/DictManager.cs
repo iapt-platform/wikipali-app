@@ -35,6 +35,7 @@ public class DictManager : MonoBehaviour
             source = "_PAPER_",
             language = "zh"} }
         };
+    #region summary列表查询
     /// <summary>
     /// 搜索匹配到的词汇的数据，返回给DicView,作为List显示
     /// </summary>
@@ -42,6 +43,7 @@ public class DictManager : MonoBehaviour
     {
         public string id;
         public string dicID;
+        public string word_en;
         public string word;
         public string meaning;
     }
@@ -58,7 +60,7 @@ public class DictManager : MonoBehaviour
         dbManager.Getdb(db =>
         {
             //TODO:是否需要混入word_en搜索结果？目前只搜索word，模糊查询也有word_en的效果
-            var reader = db.SelectLike("bh-paper", inputStr,"word", LIMIT_COUNT);
+            var reader = db.SelectLike("bh-paper", inputStr, "word", LIMIT_COUNT);
 
             //调用SQLite工具  解析对应数据
             Dictionary<string, object>[] pairs = SQLiteTools.GetValues(reader);
@@ -128,7 +130,60 @@ public class DictManager : MonoBehaviour
         return i;
     }
 
+    #endregion
+    #region detail 查词 各个词典
+    //TODO:改为dicID 在数据库查
+    string[] dicIDArr = new string[]
+        {
+            "bh-paper",//巴汉词典
+            "concise",//英文词典
+            "syzb"//日语词典
+        };
+    public class MatchedWordDetail
+    {
+        public string id;
+        public string dicID;
+        public string dicName;
+        public string word;
+        public string meaning;
+    }
+    //查询每个词典，准确匹配
+    public MatchedWordDetail[] MatchWordDetail(string word)
+    {
+        if (string.IsNullOrEmpty(word))
+            return new MatchedWordDetail[0];
+        List<MatchedWordDetail> matchedWordList = new List<MatchedWordDetail>();
+        int length = dicIDArr.Length;
+        for (int i = 0; i < length; i++)
+        {
+            dbManager.Getdb(db =>
+            {
+                //TODO:是否需要混入word_en搜索结果？目前只搜索word，模糊查询也有word_en的效果
+                var reader = db.SelectSame(dicIDArr[i], word, "word", 1);
 
+                //调用SQLite工具  解析对应数据
+                Dictionary<string, object> pairs = SQLiteTools.GetValue(reader);
+                if (pairs != null)
+                {
+
+                    MatchedWordDetail m = new MatchedWordDetail()
+                    {
+                        id = pairs["id"].ToString(),
+                        word = pairs["word"].ToString(),
+                        meaning = pairs["note"].ToString(),
+                        dicID = pairs["dict_id"].ToString(),
+                    };
+                    var readerDic = db.SelectDic(m.dicID);
+                    Dictionary<string, object> dicPairs = SQLiteTools.GetValue(readerDic);
+                    m.dicName = dicPairs["dictname"].ToString();
+                    matchedWordList.Add(m);
+                }
+            });
+        }
+
+        return matchedWordList.ToArray();
+    }
+    #endregion
     // Start is called before the first frame update
     void Start()
     {

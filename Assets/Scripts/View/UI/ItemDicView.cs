@@ -14,6 +14,7 @@ public class ItemDicView : MonoBehaviour
     public MatchedWord word;
     public Text nameTxt;
     public Text detailTxt;
+    public DicView dicView;
     public void SetMeaning(MatchedWord matchedWord)
     {
         //解释限制1行
@@ -31,11 +32,15 @@ public class ItemDicView : MonoBehaviour
     }
     public void OnBtnClick()
     {
-        DetailScrollView.gameObject.SetActive(true);
-        SummaryScrollView.gameObject.SetActive(false);
-        //Debug.LogError(word.word);
+        //SetSummaryOff();
 
+        dicView.OnItemDicClick(word);
     }
+    //void SetSummaryOff()
+    //{
+    //    DetailScrollView.gameObject.SetActive(true);
+    //    SummaryScrollView.gameObject.SetActive(false);
+    //}
     // Update is called once per frame
     void Update()
     {

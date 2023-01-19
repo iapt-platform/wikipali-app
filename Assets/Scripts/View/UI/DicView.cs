@@ -15,7 +15,9 @@ public class DicView : MonoBehaviour
     //用户输入的查词
     public InputField userInput;
     public Button itemDicBtn;
-    public RectTransform scrollContent;
+    public DetailDicItemView detailDicItem;
+    public RectTransform summaryScrollContent;
+    public RectTransform detailScrollContent;
     //单词列表面板
     public RectTransform SummaryScrollView;
     //单词详情面板
@@ -23,11 +25,8 @@ public class DicView : MonoBehaviour
     //todo 单例模式
     public DictManager dicManager;
     public bool isDelBtnOn = false;
-    public void OnSearchInputClick()
-    {
-
-
-    }
+    //是否是补全单词，补全不是用户输入
+    public bool isComplement = false;
 
     public void OnDelBtnClick()
     {
@@ -44,6 +43,8 @@ public class DicView : MonoBehaviour
     }
     public void OnSearchValueChanged(string value)
     {
+        if (isComplement)
+            return;
         //Debug.LogError(value);
         DestroyItemDicList();
         SearchWord(userInput.text);
@@ -62,7 +63,7 @@ public class DicView : MonoBehaviour
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;
         for (int i = 0; i < length; i++)
         {
-            GameObject inst = Instantiate(itemDicBtn.gameObject, scrollContent);
+            GameObject inst = Instantiate(itemDicBtn.gameObject, summaryScrollContent);
             inst.transform.position = itemDicBtn.transform.position;
             inst.GetComponent<RectTransform>().position -= Vector3.up * height * i;
 
@@ -72,7 +73,7 @@ public class DicView : MonoBehaviour
             inst.SetActive(true);
             itemDicList.Add(inst);
         }
-        scrollContent.sizeDelta = new Vector2(scrollContent.sizeDelta.x, height * length);
+        summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * length);
 
     }
     //销毁下拉列表GO
@@ -126,6 +127,81 @@ public class DicView : MonoBehaviour
     {
         DetailScrollView.gameObject.SetActive(false);
         SummaryScrollView.gameObject.SetActive(true);
+    }
+    void SetSummaryOff()
+    {
+        DetailScrollView.gameObject.SetActive(true);
+        SummaryScrollView.gameObject.SetActive(false);
+    }
+    /// <summary>
+    /// 点击某个单词查询
+    /// </summary>
+    /// <param name="word"></param>
+    public void OnItemDicClick(MatchedWord word)
+    {
+        SetSummaryOff();
+        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦
+        DisplayWordDetail(word.word);
+    }
+    List<GameObject> detailDicItemList = new List<GameObject>();
+    void DisplayWordDetail(string word)
+    {
+        DestroyDetailDicItemList();
+        if (string.IsNullOrEmpty(word))
+        {
+            SetDelBtn(false);
+            return;
+        }
+        //补全查词
+        isComplement = true;
+        userInput.text = word;
+        isComplement = false;
+
+        MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
+        int length = matchedWordArr.Length;
+        float height = 0;
+        for (int i = 0; i < length; i++)
+        {
+            GameObject inst = Instantiate(detailDicItem.gameObject, detailScrollContent);
+            inst.transform.position = detailDicItem.transform.position;
+            inst.GetComponent<RectTransform>().position -= Vector3.up * height;
+            DetailDicItemView ddiv = inst.GetComponent<DetailDicItemView>();
+            ddiv.Init(matchedWordArr[i]);
+            height += ddiv.GetHeight();
+            inst.SetActive(true);
+            detailDicItemList.Add(inst);
+        }
+        //等下一帧UI刷新后获取位置
+        StartCoroutine(SetHeight());
+
+    }
+    IEnumerator SetHeight()
+    {
+        yield return null;
+        int length = detailDicItemList.Count;
+        float height = 0;
+        for (int i = 0; i < length; i++)
+        {
+            detailDicItemList[i].transform.position = detailDicItem.transform.position;
+            detailDicItemList[i].GetComponent<RectTransform>().position -= Vector3.up * height;
+            DetailDicItemView ddiv = detailDicItemList[i].GetComponent<DetailDicItemView>();
+            //?为啥会缩100？
+            height += ddiv.GetHeight() + 200;
+        }
+        detailScrollContent.sizeDelta = new Vector2(detailScrollContent.sizeDelta.x, height);
+
+    }
+    //销毁词典列表GO
+    private void DestroyDetailDicItemList()
+    {
+        int length = detailDicItemList.Count;
+        if (length == 0)
+            return;
+        for (int i = 0; i < length; i++)
+        {
+            Destroy(detailDicItemList[i]);
+        }
+        detailDicItemList.Clear();
     }
     // Update is called once per frame
     void Update()
