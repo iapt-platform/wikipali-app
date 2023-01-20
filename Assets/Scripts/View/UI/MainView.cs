@@ -11,6 +11,9 @@ public class MainView : MonoBehaviour
     public Toggle userToggle;
     public Toggle settingToggle;
     public DicView dicView;
+    public ArticleView articleView;
+    public UserView userView;
+    public SettingView settingView;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +23,6 @@ public class MainView : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
