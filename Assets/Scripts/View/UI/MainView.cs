@@ -17,9 +17,34 @@ public class MainView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        dicToggle.onValueChanged.AddListener(OnDicToggleValueChanged);
+        articleToggle.onValueChanged.AddListener(OnArticleToggleValueChanged);
+        userToggle.onValueChanged.AddListener(OnUserToggleValueChanged);
+        settingToggle.onValueChanged.AddListener(OnSettingToggleValueChanged);
+    }
+    void OnDicToggleValueChanged(bool value)
+    {
+        dicView.gameObject.SetActive(value);
 
     }
+    void OnArticleToggleValueChanged(bool value)
+    {
+        articleView.gameObject.SetActive(value);
 
+
+    }
+    void OnUserToggleValueChanged(bool value)
+    {
+        userView.gameObject.SetActive(value);
+
+
+    }
+    void OnSettingToggleValueChanged(bool value)
+    {
+        settingView.gameObject.SetActive(value);
+
+
+    }
     // Update is called once per frame
     void Update()
     {
