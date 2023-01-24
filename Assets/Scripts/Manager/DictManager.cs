@@ -4,9 +4,22 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using Imdork.SQLite;
 
-public class DictManager : MonoBehaviour
+public class DictManager
 {
-    public DBManager dbManager;
+    //懒汉式单例类.在第一次调用的时候实例化自己 
+    private DictManager() { }
+    private static DictManager manager = null;
+    //静态工厂方法 
+    public static DictManager Instance()
+    {
+        if (manager == null)
+        {
+            manager = new DictManager();
+        }
+        return manager;
+    }
+
+    public DBManager dbManager = DBManager.Instance();
     //词典查词总览限制显示数量
     const int LIMIT_COUNT = 30;
     class DicIDInfo
@@ -21,20 +34,6 @@ public class DictManager : MonoBehaviour
         public string source;
         public string language;
     }
-    //key:table name,value:词典信息
-    Dictionary<string, DicIDInfo> dicInfoArr = new Dictionary<string, DicIDInfo>
-        {
-            { "bh-paper",new DicIDInfo{
-            dictname = "《巴汉词典》,《巴汉词典》Mahāñāṇo Bhikkhu编著",
-            shortname = "巴汉",
-            description = "《巴汉词典》,《巴汉词典》Mahāñāṇo Bhikkhu编著",
-            dest_lang = "zh-hans",
-            author = "原著：中译：Mahāñāṇo Bhikkhu尊者",
-            uuid = "f364d3dc-b611-471b-9a4f-531286b8c2c3",
-
-            source = "_PAPER_",
-            language = "zh"} }
-        };
     #region summary列表查询
     /// <summary>
     /// 搜索匹配到的词汇的数据，返回给DicView,作为List显示

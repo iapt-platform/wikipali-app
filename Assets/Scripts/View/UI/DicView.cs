@@ -23,7 +23,7 @@ public class DicView : MonoBehaviour
     //单词详情面板
     public RectTransform DetailScrollView;
     //todo 单例模式
-    public DictManager dicManager;
+    public DictManager dicManager = DictManager.Instance();
     public bool isDelBtnOn = false;
     //是否是补全单词，补全不是用户输入
     public bool isComplement = false;

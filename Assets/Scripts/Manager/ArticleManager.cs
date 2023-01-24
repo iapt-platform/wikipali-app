@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArticleView : MonoBehaviour
+public class ArticleManager : MonoBehaviour
 {
-    ArticleController controller = ArticleController.Instance();
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
