@@ -20,14 +20,15 @@ public class DBManager
         return manager;
     }
 
-    public string dictDBurl = "DB/Dict";
+    public static string DictDBurl = "DB/Dict";
+    public static string SentenceDBurl = "DB/Sentence";
     public SQLiteHelper dbHelper;
 
-    public void Getdb(Action<DbAccess> action)
+    public void Getdb(Action<DbAccess> action,string dburl)
     {
         //Path数据库文件，一定是StreamingAssets文件夹下 填写的路径文件不需要填写.db后缀
         //创建数据库读取类
-        SQLiteHelper helper = new SQLiteHelper(dictDBurl);
+        SQLiteHelper helper = new SQLiteHelper(dburl);
         //打开数据库 存储数据库操作类
         using (var db = helper.Open())
         {

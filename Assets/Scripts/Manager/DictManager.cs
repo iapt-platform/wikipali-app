@@ -59,7 +59,7 @@ public class DictManager
         dbManager.Getdb(db =>
         {
             //TODO:是否需要混入word_en搜索结果？目前只搜索word，模糊查询也有word_en的效果
-            var reader = db.SelectLike("bh-paper", inputStr, "word", LIMIT_COUNT);
+            var reader = db.SelectDictLike("bh-paper", inputStr, "word", LIMIT_COUNT);
 
             //调用SQLite工具  解析对应数据
             Dictionary<string, object>[] pairs = SQLiteTools.GetValues(reader);
@@ -80,7 +80,7 @@ public class DictManager
 
                 };
             }
-        });
+        },DBManager.DictDBurl);
         return SortWordList(matchedWordList.ToArray());
     }
     /// <summary>
@@ -158,7 +158,7 @@ public class DictManager
             dbManager.Getdb(db =>
             {
                 //TODO:是否需要混入word_en搜索结果？目前只搜索word，模糊查询也有word_en的效果
-                var reader = db.SelectSame(dicIDArr[i], word, "word", 1);
+                var reader = db.SelectDictSame(dicIDArr[i], word, "word", 1);
 
                 //调用SQLite工具  解析对应数据
                 Dictionary<string, object> pairs = SQLiteTools.GetValue(reader);
@@ -177,7 +177,7 @@ public class DictManager
                     m.dicName = dicPairs["dictname"].ToString();
                     matchedWordList.Add(m);
                 }
-            });
+            }, DBManager.DictDBurl);
         }
 
         return matchedWordList.ToArray();
