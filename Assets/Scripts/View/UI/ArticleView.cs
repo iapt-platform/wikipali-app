@@ -72,27 +72,32 @@ public class ArticleView : MonoBehaviour
     }
     public void ArticleNodeBtnClick(ArticleTreeNode info, bool isReturn = false)
     {
+        if (!isReturn)
+            articleTreeNodeStack.Push(info);
+        string aPath = "";
+        int length = articleTreeNodeStack.Count;
+        //设置标题路径
+        ArticleTreeNode[] arr = articleTreeNodeStack.ToArray();
+        for (int i = length - 1; i > -1; i--)
+        {
+            aPath += arr[i].name + "/";
+        }
+        returnBtn.SetPath(aPath);
         if (info.children != null && info.children.Count > 0)
         {
             InitNodeItem(info.children);
-            if (!isReturn)
-                articleTreeNodeStack.Push(info);
-            string aPath = "";
-            int length = articleTreeNodeStack.Count;
-            ArticleTreeNode[] arr = articleTreeNodeStack.ToArray();
-            for (int i = length - 1; i > -1; i--)
-            {
-                aPath += arr[i].name + "/";
-            }
-            returnBtn.SetPath(aPath);
         }
         else
         {
+#if DEBUG_PERFORMANCE
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+#endif
             List<Book> book = controller.GetBooks(info);
+#if DEBUG_PERFORMANCE
             sw.Stop();
-            Debug.LogError(sw.ElapsedMilliseconds);
+            Debug.LogError("【性能】查询文章耗时：" + sw.ElapsedMilliseconds);
+#endif
             InitNodeItem(book);
         }
     }
@@ -103,6 +108,7 @@ public class ArticleView : MonoBehaviour
             InitNodeItem(info.children);
             if (!isReturn)
                 bookTreeNodeStack.Push(info);
+            //TODO?:点进书本只显示书本路径，前面是否需要显示Article路径？
             string aPath = "";
             int length = bookTreeNodeStack.Count;
             Book[] arr = bookTreeNodeStack.ToArray();
@@ -120,6 +126,29 @@ public class ArticleView : MonoBehaviour
     }
     public void ReturnBtnClick()
     {
+        if (bookTreeNodeStack.Count != 0)
+        {
+            bookTreeNodeStack.Pop();
+            if (bookTreeNodeStack.Count > 0)
+            {
+                BookNodeBtnClick(bookTreeNodeStack.Peek(), true);
+            }
+            else
+            {
+                //returnBtn.Init();
+                //设置标题路径
+                string aPath = "";
+                int length = articleTreeNodeStack.Count;
+                ArticleTreeNode[] arr = articleTreeNodeStack.ToArray();
+                for (int i = length - 1; i > -1; i--)
+                {
+                    aPath += arr[i].name + "/";
+                }
+                returnBtn.SetPath(aPath);
+                InitNodeItem(controller.currentBookList);
+            }
+            return;
+        }
         if (articleTreeNodeStack.Count == 0)
             return;
         articleTreeNodeStack.Pop();
