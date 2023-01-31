@@ -16,7 +16,8 @@ public class ArticleView : MonoBehaviour
     {
         articleTreeNodeStack = new Stack<ArticleTreeNode>();
         bookTreeNodeStack = new Stack<Book>();
-        controller.GetArticleTreeNodeData();
+        //TODO?:controller在此处初始化不太合理
+        controller.Init();
         InitNodeItem(controller.articleTreeNodes.info);
     }
     List<GameObject> nodeList = new List<GameObject>();

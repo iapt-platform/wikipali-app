@@ -25,14 +25,30 @@ public class ArticleNodeItemView : MonoBehaviour
     {
         isBook = false;
         article = aNode;
-        titleText.text = aNode.name;
+        //节点翻译
+        string ts = "";
+        bool isHaveTs = ArticleController.Instance().tsDic.TryGetValue(aNode.name, out ts);
+        if (isHaveTs)
+            titleText.text = ts;
+        else
+        {
+            isHaveTs = ArticleController.Instance().tsDic.TryGetValue(aNode.name.ToLower(), out ts);
+            if (isHaveTs)
+                titleText.text = ts;
+            else
+                titleText.text = aNode.name;
+        }
+
         subTitleText.text = aNode.name;
     }
     public void Init(Book bNode)
     {
         isBook = true;
         book = bNode;
-        titleText.text = bNode.toc;
+        if (string.IsNullOrEmpty(bNode.translateName))
+            titleText.text = bNode.toc;
+        else
+            titleText.text = bNode.translateName;
         subTitleText.text = bNode.toc;
     }
     public void OnBtnClick()

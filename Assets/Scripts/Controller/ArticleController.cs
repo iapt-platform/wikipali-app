@@ -21,6 +21,12 @@ public class ArticleController
         return controller;
     }
     ArticleManager manager = ArticleManager.Instance();
+    //初始化读取数据
+    public void Init()
+    {
+        GetArticleTreeNodeData();
+        GetArticleTSData();
+    }
     //圣典分类方式
     public enum Category
     {
@@ -52,7 +58,7 @@ public class ArticleController
         public List<ArticleTreeNode> info;
     }
     public ArticleTreeNodes articleTreeNodes;
-    public void GetArticleTreeNodeData()
+    void GetArticleTreeNodeData()
     {
         string json = "";
         switch (category)
@@ -67,6 +73,71 @@ public class ArticleController
         articleTreeNodes = JsonUtility.FromJson<ArticleTreeNodes>(json);
     }
 
+    //文章标题翻译
+    [Serializable]
+    public class ArticleTreeTS
+    {
+        public string name;
+        public int row;//book ID
+        public string id;
+        public string folder;
+        public string title;
+        public string c1;
+        public string c2;
+        public string c3;
+        public string c4;
+    }
+    [Serializable]
+    public class ArticleTreeTSs
+    {
+        public List<ArticleTreeTS> info;
+    }
+    public ArticleTreeTSs defaultTS;
+    public ArticleTreeTSs languageTS;
+    void GetArticleTSDataJson()
+    {
+        defaultTS = JsonUtility.FromJson<ArticleTreeTSs>(manager.ReadPaliBookJson());
+        languageTS = JsonUtility.FromJson<ArticleTreeTSs>(manager.ReadCurrLanguageBookJson());
+    }
+    //翻译词典 key = pali，value = 翻译
+    public Dictionary<string, string> tsDic = new Dictionary<string, string>();
+    //翻译词典 key = bookID，value = 翻译
+    public Dictionary<int, string> tsBookDic = new Dictionary<int, string>();
+    void GetArticleTSData()
+    {
+        GetArticleTSDataJson();
+        int length = defaultTS.info.Count;
+        for (int i = 0; i < length; i++)
+        {
+            ArticleTreeTS lInfo = languageTS.info[i];
+            ArticleTreeTS dInfo = defaultTS.info[i];
+            tsBookDic.Add(lInfo.row, lInfo.title);
+            if (!string.IsNullOrEmpty(dInfo.title) && !tsDic.ContainsKey(dInfo.title))
+            {
+                tsDic.Add(dInfo.title, lInfo.title);
+            }
+            if (!string.IsNullOrEmpty(dInfo.title) && !tsDic.ContainsKey(dInfo.title))
+            {
+                tsDic.Add(dInfo.title, lInfo.title);
+            }
+            if (!string.IsNullOrEmpty(dInfo.c1) && !tsDic.ContainsKey(dInfo.c1))
+            {
+                tsDic.Add(dInfo.c1, lInfo.c1);
+            }
+            if (!string.IsNullOrEmpty(dInfo.c2) && !tsDic.ContainsKey(dInfo.c2))
+            {
+                tsDic.Add(dInfo.c2, lInfo.c2);
+            }
+            if (!string.IsNullOrEmpty(dInfo.c3) && !tsDic.ContainsKey(dInfo.c3))
+            {
+                tsDic.Add(dInfo.c3, lInfo.c3);
+            }
+            if (!string.IsNullOrEmpty(dInfo.c4) && !tsDic.ContainsKey(dInfo.c4))
+            {
+                tsDic.Add(dInfo.c4, lInfo.c4);
+            }
+        }
+    }
     #endregion
     #region bookID
 
@@ -88,9 +159,7 @@ public class ArticleController
         if (node == null)
             return res;
         List<BookDBData> bookDBList = manager.GetBooksFromTags(node.tag);
-        //List<Book> tempChildren = new List<Book>();
-        //ket = paragraph,value = book
-        Dictionary<int, Book> bookKVP = new Dictionary<int, Book>();
+        Dictionary<int, Dictionary<int, Book>> bookKVP = new Dictionary<int, Dictionary<int, Book>>();
         int length = bookDBList.Count;
         for (int i = 0; i < length; i++)
         {
@@ -101,16 +170,27 @@ public class ArticleController
                 level = bookDBList[i].level,
                 paragraph = bookDBList[i].paragraph,
                 parentP = bookDBList[i].parent,
+                translateName = bookDBList[i].toc,
             };
-            //??????????????
-            if (bookKVP.ContainsKey(book.paragraph))
-                bookKVP.Clear();
-            bookKVP.Add(book.paragraph, book);
-            if (book.level == 1)
-                res.Add(book);
-            if (bookKVP.ContainsKey(book.parentP))
+            if (book.toc == "(MN)Mūlapaṇṇāsapāḷi")
+                ;
+            if (!bookKVP.ContainsKey(book.id))
             {
-                Book bookP = bookKVP[book.parentP];
+                bookKVP.Add(book.id, new Dictionary<int, Book>());
+            }
+            bookKVP[book.id].Add(book.paragraph, book);
+            if (book.level == 1)
+            {
+                res.Add(book);
+                //翻译
+                string ts = "";
+                bool isHaveTs = tsBookDic.TryGetValue(book.id, out ts);
+                if (isHaveTs)
+                    book.translateName = ts;
+            }
+            if (bookKVP[book.id].ContainsKey(book.parentP))
+            {
+                Book bookP = bookKVP[book.id][book.parentP];
                 if (bookP.children == null)
                     bookP.children = new List<Book>();
                 bookP.children.Add(book);

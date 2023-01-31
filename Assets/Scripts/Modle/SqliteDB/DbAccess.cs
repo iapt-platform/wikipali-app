@@ -419,7 +419,8 @@ namespace Imdork.SQLite
             select = "('" + select + "')";
             //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
             //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
-            string query = "SELECT anchor_id,count(*) AS co FROM tag_map WHERE tag_id IN  (SELECT id FROM tag WHERE name IN " + select + ") GROUP BY anchor_id ORDER BY co DESC";
+            //string query = "SELECT anchor_id,count(*) AS co FROM tag_map WHERE tag_id IN  (SELECT id FROM tag WHERE name IN " + select + ") GROUP BY anchor_id ORDER BY co DESC";
+            string query = "SELECT anchor_id,count(*) AS co FROM tag_map WHERE tag_id IN  (SELECT id FROM tag WHERE name IN " + select + ") GROUP BY anchor_id ORDER BY co DESC";// ORDER BY co DESC";
             return ExecuteQuery(query);
         }
         public SqliteDataReader SelectArticle(string[] tagIDArr)
@@ -428,7 +429,7 @@ namespace Imdork.SQLite
             select = "('" + select + "')";
             //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
             //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
-            string query = "SELECT * FROM pali_text WHERE id IN " + select;// "' limit " + limit.ToString();
+            string query = "SELECT * FROM pali_text WHERE id IN " + select+ "  ORDER BY level ASC , paragraph ASC";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         /// <summary>

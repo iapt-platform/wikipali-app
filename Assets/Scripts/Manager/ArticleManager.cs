@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using static SettingManager;
 
 public class ArticleManager
 {
@@ -20,29 +21,48 @@ public class ArticleManager
         return manager;
     }
     public DBManager dbManager = DBManager.Instance();
-    #region 读取Json目录树
-    const string defualtJsonFilePath = "defualt";
-    const string cscd4JsonFilePath = "cscd";
 
     /// <summary>
-    /// 通过StreamReader读取本地StreamingAssets文件夹中的Json文件
+    /// 读取本地文件夹中的Json文件
     /// <param name="jsonName">json文件名或文件名路径</param>
     /// </summary>
     string ReadJsonFromStreamingAssetsPath(string jsonName)
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("Json/PalicanonCategory/" + jsonName);
+        TextAsset textAsset = Resources.Load<TextAsset>(jsonName);
         return textAsset.text;
     }
+    #region 读取Json目录树
+    const string defualtJsonFilePath = "defualt";
+    const string cscd4JsonFilePath = "cscd";
     public string ReadDefualtJson()
     {
-        return ReadJsonFromStreamingAssetsPath(defualtJsonFilePath);
+        return ReadJsonFromStreamingAssetsPath("Json/PalicanonCategory/" + defualtJsonFilePath);
     }
     public string ReadCSCDJson()
     {
-        return ReadJsonFromStreamingAssetsPath(cscd4JsonFilePath);
+        return ReadJsonFromStreamingAssetsPath("Json/PalicanonCategory/" + cscd4JsonFilePath);
     }
     #endregion
+    #region 读取Json目录翻译
+    Dictionary<Language, string> languageTSPath = new Dictionary<Language, string>()
+    {
+        //{ "pali","default"},
+        { Language.ZH_CN,"zh-cn"},
+        { Language.ZH_TW,"zh-tw"},
+        { Language.EN,"en"},
+        { Language.MY,"my"},
+        { Language.SI,"si"},
+    };
 
+    public string ReadCurrLanguageBookJson()
+    {
+        return ReadJsonFromStreamingAssetsPath("Json/book_index/a/" + languageTSPath[SettingManager.Instance().language]);
+    }
+    public string ReadPaliBookJson()
+    {
+        return ReadJsonFromStreamingAssetsPath("Json/book_index/a/default");
+    }
+    #endregion
     #region 读取数据库句子与释义
     public class BookDBData
     {
