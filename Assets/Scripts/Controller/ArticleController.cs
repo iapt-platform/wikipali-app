@@ -148,6 +148,7 @@ public class ArticleController
         public int level;
         public int paragraph;//段落数
         public int parentP;//是父的paragraph?
+        public int chapter_len;//章节paragraph长度
         public Book parent;
         public List<Book> children;// = new List<Book>();
         public string translateName;
@@ -179,6 +180,7 @@ public class ArticleController
                 level = bookDBList[i].level,
                 paragraph = bookDBList[i].paragraph,
                 parentP = bookDBList[i].parent,
+                chapter_len = bookDBList[i].chapter_len,
                 translateName = bookDBList[i].toc,
             };
 
@@ -197,28 +199,10 @@ public class ArticleController
                     book.translateName = ts;
             }
             //获取章节的版本风格信息
-            else if(book.level < 100)
+            else if (book.level < 100)
             {
                 List<ChapterDBData> cDataList = GetChapterListByBookData(book.id, book.paragraph, cList);
-                if (cDataList == null || cDataList.Count == 0)
-                {
-                    //??????????
-                    book.isHaveProgress = true;
-                    book.progress = 0;
-                    book.chapterDBDatas = cDataList;
-
-                }
-                else
-                {
-                    book.isHaveProgress = true;
-                    //选取最高的进度
-                    book.progress = cDataList[0].progress;
-                    book.chapterDBDatas = cDataList;
-                    if (!string.IsNullOrEmpty(cDataList[0].title))
-                    {
-                        book.translateName = cDataList[0].title;
-                    }
-                }
+                SetChapterListByBookData(book, cDataList);
             }
             if (bookKVP[book.id].ContainsKey(book.parentP))
             {
@@ -232,7 +216,29 @@ public class ArticleController
         currentBookList = res;
         return res;
     }
-    List<ChapterDBData> GetChapterListByBookData(int bookID,int paragraph, List<ChapterDBData> cDataList)
+    Book SetChapterListByBookData(Book book, List<ChapterDBData> cDataList)
+    {
+        if (cDataList == null || cDataList.Count == 0)
+        {
+            //??????????
+            book.isHaveProgress = true;
+            book.progress = 0;
+            book.chapterDBDatas = cDataList;
+        }
+        else
+        {
+            book.isHaveProgress = true;
+            //选取最高的进度
+            book.progress = cDataList[0].progress;
+            book.chapterDBDatas = cDataList;
+            if (!string.IsNullOrEmpty(cDataList[0].title))
+            {
+                book.translateName = cDataList[0].title;
+            }
+        }
+        return book;
+    }
+    List<ChapterDBData> GetChapterListByBookData(int bookID, int paragraph, List<ChapterDBData> cDataList)
     {
         List<ChapterDBData> res = new List<ChapterDBData>();
         int length = cDataList.Count;
@@ -256,13 +262,36 @@ public class ArticleController
     public void GetBooksChildrenLevel(Book node)
     {
         List<Book> res = new List<Book>();
-        if (node == null)
+        if (node == null || node.chapter_len == 0)
             return;
+#if DEBUG_PERFORMANCE
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+#endif
         List<BookDBData> bookDBList;
-        List<int> bookIDList;
-        //此处只能获取book level <=2的内容
-
-
+        //此处只能获取指定pargraph范围内的level>2&&<100的book数据
+        bookDBList = manager.GetBookChildrenFromID(node.id, node.paragraph, node.paragraph + node.chapter_len);
+        int length = bookDBList.Count;
+        List<ChapterDBData> cList = manager.GetChaptersFromBookID(node.id);
+        for (int i = 0; i < length; i++)
+        {
+            Book book = new Book()
+            {
+                id = bookDBList[i].id,
+                toc = bookDBList[i].toc,
+                level = bookDBList[i].level,
+                paragraph = bookDBList[i].paragraph,
+                parentP = bookDBList[i].parent,
+                translateName = bookDBList[i].toc,
+            };
+            res.Add(book);
+            List<ChapterDBData> cDataList = GetChapterListByBookData(book.id, book.paragraph, cList);
+            SetChapterListByBookData(book, cDataList);
+        }
+#if DEBUG_PERFORMANCE
+        sw.Stop();
+        Debug.LogError("【性能】查询子文章耗时：" + sw.ElapsedMilliseconds);
+#endif
         node.children = res;
     }
     #endregion

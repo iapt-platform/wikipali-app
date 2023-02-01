@@ -102,7 +102,7 @@ public class ArticleView : MonoBehaviour
             InitNodeItem(book);
         }
     }
-    public void BookNodeBtnClick(Book info, bool isReturn = false)
+    public void BookNodeBtnClick(Book info, bool isReturn = false, bool isChild = false)
     {
         if (info.children != null && info.children.Count > 0)
         {
@@ -121,8 +121,16 @@ public class ArticleView : MonoBehaviour
         }
         else
         {
-
-            ;
+            if (!isChild)
+            {
+                //再次获取子章节
+                controller.GetBooksChildrenLevel(info);
+                BookNodeBtnClick(info, isReturn, true);
+            }
+            else
+            {
+                //TODO：显示版本风格，进入显示文章与翻译部分
+            }
         }
     }
     public void ReturnBtnClick()
