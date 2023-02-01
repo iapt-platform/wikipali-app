@@ -78,20 +78,20 @@ public class ArticleManager
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public List<BookDBData> GetBooksFromTags(List<string> tag)
+    public (List<BookDBData>, List<int>) GetBooksFromTags(List<string> tag)
     {
         int length = tag.Count;
         List<BookDBData> bookList = new List<BookDBData>();
+        List<int> bookIDList = new List<int>();
         if (tag == null || length == 0)
-            return bookList;
+            return (bookList, bookIDList);
         List<string> anchorIDList = new List<string>();
         dbManager.Getdb(db =>
         {
-            List<string> tempList = new List<string>();
-
             //查找tagID
             var readerTag = db.SelectArticleTag(tag.ToArray());
             Dictionary<string, object>[] tagPairs = SQLiteTools.GetValues(readerTag);
+            //因为有orderby 减少循环次数
             bool isCoCountMatch = false;
             string tagCount = length.ToString();
             if (tagPairs != null)
@@ -104,19 +104,16 @@ public class ArticleManager
                     string co = tagPairs[t]["co"].ToString();
                     if (co == tagCount)
                     {
-                        //isCoCountMatch = true;
+                        isCoCountMatch = true;
                         anchorIDList.Add(anchorID);
                     }
-                    //else
-                    //{
-                    //    if (isCoCountMatch)
-                    //        break;
-                    //}
+                    else
+                    {
+                        if (isCoCountMatch)
+                            break;
+                    }
                 };
             }
-
-
-            //length = anchorIDList.Count;
 
             var readerPali = db.SelectArticle(anchorIDList.ToArray());
             Dictionary<string, object>[] paliPairs = SQLiteTools.GetValues(readerPali);
@@ -134,11 +131,75 @@ public class ArticleManager
                         parent = int.Parse(paliPairs[p]["parent"].ToString()),
                     };
                     bookList.Add(book);
+                    if (!bookIDList.Contains(book.id))
+                        bookIDList.Add(book.id);
                 }
             }
 
         }, DBManager.SentenceDBurl);
-        return bookList;
+        return (bookList, bookIDList);
+    }
+    public class ChapterDBData
+    {
+        public string id;
+        public int bookID;
+        public int paragraph;//段落数
+        public string language;
+        public string title;
+        public string channel_id;
+        public float progress;
+        //public Date
+        //public string translateName;
+    }
+    /// <summary>
+    /// 输入bookID，返回chapter数据
+    /// </summary>
+    public List<ChapterDBData> GetChaptersFromBookIDs(List<int> bookIDList)
+    {
+        List<ChapterDBData> cList = new List<ChapterDBData>();
+        if (bookIDList == null || bookIDList.Count == 0)
+            return cList;
+        dbManager.Getdb(db =>
+        {
+
+            var readerPali = db.SelectChapter(bookIDList.ToArray());
+            Dictionary<string, object>[] paliPairs = SQLiteTools.GetValues(readerPali);
+            if (paliPairs != null)
+            {
+                int paliLength = paliPairs.Length;
+                for (int p = 0; p < paliLength; p++)
+                {
+
+                    string title = "";
+                    if (paliPairs[p].ContainsKey("title"))
+                        title = paliPairs[p]["title"].ToString();
+
+
+                    //int.Parse(paliPairs[p]["book"].ToString());
+                    //int.Parse(paliPairs[p]["paragraph"].ToString());
+                    string language = "pali";
+                    if (paliPairs[p].ContainsKey("language"))
+                        language = paliPairs[p]["language"].ToString();
+                    //paliPairs[p]["language"].ToString();
+                    //paliPairs[p]["channel_id"].ToString();
+                    //float.Parse(paliPairs[p]["progress"].ToString());
+
+                    ChapterDBData c = new ChapterDBData()
+                    {
+                        id = paliPairs[p]["id"].ToString(),
+                        bookID = int.Parse(paliPairs[p]["book"].ToString()),
+                        paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
+                        language = language,
+                        title = title,
+                        channel_id = paliPairs[p]["channel_id"].ToString(),
+                        progress = float.Parse(paliPairs[p]["progress"].ToString()),
+                    };
+                    cList.Add(c);
+                }
+            }
+
+        }, DBManager.SentenceDBurl);
+        return cList;
     }
     #endregion
 }

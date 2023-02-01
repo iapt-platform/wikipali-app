@@ -432,6 +432,14 @@ namespace Imdork.SQLite
             string query = "SELECT * FROM pali_text WHERE id IN " + select+ "  ORDER BY level ASC , paragraph ASC";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
+        public SqliteDataReader SelectChapter(int[] bookIDArr)
+        {
+            string select = string.Join("','", bookIDArr);
+            select = "('" + select + "')";
+            string query = "SELECT * FROM chapter WHERE book IN " + select+ "  ORDER BY book ASC , paragraph ASC, progress DESC";// "' limit " + limit.ToString();
+            //string query = "SELECT * FROM chapter WHERE book = 9";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
         /// <summary>
         /// 匹配查询,通用
         /// </summary>

@@ -12,6 +12,10 @@ public class ArticleNodeItemView : MonoBehaviour
     public Book book;
     public Button btn;
     public ArticleView articleView;
+    //进度部分
+    public GameObject progress;
+    public Image progressImg;
+    public Text progressText;
     //是否脱离了tag树形结构进入到选书和章节
     public bool isBook;
 
@@ -38,7 +42,6 @@ public class ArticleNodeItemView : MonoBehaviour
             else
                 titleText.text = aNode.name;
         }
-
         subTitleText.text = aNode.name;
     }
     public void Init(Book bNode)
@@ -50,6 +53,14 @@ public class ArticleNodeItemView : MonoBehaviour
         else
             titleText.text = bNode.translateName;
         subTitleText.text = bNode.toc;
+        //显示百分比
+        if (bNode.isHaveProgress)
+        {
+            progress.SetActive(true);
+            progressImg.fillAmount = bNode.progress;
+            int progressP = (int)(bNode.progress * 100);
+            progressText.text = progressP + "%";
+        }
     }
     public void OnBtnClick()
     {

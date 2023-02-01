@@ -151,14 +151,23 @@ public class ArticleController
         public Book parent;
         public List<Book> children;// = new List<Book>();
         public string translateName;
+        //章节部分需要
+        public bool isHaveProgress = false;//是否有进度条
+        public float progress;
+        public List<ChapterDBData> chapterDBDatas;
     }
     public List<Book> currentBookList;
+    //获取level<=2的所有书籍&章节
     public List<Book> GetBooks(ArticleTreeNode node)
     {
         List<Book> res = new List<Book>();
         if (node == null)
             return res;
-        List<BookDBData> bookDBList = manager.GetBooksFromTags(node.tag);
+        List<BookDBData> bookDBList;
+        List<int> bookIDList;
+        //此处只能获取book level <=2的内容
+        (bookDBList, bookIDList) = manager.GetBooksFromTags(node.tag);
+        List<ChapterDBData> cList = manager.GetChaptersFromBookIDs(bookIDList);
         Dictionary<int, Dictionary<int, Book>> bookKVP = new Dictionary<int, Dictionary<int, Book>>();
         int length = bookDBList.Count;
         for (int i = 0; i < length; i++)
@@ -172,8 +181,7 @@ public class ArticleController
                 parentP = bookDBList[i].parent,
                 translateName = bookDBList[i].toc,
             };
-            if (book.toc == "(MN)Mūlapaṇṇāsapāḷi")
-                ;
+
             if (!bookKVP.ContainsKey(book.id))
             {
                 bookKVP.Add(book.id, new Dictionary<int, Book>());
@@ -188,6 +196,30 @@ public class ArticleController
                 if (isHaveTs)
                     book.translateName = ts;
             }
+            //获取章节的版本风格信息
+            else if(book.level < 100)
+            {
+                List<ChapterDBData> cDataList = GetChapterListByBookData(book.id, book.paragraph, cList);
+                if (cDataList == null || cDataList.Count == 0)
+                {
+                    //??????????
+                    book.isHaveProgress = true;
+                    book.progress = 0;
+                    book.chapterDBDatas = cDataList;
+
+                }
+                else
+                {
+                    book.isHaveProgress = true;
+                    //选取最高的进度
+                    book.progress = cDataList[0].progress;
+                    book.chapterDBDatas = cDataList;
+                    if (!string.IsNullOrEmpty(cDataList[0].title))
+                    {
+                        book.translateName = cDataList[0].title;
+                    }
+                }
+            }
             if (bookKVP[book.id].ContainsKey(book.parentP))
             {
                 Book bookP = bookKVP[book.id][book.parentP];
@@ -199,6 +231,39 @@ public class ArticleController
         }
         currentBookList = res;
         return res;
+    }
+    List<ChapterDBData> GetChapterListByBookData(int bookID,int paragraph, List<ChapterDBData> cDataList)
+    {
+        List<ChapterDBData> res = new List<ChapterDBData>();
+        int length = cDataList.Count;
+        //由于排了序，相同在一起，只要不同就退出循环
+        bool isMatch = false;
+        for (int i = 0; i < length; i++)
+        {
+            if (cDataList[i].bookID == bookID && cDataList[i].paragraph == paragraph)
+            {
+                res.Add(cDataList[i]);
+                isMatch = true;
+            }
+            else if (isMatch)
+            {
+                break;
+            }
+        }
+        return res;
+    }
+    //获取level>2的所有书籍&章节,是level2书籍的子章节书籍
+    public void GetBooksChildrenLevel(Book node)
+    {
+        List<Book> res = new List<Book>();
+        if (node == null)
+            return;
+        List<BookDBData> bookDBList;
+        List<int> bookIDList;
+        //此处只能获取book level <=2的内容
+
+
+        node.children = res;
     }
     #endregion
 }
