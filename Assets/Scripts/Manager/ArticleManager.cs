@@ -176,6 +176,13 @@ public class ArticleManager
         }, DBManager.SentenceDBurl);
         return bookList;
     }
+    public class ChannelChapterDBData
+    {
+        public string channel_id;
+        public string name;
+        public Language language;
+        public string summary;
+    }
     public class ChapterDBData
     {
         public string id;
@@ -184,6 +191,7 @@ public class ArticleManager
         public string language;
         public string title;
         public string channel_id;
+        public ChannelChapterDBData channelData;
         public float progress;
         //public Date
         //public string translateName;
@@ -283,5 +291,70 @@ public class ArticleManager
         }, DBManager.SentenceDBurl);
         return cList;
     }
-    #endregion
+    /// <summary>
+    /// 返回channel数据，key : channelID ,value:channelData
+    /// </summary>
+    public Dictionary<string, ChannelChapterDBData> GetChannelDataByIDs(List<string> channelIDList)
+    {
+        Dictionary<string, ChannelChapterDBData> data = new Dictionary<string, ChannelChapterDBData>();
+        if (channelIDList == null || channelIDList.Count == 0)
+            return data;
+        dbManager.Getdb(db =>
+        {
+
+            var readerPali = db.SelectChannel(channelIDList.ToArray());
+            Dictionary<string, object>[] paliPairs = SQLiteTools.GetValues(readerPali);
+            if (paliPairs != null)
+            {
+                int paliLength = paliPairs.Length;
+                for (int p = 0; p < paliLength; p++)
+                {
+
+                    //?????默认为null的是中文？
+                    Language l = Language.ZH_CN;
+                    if (paliPairs[p].ContainsKey("language"))
+                    {
+                        string language = paliPairs[p]["language"].ToString();
+                        switch (language)
+                        {
+                            case "zh":
+                            case "zh-cn":
+                                l = Language.ZH_CN;
+                                break;
+                            case "zh-tw":
+                                l = Language.ZH_TW;
+                                break;
+                            case "en":
+                                l = Language.EN;
+                                break;
+                            case "my":
+                                l = Language.MY;
+                                break;
+                            case "si":
+                                l = Language.MY;
+                                break;
+                        }
+                    }
+
+                    string summary = "";
+                    if (paliPairs[p].ContainsKey("summary"))
+                        summary = paliPairs[p]["summary"].ToString();
+                    string name = "";
+                    if (paliPairs[p].ContainsKey("name"))
+                        name = paliPairs[p]["name"].ToString();
+
+                    ChannelChapterDBData c = new ChannelChapterDBData()
+                    {
+                        channel_id = paliPairs[p]["id"].ToString(),
+                        name = name,
+                        language = l,
+                        summary = summary,
+                    };
+                    data.Add(c.channel_id,c);
+                }
+            }
+        }, DBManager.SentenceDBurl);
+        return data;
+    }
+    #endregion 
 }

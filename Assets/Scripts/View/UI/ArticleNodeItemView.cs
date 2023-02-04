@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static ArticleController;
+using static ArticleManager;
 
 public class ArticleNodeItemView : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ArticleNodeItemView : MonoBehaviour
     public Text subTitleText;
     public ArticleTreeNode article;
     public Book book;
+    public ChapterDBData channel;
     public Button btn;
     public ArticleView articleView;
     //进度部分
@@ -18,6 +20,8 @@ public class ArticleNodeItemView : MonoBehaviour
     public Text progressText;
     //是否脱离了tag树形结构进入到选书和章节
     public bool isBook;
+    //是否脱离了选书到显示版本风格
+    public bool isChannel;
 
     // Start is called before the first frame update
     void Start()
@@ -62,11 +66,27 @@ public class ArticleNodeItemView : MonoBehaviour
             progressText.text = progressP + "%";
         }
     }
+    public void Init(ChapterDBData cNode)
+    {
+        isChannel = true;
+        channel = cNode;
+        titleText.text = cNode.channelData.name;
+        subTitleText.text = cNode.channelData.summary;
+        //显示百分比
+        progress.SetActive(true);
+        progressImg.fillAmount = cNode.progress;
+        int progressP = (int)(cNode.progress * 100);
+        progressText.text = progressP + "%";
+
+    }
     public void OnBtnClick()
     {
         if (isBook)
             articleView.BookNodeBtnClick(book);
-
+        else if (isChannel)
+        {
+            //todo显示版本风格
+        }
         else
             articleView.ArticleNodeBtnClick(article);
     }

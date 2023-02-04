@@ -156,6 +156,8 @@ public class ArticleController
         public bool isHaveProgress = false;//是否有进度条
         public float progress;
         public List<ChapterDBData> chapterDBDatas;
+        //是否已获取channelData
+        public bool isGetChannelData = false;
     }
     public List<Book> currentBookList;
     //获取level<=2的所有书籍&章节
@@ -293,6 +295,29 @@ public class ArticleController
         Debug.LogError("【性能】查询子文章耗时：" + sw.ElapsedMilliseconds);
 #endif
         node.children = res;
+    }
+    //获取章节版本风格列表
+    public void GetChapterChannelData(Book book)
+    {
+        if (book.chapterDBDatas == null || book.chapterDBDatas.Count == 0|| book.isGetChannelData)
+            return;
+        List<string> channelList = new List<string>();
+        int l = book.chapterDBDatas.Count;
+        for (int i = 0; i < l; i++)
+        {
+            channelList.Add(book.chapterDBDatas[i].channel_id);
+        }
+        //todo channel
+        Dictionary<string, ChannelChapterDBData> data = manager.GetChannelDataByIDs(channelList);
+        for (int i = 0; i < l; i++)
+        {
+            string cID = book.chapterDBDatas[i].channel_id;
+            if (data.ContainsKey(cID))
+            {
+                book.chapterDBDatas[i].channelData = data[cID];
+            }
+        }
+        book.isGetChannelData = true;
     }
     #endregion
 }

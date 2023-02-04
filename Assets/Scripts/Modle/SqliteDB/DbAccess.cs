@@ -453,6 +453,13 @@ namespace Imdork.SQLite
             //string query = "SELECT * FROM chapter WHERE book = 9";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
+        public SqliteDataReader SelectChannel(string[] channelIDArr)
+        {
+            string select = string.Join("','", channelIDArr);
+            select = "('" + select + "')";
+            string query = "SELECT * FROM channel WHERE id IN " + select ;//
+            return ExecuteQuery(query);
+        }
         /// <summary>
         /// 匹配查询,通用
         /// </summary>

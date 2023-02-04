@@ -54,6 +54,24 @@ public class ArticleView : MonoBehaviour
             nodeList.Add(inst);
         }
     }
+    void InitNodeItem(List<ChapterDBData> info)
+    {
+        DestroyNodeList();
+        int length = info.Count;
+        float height = nodeItem.GetComponent<RectTransform>().sizeDelta.y;
+        for (int i = 0; i < length; i++)
+        {
+            if (info[i].channelData == null)
+                continue;
+            GameObject inst = Instantiate(nodeItem.gameObject, nodeItem.transform.parent);
+            inst.transform.position = nodeItem.transform.position;
+            inst.GetComponent<RectTransform>().position -= Vector3.up * height * i;
+
+            inst.GetComponent<ArticleNodeItemView>().Init(info[i]);
+            inst.SetActive(true);
+            nodeList.Add(inst);
+        }
+    }
     //销毁下拉列表GO
     private void DestroyNodeList()
     {
@@ -71,6 +89,7 @@ public class ArticleView : MonoBehaviour
     {
 
     }
+    //点击article节点
     public void ArticleNodeBtnClick(ArticleTreeNode info, bool isReturn = false)
     {
         if (!isReturn)
@@ -102,6 +121,7 @@ public class ArticleView : MonoBehaviour
             InitNodeItem(book);
         }
     }
+    //点击细化到book的节点
     public void BookNodeBtnClick(Book info, bool isReturn = false, bool isChild = false)
     {
         if (info.children != null && info.children.Count > 0)
@@ -125,13 +145,33 @@ public class ArticleView : MonoBehaviour
             {
                 //再次获取子章节
                 controller.GetBooksChildrenLevel(info);
+                //获取版本风格
+                controller.GetChapterChannelData(info);
                 BookNodeBtnClick(info, isReturn, true);
             }
             else
             {
-                //TODO：显示版本风格，进入显示文章与翻译部分
+                //显示版本风格
+                InitNodeItem(info.chapterDBDatas);
+
+                bookTreeNodeStack.Push(info);
+                //TODO?:点进书本只显示书本路径，前面是否需要显示Article路径？
+                string aPath = "";
+                int length = bookTreeNodeStack.Count;
+                Book[] arr = bookTreeNodeStack.ToArray();
+                for (int i = length - 1; i > 0; i--)
+                {
+                    aPath += arr[i].toc + "/";
+                }
+                aPath += "译文版本";
+                returnBtn.SetPath(aPath);
             }
         }
+    }
+    //点击显示channel的节点
+    public void ChannelBtnClick()
+    { 
+    
     }
     public void ReturnBtnClick()
     {
