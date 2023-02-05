@@ -79,6 +79,15 @@ public class ArticleNodeItemView : MonoBehaviour
         progressText.text = progressP + "%";
 
     }
+    //channel章节 pali原文按钮
+    public void InitPali(Book bNode)
+    {
+        isChannel = true;
+        book = bNode;
+        titleText.text = "Pali原文";
+        subTitleText.gameObject.SetActive(false);
+
+    }
     public void OnBtnClick()
     {
         if (isBook)
@@ -86,6 +95,7 @@ public class ArticleNodeItemView : MonoBehaviour
         else if (isChannel)
         {
             //todo显示版本风格
+            articleView.ShowPaliContent(book);
         }
         else
             articleView.ArticleNodeBtnClick(article);

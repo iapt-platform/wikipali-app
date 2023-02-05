@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using static ArticleManager;
 /// <summary>
@@ -139,7 +140,7 @@ public class ArticleController
         }
     }
     #endregion
-    #region bookID
+    #region book树形结构
 
     public class Book
     {
@@ -299,7 +300,7 @@ public class ArticleController
     //获取章节版本风格列表
     public void GetChapterChannelData(Book book)
     {
-        if (book.chapterDBDatas == null || book.chapterDBDatas.Count == 0|| book.isGetChannelData)
+        if (book.chapterDBDatas == null || book.chapterDBDatas.Count == 0 || book.isGetChannelData)
             return;
         List<string> channelList = new List<string>();
         int l = book.chapterDBDatas.Count;
@@ -318,6 +319,46 @@ public class ArticleController
             }
         }
         book.isGetChannelData = true;
+    }
+    #endregion
+
+    #region 文章内容部分
+    //获取巴利原文句子
+    List<SentenceDBData> GetPaliSentenceByBook(Book book)
+    {
+        if (book == null)
+            return new List<SentenceDBData>();
+        BookDBData bookData = manager.GetBookChildrenFromID(book.id, book.paragraph);
+        int chapter_len = 0;
+        if (bookData != null)
+            chapter_len = bookData.chapter_len;
+        List<SentenceDBData> res = manager.GetPaliSentenceByBookParagraph(book.id, book.paragraph, book.paragraph + chapter_len);
+        return res;
+    }
+    //获取版本风格翻译
+    List<SentenceDBData> GetPaliSentenceTranslateByBookChannel(Book book, ChannelChapterDBData channel)
+    {
+        if (book == null || channel == null)
+            return new List<SentenceDBData>();
+        List<SentenceDBData> res = manager.GetPaliSentenceTranslationByBookParagraph(book.id, book.paragraph, book.paragraph + book.chapter_len, channel.channel_id);
+        return res;
+    }
+    //获取整个巴利原文
+    public string GetPaliContentText(Book book)
+    {
+        if (book == null)
+            return "";
+        List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
+        if (sentence == null || sentence.Count == 0)
+            return "";
+        StringBuilder sb = new StringBuilder("");
+        int l = sentence.Count;
+        for (int i = 0; i < l; i++)
+        {
+            sb.AppendLine(sentence[i].content);
+            sb.AppendLine("");
+        }
+        return sb.ToString();
     }
     #endregion
 }

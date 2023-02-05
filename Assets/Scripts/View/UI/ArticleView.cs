@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static ArticleController;
 using static ArticleManager;
 
@@ -9,6 +10,12 @@ public class ArticleView : MonoBehaviour
     ArticleController controller = ArticleController.Instance();
     public ArticleNodeItemView nodeItem;
     public ArticleTitleReturnBtn returnBtn;
+    //文章标题树
+    public GameObject ListViewGO;
+    //文章内容 pali原文和翻译
+    public GameObject ContentViewGO;
+    public InputField PaliContentText;
+    public RectTransform PaliContentTextRect;
     Stack<ArticleTreeNode> articleTreeNodeStack;
     Stack<Book> bookTreeNodeStack;
     // Start is called before the first frame update
@@ -54,18 +61,31 @@ public class ArticleView : MonoBehaviour
             nodeList.Add(inst);
         }
     }
-    void InitNodeItem(List<ChapterDBData> info)
+    //chapter
+    void InitNodeItem(Book book)
     {
+        List<ChapterDBData> info = book.chapterDBDatas;
         DestroyNodeList();
         int length = info.Count;
         float height = nodeItem.GetComponent<RectTransform>().sizeDelta.y;
+
+        //todo 优化代码
+        //第一个按钮是显示原文
+        GameObject inst0 = Instantiate(nodeItem.gameObject, nodeItem.transform.parent);
+        inst0.transform.position = nodeItem.transform.position;
+        inst0.GetComponent<RectTransform>().position -= Vector3.up ;
+        inst0.GetComponent<ArticleNodeItemView>().InitPali(book);
+        inst0.SetActive(true);
+        nodeList.Add(inst0);
+
+
         for (int i = 0; i < length; i++)
         {
             if (info[i].channelData == null)
                 continue;
             GameObject inst = Instantiate(nodeItem.gameObject, nodeItem.transform.parent);
             inst.transform.position = nodeItem.transform.position;
-            inst.GetComponent<RectTransform>().position -= Vector3.up * height * i;
+            inst.GetComponent<RectTransform>().position -= Vector3.up * height * (i + 1);
 
             inst.GetComponent<ArticleNodeItemView>().Init(info[i]);
             inst.SetActive(true);
@@ -152,7 +172,7 @@ public class ArticleView : MonoBehaviour
             else
             {
                 //显示版本风格
-                InitNodeItem(info.chapterDBDatas);
+                InitNodeItem(info);
 
                 bookTreeNodeStack.Push(info);
                 //TODO?:点进书本只显示书本路径，前面是否需要显示Article路径？
@@ -170,8 +190,8 @@ public class ArticleView : MonoBehaviour
     }
     //点击显示channel的节点
     public void ChannelBtnClick()
-    { 
-    
+    {
+
     }
     public void ReturnBtnClick()
     {
@@ -211,4 +231,16 @@ public class ArticleView : MonoBehaviour
             InitNodeItem(controller.articleTreeNodes.info);
         }
     }
+    #region 显示文章内容部分
+    public void ShowPaliContent(Book book)
+    {
+        ContentViewGO.SetActive(true);
+        ListViewGO.SetActive(false);
+        string text = controller.GetPaliContentText(book);
+        PaliContentText.text = text;
+
+    }
+
+
+    #endregion
 }

@@ -63,7 +63,7 @@ public class ArticleManager
         return ReadJsonFromStreamingAssetsPath("Json/book_index/a/default");
     }
     #endregion
-    #region 读取数据库句子与释义
+    #region 读取数据库目录树
     public class BookDBData
     {
         public int id;
@@ -176,6 +176,37 @@ public class ArticleManager
         }, DBManager.SentenceDBurl);
         return bookList;
     }
+    /// <summary>
+    /// 输入BookID，pargraph返回指定book数据
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public BookDBData GetBookChildrenFromID(int bookID, int pargraph)
+    {
+        BookDBData res = null;
+        dbManager.Getdb(db =>
+        {
+            var readerPali = db.SelectArticle(bookID, pargraph);
+            Dictionary<string, object> paliPair = SQLiteTools.GetValue(readerPali);
+            if (paliPair != null)
+            {
+
+                BookDBData book = new BookDBData()
+                {
+                    id = int.Parse(paliPair["book"].ToString()),
+                    paragraph = int.Parse(paliPair["paragraph"].ToString()),
+                    level = int.Parse(paliPair["level"].ToString()),
+                    toc = paliPair["toc"].ToString(),
+                    chapter_len = int.Parse(paliPair["chapter_len"].ToString()),
+                    parent = int.Parse(paliPair["parent"].ToString()),
+                };
+                res = book;
+            }
+
+        }, DBManager.SentenceDBurl);
+        return res;
+    }
+
     public class ChannelChapterDBData
     {
         public string channel_id;
@@ -350,11 +381,136 @@ public class ArticleManager
                         language = l,
                         summary = summary,
                     };
-                    data.Add(c.channel_id,c);
+                    data.Add(c.channel_id, c);
                 }
             }
         }, DBManager.SentenceDBurl);
         return data;
     }
-    #endregion 
+    #endregion
+    #region 读取数据库句子与释义
+    public class SentenceDBData
+    {
+        public string id;
+        public int bookID;
+        public int paragraph;
+        public int word_start;
+        public int word_end;
+        public string content;
+    }
+    public List<SentenceDBData> GetPaliSentenceByBookParagraph(int bookID, int min, int max)
+    {
+        List<SentenceDBData> res = new List<SentenceDBData>();
+        dbManager.Getdb(db =>
+        {
+
+            var readerPali = db.SelectSentence(bookID, min.ToString(), max.ToString());
+            Dictionary<string, object>[] paliPairs = SQLiteTools.GetValues(readerPali);
+            if (paliPairs != null)
+            {
+                int paliLength = paliPairs.Length;
+                for (int p = 0; p < paliLength; p++)
+                {
+
+                    //?????默认为null的是中文？
+                    //Language l = Language.ZH_CN;
+                    //if (paliPairs[p].ContainsKey("language"))
+                    //{
+                    //    string language = paliPairs[p]["language"].ToString();
+                    //    switch (language)
+                    //    {
+                    //        case "zh":
+                    //        case "zh-cn":
+                    //            l = Language.ZH_CN;
+                    //            break;
+                    //        case "zh-tw":
+                    //            l = Language.ZH_TW;
+                    //            break;
+                    //        case "en":
+                    //            l = Language.EN;
+                    //            break;
+                    //        case "my":
+                    //            l = Language.MY;
+                    //            break;
+                    //        case "si":
+                    //            l = Language.MY;
+                    //            break;
+                    //    }
+                    //}
+
+
+                    SentenceDBData s = new SentenceDBData()
+                    {
+                        id = paliPairs[p]["id"].ToString(),
+                        bookID = int.Parse(paliPairs[p]["book"].ToString()),
+                        paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
+                        word_start = int.Parse(paliPairs[p]["word_start"].ToString()),
+                        word_end = int.Parse(paliPairs[p]["word_end"].ToString()),
+                        content = paliPairs[p]["content"].ToString(),
+
+                    };
+                    res.Add(s);
+                }
+            }
+        }, DBManager.SentenceDBurl);
+        return res;
+    }
+    public List<SentenceDBData> GetPaliSentenceTranslationByBookParagraph(int bookID, int min, int max, string channel)
+    {
+        List<SentenceDBData> res = new List<SentenceDBData>();
+        dbManager.Getdb(db =>
+        {
+
+            var readerPali = db.SelectSentenceTranslation(bookID, min.ToString(), max.ToString(), channel);
+            Dictionary<string, object>[] paliPairs = SQLiteTools.GetValues(readerPali);
+            if (paliPairs != null)
+            {
+                int paliLength = paliPairs.Length;
+                for (int p = 0; p < paliLength; p++)
+                {
+
+                    //?????默认为null的是中文？
+                    //Language l = Language.ZH_CN;
+                    //if (paliPairs[p].ContainsKey("language"))
+                    //{
+                    //    string language = paliPairs[p]["language"].ToString();
+                    //    switch (language)
+                    //    {
+                    //        case "zh":
+                    //        case "zh-cn":
+                    //            l = Language.ZH_CN;
+                    //            break;
+                    //        case "zh-tw":
+                    //            l = Language.ZH_TW;
+                    //            break;
+                    //        case "en":
+                    //            l = Language.EN;
+                    //            break;
+                    //        case "my":
+                    //            l = Language.MY;
+                    //            break;
+                    //        case "si":
+                    //            l = Language.MY;
+                    //            break;
+                    //    }
+                    //}
+
+
+                    SentenceDBData s = new SentenceDBData()
+                    {
+                        id = paliPairs[p]["id"].ToString(),
+                        bookID = int.Parse(paliPairs[p]["book"].ToString()),
+                        paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
+                        word_start = int.Parse(paliPairs[p]["word_start"].ToString()),
+                        word_end = int.Parse(paliPairs[p]["word_end"].ToString()),
+                        content = paliPairs[p]["content"].ToString(),
+
+                    };
+                    res.Add(s);
+                }
+            }
+        }, DBManager.SentenceDBurl);
+        return res;
+    }
+    #endregion
 }

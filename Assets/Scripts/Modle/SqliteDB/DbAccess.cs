@@ -429,21 +429,26 @@ namespace Imdork.SQLite
             select = "('" + select + "')";
             //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
             //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
-            string query = "SELECT * FROM pali_text WHERE id IN " + select+ "  ORDER BY level ASC , paragraph ASC";// "' limit " + limit.ToString();
+            string query = "SELECT * FROM pali_text WHERE id IN " + select + "  ORDER BY level ASC , paragraph ASC";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
-        public SqliteDataReader SelectArticleChildren(string bookID,string min ,string max)
+        public SqliteDataReader SelectArticleChildren(string bookID, string min, string max)
         {
-            string query = "SELECT * FROM pali_text WHERE book = " + bookID + " AND paragraph > "+min+ " AND paragraph < " + max + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
+            string query = "SELECT * FROM pali_text WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
             //string query = "SELECT * FROM pali_text WHERE id = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max;// + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
             //string query = "SELECT * FROM pali_text WHERE paragraph > " + min + " AND paragraph < " + max;// + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectArticle(int bookID, int pargraph)
+        {
+            string query = "SELECT * FROM pali_text WHERE book = " + bookID + " AND paragraph = " + pargraph;// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         public SqliteDataReader SelectChapter(int[] bookIDArr)
         {
             string select = string.Join("','", bookIDArr);
             select = "('" + select + "')";
-            string query = "SELECT * FROM chapter WHERE book IN " + select+ "  ORDER BY book ASC , paragraph ASC, progress DESC";// "' limit " + limit.ToString();
+            string query = "SELECT * FROM chapter WHERE book IN " + select + "  ORDER BY book ASC , paragraph ASC, progress DESC";// "' limit " + limit.ToString();
             //string query = "SELECT * FROM chapter WHERE book = 9";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
@@ -457,7 +462,19 @@ namespace Imdork.SQLite
         {
             string select = string.Join("','", channelIDArr);
             select = "('" + select + "')";
-            string query = "SELECT * FROM channel WHERE id IN " + select ;//
+            string query = "SELECT * FROM channel WHERE id IN " + select;//
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectSentence(int bookID, string min, string max)
+        {
+
+            string query = "SELECT * FROM sentence WHERE book = " + bookID + "  AND paragraph > " + min + " AND paragraph < " + max + "  ORDER BY word_start DESC";//
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectSentenceTranslation(int bookID, string min, string max, string channel)
+        {
+
+            string query = "SELECT * FROM sentence WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = " + channel + "  ORDER BY word_start DESC";//
             return ExecuteQuery(query);
         }
         /// <summary>
