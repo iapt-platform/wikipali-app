@@ -16,6 +16,7 @@ public class ArticleView : MonoBehaviour
     public GameObject ContentViewGO;
     public InputField PaliContentText;
     public RectTransform PaliContentTextRect;
+    public Text textRuler;
     Stack<ArticleTreeNode> articleTreeNodeStack;
     Stack<Book> bookTreeNodeStack;
     // Start is called before the first frame update
@@ -73,7 +74,7 @@ public class ArticleView : MonoBehaviour
         //第一个按钮是显示原文
         GameObject inst0 = Instantiate(nodeItem.gameObject, nodeItem.transform.parent);
         inst0.transform.position = nodeItem.transform.position;
-        inst0.GetComponent<RectTransform>().position -= Vector3.up ;
+        inst0.GetComponent<RectTransform>().position -= Vector3.up;
         inst0.GetComponent<ArticleNodeItemView>().InitPali(book);
         inst0.SetActive(true);
         nodeList.Add(inst0);
@@ -179,7 +180,7 @@ public class ArticleView : MonoBehaviour
                 string aPath = "";
                 int length = bookTreeNodeStack.Count;
                 Book[] arr = bookTreeNodeStack.ToArray();
-                for (int i = length - 1; i > 0; i--)
+                for (int i = length - 1; i > -1; i--)
                 {
                     aPath += arr[i].toc + "/";
                 }
@@ -195,6 +196,9 @@ public class ArticleView : MonoBehaviour
     }
     public void ReturnBtnClick()
     {
+        ContentViewGO.SetActive(false);
+        ListViewGO.SetActive(true);
+
         if (bookTreeNodeStack.Count != 0)
         {
             bookTreeNodeStack.Pop();
@@ -237,8 +241,18 @@ public class ArticleView : MonoBehaviour
         ContentViewGO.SetActive(true);
         ListViewGO.SetActive(false);
         string text = controller.GetPaliContentText(book);
+        textRuler.gameObject.SetActive(true);
+        textRuler.text = text;
         PaliContentText.text = text;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
 
+        //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
+        //Debug.LogError(textRuler.rectTransform.sizeDelta.y);
+        //Debug.LogError(PaliContentText.textComponent.cachedTextGenerator.lineCount);
+        PaliContentTextRect.sizeDelta = new Vector2(PaliContentTextRect.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
+        textRuler.gameObject.SetActive(false);
+
+        //PaliContentText.lin
     }
 
 

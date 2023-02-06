@@ -468,13 +468,13 @@ namespace Imdork.SQLite
         public SqliteDataReader SelectSentence(int bookID, string min, string max)
         {
 
-            string query = "SELECT * FROM sentence WHERE book = " + bookID + "  AND paragraph > " + min + " AND paragraph < " + max + "  ORDER BY word_start DESC";//
+            string query = "SELECT * FROM sentence WHERE book = " + bookID + "  AND paragraph > " + min + " AND paragraph < " + max + " ORDER BY paragraph ASC, word_start ASC";//
             return ExecuteQuery(query);
         }
         public SqliteDataReader SelectSentenceTranslation(int bookID, string min, string max, string channel)
         {
 
-            string query = "SELECT * FROM sentence WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = " + channel + "  ORDER BY word_start DESC";//
+            string query = "SELECT * FROM sentence WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = " + channel + " ORDER BY paragraph ASC, word_start ASC";//
             return ExecuteQuery(query);
         }
         /// <summary>
