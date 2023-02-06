@@ -16,6 +16,7 @@ public class ArticleView : MonoBehaviour
     public GameObject ContentViewGO;
     public InputField PaliContentText;
     public RectTransform PaliContentTextRect;
+    public Text contentText;
     public Text textRuler;
     Stack<ArticleTreeNode> articleTreeNodeStack;
     Stack<Book> bookTreeNodeStack;
@@ -88,7 +89,7 @@ public class ArticleView : MonoBehaviour
             inst.transform.position = nodeItem.transform.position;
             inst.GetComponent<RectTransform>().position -= Vector3.up * height * (i + 1);
 
-            inst.GetComponent<ArticleNodeItemView>().Init(info[i]);
+            inst.GetComponent<ArticleNodeItemView>().Init(book, info[i]);
             inst.SetActive(true);
             nodeList.Add(inst);
         }
@@ -243,7 +244,8 @@ public class ArticleView : MonoBehaviour
         string text = controller.GetPaliContentText(book);
         textRuler.gameObject.SetActive(true);
         textRuler.text = text;
-        PaliContentText.text = text;
+        //PaliContentText.text = text;
+        contentText.text = text;
         LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
 
         //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
@@ -254,7 +256,25 @@ public class ArticleView : MonoBehaviour
 
         //PaliContentText.lin
     }
+    public void ShowPaliContentTrans(Book book, ChapterDBData cNode)
+    {
+        ContentViewGO.SetActive(true);
+        ListViewGO.SetActive(false);
+        string text = controller.GetPaliContentTransText(book, cNode.channelData);
+        textRuler.gameObject.SetActive(true);
+        textRuler.text = text;
+        //PaliContentText.text = text;
+        contentText.text = text;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
 
+        //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
+        //Debug.LogError(textRuler.rectTransform.sizeDelta.y);
+        //Debug.LogError(PaliContentText.textComponent.cachedTextGenerator.lineCount);
+        PaliContentTextRect.sizeDelta = new Vector2(PaliContentTextRect.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
+        textRuler.gameObject.SetActive(false);
+
+        //PaliContentText.lin
+    }
 
     #endregion
 }

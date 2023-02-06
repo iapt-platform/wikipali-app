@@ -474,7 +474,7 @@ namespace Imdork.SQLite
         public SqliteDataReader SelectSentenceTranslation(int bookID, string min, string max, string channel)
         {
 
-            string query = "SELECT * FROM sentence WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = " + channel + " ORDER BY paragraph ASC, word_start ASC";//
+            string query = "SELECT * FROM sentence_translation WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = '" + channel + "' ORDER BY paragraph ASC, word_start ASC";//
             return ExecuteQuery(query);
         }
         /// <summary>

@@ -66,9 +66,10 @@ public class ArticleNodeItemView : MonoBehaviour
             progressText.text = progressP + "%";
         }
     }
-    public void Init(ChapterDBData cNode)
+    public void Init(Book bNode, ChapterDBData cNode)
     {
         isChannel = true;
+        book = bNode;
         channel = cNode;
         titleText.text = cNode.channelData.name;
         subTitleText.text = cNode.channelData.summary;
@@ -94,8 +95,11 @@ public class ArticleNodeItemView : MonoBehaviour
             articleView.BookNodeBtnClick(book);
         else if (isChannel)
         {
-            //todo显示版本风格
-            articleView.ShowPaliContent(book);
+
+            if (channel != null)    //pali&翻译
+                articleView.ShowPaliContentTrans(book, channel);
+            else                    //pali原文
+                articleView.ShowPaliContent(book);
         }
         else
             articleView.ArticleNodeBtnClick(article);

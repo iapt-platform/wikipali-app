@@ -329,7 +329,7 @@ public class ArticleController
         if (book == null)
             return new List<SentenceDBData>();
         BookDBData bookData = manager.GetBookChildrenFromID(book.id, book.paragraph);
-        int chapter_len = 0;
+        int chapter_len = book.chapter_len;
         if (bookData != null)
             chapter_len = bookData.chapter_len;
         List<SentenceDBData> res = manager.GetPaliSentenceByBookParagraph(book.id, book.paragraph, book.paragraph + chapter_len);
@@ -340,7 +340,11 @@ public class ArticleController
     {
         if (book == null || channel == null)
             return new List<SentenceDBData>();
-        List<SentenceDBData> res = manager.GetPaliSentenceTranslationByBookParagraph(book.id, book.paragraph, book.paragraph + book.chapter_len, channel.channel_id);
+        BookDBData bookData = manager.GetBookChildrenFromID(book.id, book.paragraph);
+        int chapter_len = book.chapter_len;
+        if (bookData != null)
+            chapter_len = bookData.chapter_len;
+        List<SentenceDBData> res = manager.GetPaliSentenceTranslationByBookParagraph(book.id, book.paragraph, book.paragraph + chapter_len, channel.channel_id);
         return res;
     }
     //获取整个巴利原文
@@ -357,6 +361,39 @@ public class ArticleController
         {
             sb.AppendLine(sentence[i].content);
             sb.AppendLine("");
+        }
+        return sb.ToString();
+    }
+
+    //获取整个巴利原文以及所有翻译
+    public string GetPaliContentTransText(Book book, ChannelChapterDBData channel)
+    {
+        if (book == null)
+            return "";
+        List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
+        List<SentenceDBData> sentenceTrans = GetPaliSentenceTranslateByBookChannel(book, channel);
+        if (sentence == null || sentence.Count == 0)
+            return "";
+        StringBuilder sb = new StringBuilder("");
+        int l = sentence.Count;
+        int tl = sentenceTrans.Count;
+        for (int i = 0; i < l; i++)
+        {
+            sb.AppendLine(sentence[i].content);
+            sb.AppendLine("");
+            //todo 优化
+            for (int j = 0; j < tl; j++)
+            {
+                if (j < 20)
+                    if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
+                    {
+                        //sb.AppendLine();
+                        sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
+                        sb.AppendLine("");
+                        sb.AppendLine("");
+                        // break;
+                    }
+            }
         }
         return sb.ToString();
     }
