@@ -384,15 +384,14 @@ public class ArticleController
             //todo 优化
             for (int j = 0; j < tl; j++)
             {
-                if (j < 20)
-                    if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
-                    {
-                        //sb.AppendLine();
-                        sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
-                        sb.AppendLine("");
-                        sb.AppendLine("");
-                        // break;
-                    }
+                if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
+                {
+                    //sb.AppendLine();
+                    sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
+                    sb.AppendLine("");
+                    sb.AppendLine("");
+                    // break;
+                }
             }
         }
         return sb.ToString();

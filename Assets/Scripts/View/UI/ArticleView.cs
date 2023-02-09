@@ -16,6 +16,7 @@ public class ArticleView : MonoBehaviour
     public GameObject ContentViewGO;
     public InputField PaliContentText;
     public RectTransform PaliContentTextRect;
+    public RectTransform PaliScrollContent;
     public Text contentText;
     public Text textRuler;
     Stack<ArticleTreeNode> articleTreeNodeStack;
@@ -237,8 +238,14 @@ public class ArticleView : MonoBehaviour
         }
     }
     #region 显示文章内容部分
+    public void InitPaliScroll()
+    {
+        //初始化文章位置为原点
+        PaliScrollContent.localPosition = Vector3.zero;
+    }
     public void ShowPaliContent(Book book)
     {
+        InitPaliScroll();
         ContentViewGO.SetActive(true);
         ListViewGO.SetActive(false);
         string text = controller.GetPaliContentText(book);
@@ -258,6 +265,7 @@ public class ArticleView : MonoBehaviour
     }
     public void ShowPaliContentTrans(Book book, ChapterDBData cNode)
     {
+        InitPaliScroll();
         ContentViewGO.SetActive(true);
         ListViewGO.SetActive(false);
         string text = controller.GetPaliContentTransText(book, cNode.channelData);

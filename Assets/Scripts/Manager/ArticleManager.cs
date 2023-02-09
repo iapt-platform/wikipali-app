@@ -391,7 +391,7 @@ public class ArticleManager
     #region 读取数据库句子与释义
     public class SentenceDBData
     {
-        public string id;
+        //public string id;
         public int bookID;
         public int paragraph;
         public int word_start;
@@ -412,36 +412,9 @@ public class ArticleManager
                 for (int p = 0; p < paliLength; p++)
                 {
 
-                    //?????默认为null的是中文？
-                    //Language l = Language.ZH_CN;
-                    //if (paliPairs[p].ContainsKey("language"))
-                    //{
-                    //    string language = paliPairs[p]["language"].ToString();
-                    //    switch (language)
-                    //    {
-                    //        case "zh":
-                    //        case "zh-cn":
-                    //            l = Language.ZH_CN;
-                    //            break;
-                    //        case "zh-tw":
-                    //            l = Language.ZH_TW;
-                    //            break;
-                    //        case "en":
-                    //            l = Language.EN;
-                    //            break;
-                    //        case "my":
-                    //            l = Language.MY;
-                    //            break;
-                    //        case "si":
-                    //            l = Language.MY;
-                    //            break;
-                    //    }
-                    //}
-
-
                     SentenceDBData s = new SentenceDBData()
                     {
-                        id = paliPairs[p]["id"].ToString(),
+                        //id = paliPairs[p]["id"].ToString(),
                         bookID = int.Parse(paliPairs[p]["book"].ToString()),
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         word_start = int.Parse(paliPairs[p]["word_start"].ToString()),
@@ -469,36 +442,9 @@ public class ArticleManager
                 for (int p = 0; p < paliLength; p++)
                 {
 
-                    //?????默认为null的是中文？
-                    //Language l = Language.ZH_CN;
-                    //if (paliPairs[p].ContainsKey("language"))
-                    //{
-                    //    string language = paliPairs[p]["language"].ToString();
-                    //    switch (language)
-                    //    {
-                    //        case "zh":
-                    //        case "zh-cn":
-                    //            l = Language.ZH_CN;
-                    //            break;
-                    //        case "zh-tw":
-                    //            l = Language.ZH_TW;
-                    //            break;
-                    //        case "en":
-                    //            l = Language.EN;
-                    //            break;
-                    //        case "my":
-                    //            l = Language.MY;
-                    //            break;
-                    //        case "si":
-                    //            l = Language.MY;
-                    //            break;
-                    //    }
-                    //}
-
-
                     SentenceDBData s = new SentenceDBData()
                     {
-                        id = paliPairs[p]["id"].ToString(),
+                        //id = paliPairs[p]["id"].ToString(),
                         bookID = int.Parse(paliPairs[p]["book"].ToString()),
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         word_start = int.Parse(paliPairs[p]["word_start"].ToString()),

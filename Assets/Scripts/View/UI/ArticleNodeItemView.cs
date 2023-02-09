@@ -95,11 +95,18 @@ public class ArticleNodeItemView : MonoBehaviour
             articleView.BookNodeBtnClick(book);
         else if (isChannel)
         {
-
+#if DEBUG_PERFORMANCE
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+#endif
             if (channel != null)    //pali&翻译
                 articleView.ShowPaliContentTrans(book, channel);
             else                    //pali原文
                 articleView.ShowPaliContent(book);
+#if DEBUG_PERFORMANCE
+            sw.Stop();
+            Debug.LogError("【性能】查询pali耗时：" + sw.ElapsedMilliseconds);
+#endif
         }
         else
             articleView.ArticleNodeBtnClick(article);
