@@ -100,9 +100,9 @@ public class ArticleNodeItemView : MonoBehaviour
             sw.Start();
 #endif
             if (channel != null)    //pali&翻译
-                articleView.ShowPaliContentTrans(book, channel);
+                articleView.ShowPaliContentTrans(book, channel, true);
             else                    //pali原文
-                articleView.ShowPaliContent(book);
+                articleView.ShowPaliContentTrans(book, null, false);
 #if DEBUG_PERFORMANCE
             sw.Stop();
             Debug.LogError("【性能】查询pali耗时：" + sw.ElapsedMilliseconds);

@@ -348,53 +348,73 @@ public class ArticleController
         return res;
     }
     //获取整个巴利原文
-    public string GetPaliContentText(Book book)
-    {
-        if (book == null)
-            return "";
-        List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
-        if (sentence == null || sentence.Count == 0)
-            return "";
-        StringBuilder sb = new StringBuilder("");
-        int l = sentence.Count;
-        for (int i = 0; i < l; i++)
-        {
-            sb.AppendLine(sentence[i].content);
-            sb.AppendLine("");
-        }
-        return sb.ToString();
-    }
+    //public string GetPaliContentText(Book book)
+    //{
+    //    if (book == null)
+    //        return "";
+    //    List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
+    //    if (sentence == null || sentence.Count == 0)
+    //        return "";
+    //    StringBuilder sb = new StringBuilder("");
+    //    int l = sentence.Count;
+    //    for (int i = 0; i < l; i++)
+    //    {
+    //        sb.AppendLine(sentence[i].content);
+    //        sb.AppendLine("");
+    //    }
+    //    return sb.ToString();
+    //}
 
+    const int LINE_COUNT_LIMIT = 50;
     //获取整个巴利原文以及所有翻译
-    public string GetPaliContentTransText(Book book, ChannelChapterDBData channel)
+    //由于文字过长无法显示的问题，每50行，返回一个数组
+    //todo 用行数衡量是否不准，是否需要改为字节数量
+    public List<string> GetPaliContentTransText(Book book, ChannelChapterDBData channel, bool isTrans)
     {
         if (book == null)
-            return "";
+            return null;
         List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
-        List<SentenceDBData> sentenceTrans = GetPaliSentenceTranslateByBookChannel(book, channel);
+        List<SentenceDBData> sentenceTrans = null;
+        if (isTrans)
+            sentenceTrans = GetPaliSentenceTranslateByBookChannel(book, channel);
         if (sentence == null || sentence.Count == 0)
-            return "";
+            return null;
+        List<string> res = new List<string>();
         StringBuilder sb = new StringBuilder("");
         int l = sentence.Count;
-        int tl = sentenceTrans.Count;
+        int tl = 0;
+        if (isTrans)
+            tl = sentenceTrans.Count;
+        int lineCount = 0;
         for (int i = 0; i < l; i++)
         {
             sb.AppendLine(sentence[i].content);
             sb.AppendLine("");
+            lineCount += 2;
             //todo 优化
-            for (int j = 0; j < tl; j++)
-            {
-                if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
+            if (isTrans)
+                for (int j = 0; j < tl; j++)
                 {
-                    //sb.AppendLine();
-                    sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
-                    sb.AppendLine("");
-                    sb.AppendLine("");
-                    // break;
+                    if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
+                    {
+                        //sb.AppendLine();
+                        sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
+                        sb.AppendLine("");
+                        sb.AppendLine("");
+                        lineCount += 3;
+                        // break;
+                    }
                 }
+            if (lineCount >= LINE_COUNT_LIMIT)
+            {
+                lineCount = 0;
+                res.Add(sb.ToString());
+                sb.Clear();
             }
         }
-        return sb.ToString();
+        res.Add(sb.ToString());
+        sb.Clear();
+        return res;
     }
     #endregion
 }

@@ -11,12 +11,13 @@ public class ArticleView : MonoBehaviour
     public ArticleNodeItemView nodeItem;
     public ArticleTitleReturnBtn returnBtn;
     //文章标题树
-    public GameObject ListViewGO;
+    public GameObject listViewGO;
     //文章内容 pali原文和翻译
-    public GameObject ContentViewGO;
-    public InputField PaliContentText;
-    public RectTransform PaliContentTextRect;
-    public RectTransform PaliScrollContent;
+    public GameObject contentViewGO;
+    public InputField paliContentText;
+    public RectTransform paliContentTextRect;
+    public RectTransform paliScrollContent;
+    public RectTransform nextAndPrevGroup;
     public Text contentText;
     public Text textRuler;
     Stack<ArticleTreeNode> articleTreeNodeStack;
@@ -198,8 +199,8 @@ public class ArticleView : MonoBehaviour
     }
     public void ReturnBtnClick()
     {
-        ContentViewGO.SetActive(false);
-        ListViewGO.SetActive(true);
+        contentViewGO.SetActive(false);
+        listViewGO.SetActive(true);
 
         if (bookTreeNodeStack.Count != 0)
         {
@@ -241,48 +242,70 @@ public class ArticleView : MonoBehaviour
     public void InitPaliScroll()
     {
         //初始化文章位置为原点
-        PaliScrollContent.localPosition = Vector3.zero;
+        paliScrollContent.localPosition = Vector3.zero;
+        //清理content text列表
+        DestroyTextList();
     }
-    public void ShowPaliContent(Book book)
+    //public void ShowPaliContent(Book book)
+    //{
+    //    InitPaliScroll();
+    //    ContentViewGO.SetActive(true);
+    //    ListViewGO.SetActive(false);
+    //    List<string> text = controller.GetPaliContentTransText(book, null, false);
+    //    textRuler.gameObject.SetActive(true);
+    //    textRuler.text = text;
+    //    //PaliContentText.text = text;
+    //    contentText.text = text;
+    //    LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
+
+    //    //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
+    //    //Debug.LogError(textRuler.rectTransform.sizeDelta.y);
+    //    //Debug.LogError(PaliContentText.textComponent.cachedTextGenerator.lineCount);
+    //    PaliContentTextRect.sizeDelta = new Vector2(PaliContentTextRect.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
+    //    textRuler.gameObject.SetActive(false);
+
+    //    //PaliContentText.lin
+    //}    
+    List<GameObject> contentList = new List<GameObject>();
+
+    public void ShowPaliContentTrans(Book book, ChapterDBData cNode, bool isTrans)
     {
         InitPaliScroll();
-        ContentViewGO.SetActive(true);
-        ListViewGO.SetActive(false);
-        string text = controller.GetPaliContentText(book);
+        contentViewGO.SetActive(true);
+        listViewGO.SetActive(false);
+        //每50行新建一个text
+        List<string> text = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
         textRuler.gameObject.SetActive(true);
-        textRuler.text = text;
-        //PaliContentText.text = text;
-        contentText.text = text;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
+        int l = text.Count;
+        for (int i = 0; i < l; i++)
+        {
+            textRuler.text = text[i];
+            LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
+            GameObject inst = Instantiate(contentText.gameObject, contentText.transform.parent);
+            inst.name = i.ToString();
+            inst.transform.position = contentText.transform.position;
+            Text contentTextInst = inst.GetComponent<Text>();
+            contentTextInst.text = text[i];
+            inst.SetActive(true);
+            contentTextInst.rectTransform.sizeDelta = new Vector2(contentTextInst.rectTransform.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
+            contentList.Add(inst);
+        }
 
-        //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
-        //Debug.LogError(textRuler.rectTransform.sizeDelta.y);
-        //Debug.LogError(PaliContentText.textComponent.cachedTextGenerator.lineCount);
-        PaliContentTextRect.sizeDelta = new Vector2(PaliContentTextRect.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
         textRuler.gameObject.SetActive(false);
-
+        nextAndPrevGroup.SetAsLastSibling();
         //PaliContentText.lin
     }
-    public void ShowPaliContentTrans(Book book, ChapterDBData cNode)
+    //销毁Text列表GO
+    private void DestroyTextList()
     {
-        InitPaliScroll();
-        ContentViewGO.SetActive(true);
-        ListViewGO.SetActive(false);
-        string text = controller.GetPaliContentTransText(book, cNode.channelData);
-        textRuler.gameObject.SetActive(true);
-        textRuler.text = text;
-        //PaliContentText.text = text;
-        contentText.text = text;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
-
-        //int lineCount = textRuler.cachedTextGenerator.lineCount;// PaliContentText.textComponent.cachedTextGenerator.lineCount;
-        //Debug.LogError(textRuler.rectTransform.sizeDelta.y);
-        //Debug.LogError(PaliContentText.textComponent.cachedTextGenerator.lineCount);
-        PaliContentTextRect.sizeDelta = new Vector2(PaliContentTextRect.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
-        textRuler.gameObject.SetActive(false);
-
-        //PaliContentText.lin
+        int length = contentList.Count;
+        if (length == 0)
+            return;
+        for (int i = 0; i < length; i++)
+        {
+            Destroy(contentList[i]);
+        }
+        contentList.Clear();
     }
-
     #endregion
 }
