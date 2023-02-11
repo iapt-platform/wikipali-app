@@ -59,7 +59,8 @@ public class DicView : MonoBehaviour
         }
         SetDelBtn(true);
         MatchedWord[] matchedWordArr = dicManager.MatchWord(inputStr);
-        int length = matchedWordArr.Length;
+        //由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
+        int length = matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;
         for (int i = 0; i < length; i++)
         {
@@ -140,7 +141,7 @@ public class DicView : MonoBehaviour
     public void OnItemDicClick(MatchedWord word)
     {
         SetSummaryOff();
-        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦
+        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦，，，要改 有多个相同词条存在
         DisplayWordDetail(word.word);
     }
     List<GameObject> detailDicItemList = new List<GameObject>();

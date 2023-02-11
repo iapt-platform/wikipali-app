@@ -18,6 +18,7 @@ public class ArticleView : MonoBehaviour
     public RectTransform paliContentTextRect;
     public RectTransform paliScrollContent;
     public RectTransform nextAndPrevGroup;
+    public NextPrevGroupView nextAndPrevGroupView;
     public Text contentText;
     public Text textRuler;
     Stack<ArticleTreeNode> articleTreeNodeStack;
@@ -187,10 +188,27 @@ public class ArticleView : MonoBehaviour
                 {
                     aPath += arr[i].toc + "/";
                 }
+                //todo 译文版本名字改为版本风格名
                 aPath += "译文版本";
                 returnBtn.SetPath(aPath);
             }
         }
+    }
+    public void SetChapterPath(Book nextBook)
+    {
+        bookTreeNodeStack.Pop();
+        bookTreeNodeStack.Push(nextBook);
+        //TODO?:点进书本只显示书本路径，前面是否需要显示Article路径？
+        string aPath = "";
+        int length = bookTreeNodeStack.Count;
+        Book[] arr = bookTreeNodeStack.ToArray();
+        for (int i = length - 1; i > -1; i--)
+        {
+            aPath += arr[i].toc + "/";
+        }
+        //todo 译文版本名字改为版本风格名
+        aPath += "译文版本";
+        returnBtn.SetPath(aPath);
     }
     //点击显示channel的节点
     public void ChannelBtnClick()
@@ -271,6 +289,7 @@ public class ArticleView : MonoBehaviour
     public void ShowPaliContentTrans(Book book, ChapterDBData cNode, bool isTrans)
     {
         InitPaliScroll();
+        nextAndPrevGroupView.SetChapter(book, (isTrans ? cNode.channelData.channel_id : ""), isTrans);
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
         //每50行新建一个text

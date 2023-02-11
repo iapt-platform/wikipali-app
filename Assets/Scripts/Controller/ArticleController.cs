@@ -287,6 +287,7 @@ public class ArticleController
                 parentP = bookDBList[i].parent,
                 translateName = bookDBList[i].toc,
             };
+            book.parent = node;
             res.Add(book);
             List<ChapterDBData> cDataList = GetChapterListByBookData(book.id, book.paragraph, cList);
             SetChapterListByBookData(book, cDataList);

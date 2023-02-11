@@ -21,7 +21,7 @@ public class DictManager
 
     public DBManager dbManager = DBManager.Instance();
     //词典查词总览限制显示数量
-    const int LIMIT_COUNT = 30;
+    public const int LIMIT_COUNT = 30;
     class DicIDInfo
     {
         public string dictname;
@@ -56,9 +56,10 @@ public class DictManager
         if (string.IsNullOrEmpty(inputStr))
             return new MatchedWord[0];
         List<MatchedWord> matchedWordList = new List<MatchedWord>();
+        //key: id,value: word
+        Dictionary<string, MatchedWord> matchedWordDic = new Dictionary<string, MatchedWord>();
         dbManager.Getdb(db =>
         {
-            //TODO:是否需要混入word_en搜索结果？目前只搜索word，模糊查询也有word_en的效果
             var reader = db.SelectDictLike("bh-paper", inputStr, "word", LIMIT_COUNT);
 
             //调用SQLite工具  解析对应数据
@@ -75,12 +76,36 @@ public class DictManager
                         meaning = pairs[i]["note"].ToString(),
                         dicID = pairs[i]["dict_id"].ToString(),
                     };
-
+                    matchedWordDic.Add(m.id, m);
                     matchedWordList.Add(m);
-
                 };
             }
-        },DBManager.DictDBurl);
+
+            //混入word_en搜索结果
+            var readerEn = db.SelectDictLike("bh-paper", inputStr, "word_en", LIMIT_COUNT);
+
+            //调用SQLite工具  解析对应数据
+            Dictionary<string, object>[] pairsEn = SQLiteTools.GetValues(readerEn);
+            if (pairsEn != null)
+            {
+                int length = pairsEn.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    string id = pairsEn[i]["id"].ToString();
+                    if (!matchedWordDic.ContainsKey(id))
+                    {
+                        MatchedWord m = new MatchedWord()
+                        {
+                            id = id,
+                            word = pairsEn[i]["word"].ToString(),
+                            meaning = pairsEn[i]["note"].ToString(),
+                            dicID = pairsEn[i]["dict_id"].ToString(),
+                        };
+                        matchedWordList.Add(m);
+                    }
+                };
+            }
+        }, DBManager.DictDBurl);
         return SortWordList(matchedWordList.ToArray());
     }
     /// <summary>

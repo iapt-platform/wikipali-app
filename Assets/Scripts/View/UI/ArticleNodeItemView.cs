@@ -52,10 +52,11 @@ public class ArticleNodeItemView : MonoBehaviour
     {
         isBook = true;
         book = bNode;
-        if (string.IsNullOrEmpty(bNode.translateName))
-            titleText.text = bNode.toc;
-        else
-            titleText.text = bNode.translateName;
+        //if (string.IsNullOrEmpty(bNode.translateName))
+        //    titleText.text = bNode.toc;
+        //else
+        //    titleText.text = bNode.translateName;
+        titleText.text = CommonTool.GetBookTranslateName(bNode);
         subTitleText.text = bNode.toc;
         //显示百分比
         if (bNode.isHaveProgress)
