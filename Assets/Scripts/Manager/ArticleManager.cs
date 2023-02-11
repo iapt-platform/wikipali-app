@@ -123,12 +123,15 @@ public class ArticleManager
                 int paliLength = paliPairs.Length;
                 for (int p = 0; p < paliLength; p++)
                 {
+                    string toc = "";
+                    if (paliPairs[p].ContainsKey("toc"))
+                        toc = paliPairs[p]["toc"].ToString();
                     BookDBData book = new BookDBData()
                     {
                         id = int.Parse(paliPairs[p]["book"].ToString()),
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         level = int.Parse(paliPairs[p]["level"].ToString()),
-                        toc = paliPairs[p]["toc"].ToString(),
+                        toc = toc,
                         chapter_len = int.Parse(paliPairs[p]["chapter_len"].ToString()),
                         parent = int.Parse(paliPairs[p]["parent"].ToString()),
                     };
@@ -160,12 +163,16 @@ public class ArticleManager
                 int paliLength = paliPairs.Length;
                 for (int p = 0; p < paliLength; p++)
                 {
+                    string toc = "";
+                    if (paliPairs[p].ContainsKey("toc"))
+                        toc = paliPairs[p]["toc"].ToString();
+
                     BookDBData book = new BookDBData()
                     {
                         id = int.Parse(paliPairs[p]["book"].ToString()),
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         level = int.Parse(paliPairs[p]["level"].ToString()),
-                        toc = paliPairs[p]["toc"].ToString(),
+                        toc = toc,
                         chapter_len = int.Parse(paliPairs[p]["chapter_len"].ToString()),
                         parent = int.Parse(paliPairs[p]["parent"].ToString()),
                     };
@@ -190,13 +197,15 @@ public class ArticleManager
             Dictionary<string, object> paliPair = SQLiteTools.GetValue(readerPali);
             if (paliPair != null)
             {
-
+                string toc = "";
+                if (paliPair.ContainsKey("toc"))
+                    toc = paliPair["toc"].ToString();
                 BookDBData book = new BookDBData()
                 {
                     id = int.Parse(paliPair["book"].ToString()),
                     paragraph = int.Parse(paliPair["paragraph"].ToString()),
                     level = int.Parse(paliPair["level"].ToString()),
-                    toc = paliPair["toc"].ToString(),
+                    toc = toc,
                     chapter_len = int.Parse(paliPair["chapter_len"].ToString()),
                     parent = int.Parse(paliPair["parent"].ToString()),
                 };
@@ -411,7 +420,9 @@ public class ArticleManager
                 int paliLength = paliPairs.Length;
                 for (int p = 0; p < paliLength; p++)
                 {
-
+                    string content = "";
+                    if (paliPairs[p].ContainsKey("content"))
+                        content = paliPairs[p]["content"].ToString();
                     SentenceDBData s = new SentenceDBData()
                     {
                         //id = paliPairs[p]["id"].ToString(),
@@ -419,7 +430,7 @@ public class ArticleManager
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         word_start = int.Parse(paliPairs[p]["word_start"].ToString()),
                         word_end = int.Parse(paliPairs[p]["word_end"].ToString()),
-                        content = paliPairs[p]["content"].ToString(),
+                        content = content,
 
                     };
                     res.Add(s);
@@ -441,7 +452,9 @@ public class ArticleManager
                 int paliLength = paliPairs.Length;
                 for (int p = 0; p < paliLength; p++)
                 {
-
+                    string content = "";
+                    if (paliPairs[p].ContainsKey("content"))
+                        content = paliPairs[p]["content"].ToString();
                     SentenceDBData s = new SentenceDBData()
                     {
                         //id = paliPairs[p]["id"].ToString(),
@@ -449,8 +462,7 @@ public class ArticleManager
                         paragraph = int.Parse(paliPairs[p]["paragraph"].ToString()),
                         word_start = int.Parse(paliPairs[p]["word_start"].ToString()),
                         word_end = int.Parse(paliPairs[p]["word_end"].ToString()),
-                        content = paliPairs[p]["content"].ToString(),
-
+                        content = content,
                     };
                     res.Add(s);
                 }

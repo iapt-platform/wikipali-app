@@ -289,11 +289,22 @@ public class ArticleView : MonoBehaviour
     public void ShowPaliContentTrans(Book book, ChapterDBData cNode, bool isTrans)
     {
         InitPaliScroll();
+        if (isTrans && cNode == null)
+            Debug.LogError("!!!!");
+        if (isTrans && cNode.channelData == null)
+            Debug.LogError("!!!!");
+        if (isTrans && cNode.channelData.channel_id == null)
+            Debug.LogError("!!!!");
         nextAndPrevGroupView.SetChapter(book, (isTrans ? cNode.channelData.channel_id : ""), isTrans);
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
         //每50行新建一个text
         List<string> text = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
+        if (text == null)
+        {
+            Debug.LogError("【预警】book id:" + book.id + "  没有文章内容 text = null");
+            return;
+        }
         textRuler.gameObject.SetActive(true);
         int l = text.Count;
         for (int i = 0; i < l; i++)
