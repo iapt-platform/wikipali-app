@@ -26,6 +26,15 @@ public class SettingManager
         SI
     }
     public Language language = Language.ZH_CN;
+    public void InitGame()
+    {
+        //是否已解压数据库
+        int isUnZipedDB = PlayerPrefs.GetInt("isUnZiped", 0);
+        if (isUnZipedDB == 0)
+        { 
+        
+        }
 
+    }
 
 }

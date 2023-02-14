@@ -4,11 +4,11 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-public class ProcessCSVFile : MonoBehaviour
+public class ProcessCSVFile
 {
     //去掉chapter文件title变量 换行
-    [MenuItem("Assets/LogPath")]
-    public static void LogPath()
+    [MenuItem("Assets/Tools/ProcessCSV")]
+    public static void ProcessCSV()
     {
 
         //支持多选

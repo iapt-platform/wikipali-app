@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
+    void Awake()
+    {
+        SettingManager.Instance().InitGame();
+    }
     // Start is called before the first frame update
     void Start()
     {
