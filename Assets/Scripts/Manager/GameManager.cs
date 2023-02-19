@@ -4,19 +4,60 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager manager = null;
+    //静态工厂方法 
+    public static GameManager Instance()
+    {
+        if (manager == null)
+        {
+            manager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
+        }
+        return manager;
+    }
+    public InitView initView;
     void Awake()
     {
         SettingManager.Instance().InitGame();
     }
+    bool isStartUnZipDB = false;
+    public void StartUnZipDB()
+    {
+        initView.gameObject.SetActive(true);
+        isStartUnZipDB = true;
+    }
+    public void SetUnZipProgress(float progress)
+    {
+        initView.SetProgess(progress);
+    }
+    public void EndUnZipDB()
+    {
+        initView.gameObject.SetActive(false);
+        isStartUnZipDB = false;
+        SettingManager.Instance().UnZipFin();
+    }
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (isStartUnZipDB)
+        {
+            int progressFin = ZipManager.Instance().fileProgress[0];
+
+            ulong sizeOfEntry = ZipManager.Instance().sizeOfEntry;
+            ulong bwrite = lzma.getBytesWritten();
+            float progress = (bwrite/sizeOfEntry);
+            //Debug.LogError("s:" + sizeOfEntry);
+            //Debug.LogError("b:" + bwrite);
+            SetUnZipProgress(progress);
+            if (100 == progressFin)
+            {
+                EndUnZipDB();
+            }
+        }
     }
 }

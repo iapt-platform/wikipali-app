@@ -267,7 +267,7 @@ public class ArticleController
         List<Book> res = new List<Book>();
         if (node == null || node.chapter_len == 0)
             return;
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
 #endif
@@ -292,7 +292,7 @@ public class ArticleController
             List<ChapterDBData> cDataList = GetChapterListByBookData(book.id, book.paragraph, cList);
             SetChapterListByBookData(book, cDataList);
         }
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
         sw.Stop();
         Debug.LogError("【性能】查询子文章耗时：" + sw.ElapsedMilliseconds);
 #endif

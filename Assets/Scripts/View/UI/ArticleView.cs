@@ -134,12 +134,12 @@ public class ArticleView : MonoBehaviour
         }
         else
         {
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
             List<Book> book = controller.GetBooks(info);
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
             sw.Stop();
             Debug.LogError("【性能】查询文章耗时：" + sw.ElapsedMilliseconds);
 #endif

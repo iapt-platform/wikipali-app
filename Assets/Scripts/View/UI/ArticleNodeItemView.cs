@@ -96,7 +96,7 @@ public class ArticleNodeItemView : MonoBehaviour
             articleView.BookNodeBtnClick(book);
         else if (isChannel)
         {
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
@@ -104,7 +104,7 @@ public class ArticleNodeItemView : MonoBehaviour
                 articleView.ShowPaliContentTrans(book, channel, true);
             else                    //pali原文
                 articleView.ShowPaliContentTrans(book, null, false);
-#if DEBUG_PERFORMANCE
+#if DEBUG_PERFORMANCE || UNITY_EDITOR
             sw.Stop();
             Debug.LogError("【性能】查询pali耗时：" + sw.ElapsedMilliseconds);
 #endif

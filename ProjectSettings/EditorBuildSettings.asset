@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WikiPali.unity
     guid: 25706bfdc8b2e5b48a5abbff2f9c8878
+  - enabled: 0
+    path: Assets/TempTest/ZIP/TestZip.unity
+    guid: 601a91d4dd7b5044a854a0555c37ccc6
   m_configObjects: {}
