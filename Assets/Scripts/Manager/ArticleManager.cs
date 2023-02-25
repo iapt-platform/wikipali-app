@@ -50,6 +50,7 @@ public class ArticleManager
         { Language.ZH_CN,"zh-cn"},
         { Language.ZH_TW,"zh-tw"},
         { Language.EN,"en"},
+        { Language.JP,"en"},
         { Language.MY,"my"},
         { Language.SI,"si"},
     };
@@ -365,6 +366,7 @@ public class ArticleManager
                                 l = Language.ZH_TW;
                                 break;
                             case "en":
+                            case "jp":
                                 l = Language.EN;
                                 break;
                             case "my":

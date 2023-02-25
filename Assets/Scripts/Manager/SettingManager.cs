@@ -22,6 +22,7 @@ public class SettingManager
         ZH_CN,
         ZH_TW,
         EN,
+        JP,
         MY,
         SI
     }

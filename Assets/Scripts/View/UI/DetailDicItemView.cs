@@ -12,6 +12,9 @@ public class DetailDicItemView : MonoBehaviour
     public Text detailTxt;
     public DicView dicView;
     MatchedWordDetail word;
+    public float itemHeight;
+    //是否是折叠状态
+    bool isFolded = false;
     public void Init(MatchedWordDetail wordDic)
     {
         word = wordDic;
@@ -30,15 +33,42 @@ public class DetailDicItemView : MonoBehaviour
         height += detailTxt.GetComponent<RectTransform>().sizeDelta.y;
         return height;
     }
-    // Start is called before the first frame update
-    void Awake()
+
+    public void OnBtnClick()
     {
+        if (isFolded)
+        {
+            Vector2 size = this.GetComponent<RectTransform>().sizeDelta;
+            this.GetComponent<RectTransform>().sizeDelta  = new Vector2(size.x, itemHeight);
+            detailTxt.gameObject.SetActive(true);
+            gameObject.SetActive(false);
+            gameObject.SetActive(true);
+            dropDownImg.rectTransform.localRotation = Quaternion.Euler(0, 0, 180);
+            isFolded = false;
+        }
+        else
+        {
+            Vector2 size = this.GetComponent<RectTransform>().sizeDelta;
+            this.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, titleBtn.GetComponent<RectTransform>().sizeDelta.y);
+            detailTxt.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+            gameObject.SetActive(true);
+            dropDownImg.rectTransform.localRotation = Quaternion.Euler(0, 0, 0);
+            isFolded = true;
+        }
+
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        titleBtn.onClick.AddListener(OnBtnClick);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

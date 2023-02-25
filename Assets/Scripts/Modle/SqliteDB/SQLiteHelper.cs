@@ -64,7 +64,6 @@ namespace Imdork.SQLite
             string path;
 
 #if UNITY_EDITOR
-            Debug.LogError("找数据库路径");
             path = Application.streamingAssetsPath + "/" + datebasePath;
 #elif UNITY_ANDROID
             Debug.LogError("找数据库路径");

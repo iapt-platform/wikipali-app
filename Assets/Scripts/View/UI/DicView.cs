@@ -59,8 +59,8 @@ public class DicView : MonoBehaviour
         }
         SetDelBtn(true);
         MatchedWord[] matchedWordArr = dicManager.MatchWord(inputStr);
-        //由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
-        int length = matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
+        //限制了//由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
+        int length = matchedWordArr.Length;// matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;
         for (int i = 0; i < length; i++)
         {
@@ -190,6 +190,7 @@ public class DicView : MonoBehaviour
             DetailDicItemView ddiv = detailDicItemList[i].GetComponent<DetailDicItemView>();
             float textHeight = ddiv.GetHeight();
             detailDicItemList[i].GetComponent<RectTransform>().sizeDelta += new Vector2(0, textHeight);
+            ddiv.itemHeight = detailDicItemList[i].GetComponent<RectTransform>().sizeDelta.y;
             //?为啥会缩100？
             //height += ddiv.GetHeight() + 200;
         }
