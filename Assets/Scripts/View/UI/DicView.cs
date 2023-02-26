@@ -23,7 +23,7 @@ public class DicView : MonoBehaviour
     //单词详情面板
     public RectTransform DetailScrollView;
     //todo 单例模式
-    public DictManager dicManager;
+    public DictManager dicManager = DictManager.Instance();
     public bool isDelBtnOn = false;
     //是否是补全单词，补全不是用户输入
     public bool isComplement = false;
@@ -59,13 +59,14 @@ public class DicView : MonoBehaviour
         }
         SetDelBtn(true);
         MatchedWord[] matchedWordArr = dicManager.MatchWord(inputStr);
-        int length = matchedWordArr.Length;
+        //限制了//由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
+        int length = matchedWordArr.Length;// matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;
         for (int i = 0; i < length; i++)
         {
-            GameObject inst = Instantiate(itemDicBtn.gameObject, summaryScrollContent);
+            GameObject inst = Instantiate(itemDicBtn.gameObject, summaryScrollContent, false);
             inst.transform.position = itemDicBtn.transform.position;
-            inst.GetComponent<RectTransform>().position -= Vector3.up * height * i;
+            //inst.GetComponent<RectTransform>().position -= Vector3.up * height * i;
 
             //matchedWordArr[i].meaning.Substring(0, matchedWordArr[i].meaning.IndexOf(System.Environment.NewLine));
             //string first = new StringReader(str).ReadLine();
@@ -140,7 +141,7 @@ public class DicView : MonoBehaviour
     public void OnItemDicClick(MatchedWord word)
     {
         SetSummaryOff();
-        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦
+        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦，，，要改 有多个相同词条存在
         DisplayWordDetail(word.word);
     }
     List<GameObject> detailDicItemList = new List<GameObject>();
@@ -159,15 +160,17 @@ public class DicView : MonoBehaviour
 
         MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
         int length = matchedWordArr.Length;
-        float height = 0;
+        //float height = 0;
         for (int i = 0; i < length; i++)
         {
-            GameObject inst = Instantiate(detailDicItem.gameObject, detailScrollContent);
+            GameObject inst = Instantiate(detailDicItem.gameObject, detailScrollContent, false);
             inst.transform.position = detailDicItem.transform.position;
-            inst.GetComponent<RectTransform>().position -= Vector3.up * height;
+            //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             DetailDicItemView ddiv = inst.GetComponent<DetailDicItemView>();
             ddiv.Init(matchedWordArr[i]);
-            height += ddiv.GetHeight();
+            //float textHeight = ddiv.GetHeight();
+            //inst.GetComponent<RectTransform>().sizeDelta += new Vector2(0, textHeight);
+            //height += textHeight;
             inst.SetActive(true);
             detailDicItemList.Add(inst);
         }
@@ -182,11 +185,14 @@ public class DicView : MonoBehaviour
         float height = 0;
         for (int i = 0; i < length; i++)
         {
-            detailDicItemList[i].transform.position = detailDicItem.transform.position;
-            detailDicItemList[i].GetComponent<RectTransform>().position -= Vector3.up * height;
+            //detailDicItemList[i].transform.position = detailDicItem.transform.position;
+            //detailDicItemList[i].GetComponent<RectTransform>().position -= Vector3.up * height;
             DetailDicItemView ddiv = detailDicItemList[i].GetComponent<DetailDicItemView>();
+            float textHeight = ddiv.GetHeight();
+            detailDicItemList[i].GetComponent<RectTransform>().sizeDelta += new Vector2(0, textHeight);
+            ddiv.itemHeight = detailDicItemList[i].GetComponent<RectTransform>().sizeDelta.y;
             //?为啥会缩100？
-            height += ddiv.GetHeight() + 200;
+            //height += ddiv.GetHeight() + 200;
         }
         detailScrollContent.sizeDelta = new Vector2(detailScrollContent.sizeDelta.x, height);
 

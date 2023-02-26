@@ -41,7 +41,7 @@ namespace Imdork.SQLite
         /// 数据库路径
         /// </summary>
         string datebasePath;
-     
+
         /// <summary>
         /// 打开数据库
         /// </summary>
@@ -52,8 +52,8 @@ namespace Imdork.SQLite
             db.OpenDB(url);
             return db;
         }
-     
-          
+
+
         /// <summary>
         /// 根据平台读取对应StreamingAssets路径
         /// </summary>
@@ -66,30 +66,13 @@ namespace Imdork.SQLite
 #if UNITY_EDITOR
             path = Application.streamingAssetsPath + "/" + datebasePath;
 #elif UNITY_ANDROID
+            Debug.LogError("找数据库路径");
 
             // 沙盘路径
-            path = Application.persistentDataPath + "/" + datebaseName;
-
-            //如果查找该文件路径
-            if (File.Exists(path))
-            {
-                //返回该数据库路径
-                return path;
-            }
-
-            // jar:file:是安卓手机路径的意思  
-            // Application.dataPath + "!/assets/"   即  Application.dataPath/StreamingAssets  
-            var request = UnityWebRequest.Get("jar:file://" + Application.dataPath + "!/assets/" + datebasePath);
-            request.SendWebRequest(); //读取数据
-            while (!request.downloadHandler.isDone) { }
-            // 因为安卓中streamingAssetsPath路径下的文件权限是只读，所以获取之后把他拷贝到沙盘路径中
-            File.WriteAllBytes(path, request.downloadHandler.data);
+            path = CommonTool.CopyAndroidPathToPersistent(datebasePath);
 #else
        path = Application.streamingAssetsPath + "/" + datebasePath;
 #endif
-
-
-
             return path;
         }
 
@@ -111,6 +94,6 @@ namespace Imdork.SQLite
             //查询文件的方法
             return File.Exists(appDBPath());
         }
-         
+
     }
 }

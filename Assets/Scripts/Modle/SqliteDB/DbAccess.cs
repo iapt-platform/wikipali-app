@@ -370,7 +370,7 @@ namespace Imdork.SQLite
         /// <summary>
         /// 模糊查询，查词用
         /// </summary>
-        public SqliteDataReader SelectLike(string tableName, string inputStr, string word, int limit)
+        public SqliteDataReader SelectDictLike(string tableName, string inputStr, string word, int limit)
         {
             string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'" + inputStr + "%' limit " + limit.ToString();
             return ExecuteQuery(query);
@@ -378,7 +378,7 @@ namespace Imdork.SQLite
         /// <summary>
         /// 匹配查询，查词用
         /// </summary>
-        public SqliteDataReader SelectSame(string tableName, string inputStr, string word, int limit)
+        public SqliteDataReader SelectDictSame(string tableName, string inputStr, string word, int limit)
         {
             string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
             return ExecuteQuery(query);
@@ -389,6 +389,113 @@ namespace Imdork.SQLite
         public SqliteDataReader SelectDic(string uuid, string id = "uuid", string tableName = "dict")
         {
             string query = "SELECT `dictname` FROM " + "'" + tableName + "'" + " WHERE " + id + " = " + "'" + uuid + "'";
+            return ExecuteQuery(query);
+        }
+        /// <summary>
+        /// 匹配查询,通用
+        /// </summary>
+        public SqliteDataReader SelectSame(string tableName, string inputStr, string word, int limit, params string[] selects)
+        {
+            string select = "";
+            int length = selects.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (i > 0)
+                    select += ",";
+                //select += string.Format("`{0}`", selects[i]);
+                select += "`";
+                select += selects[i];
+                select += "`";
+            }
+            string query = "SELECT " + select + " FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        /// <summary>
+        /// 匹配查询,文章用
+        /// </summary>
+        public SqliteDataReader SelectArticleTag(string[] tagIDArr)
+        {
+            string select = string.Join("','", tagIDArr);
+            select = "('" + select + "')";
+            //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
+            //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
+            //string query = "SELECT anchor_id,count(*) AS co FROM tag_map WHERE tag_id IN  (SELECT id FROM tag WHERE name IN " + select + ") GROUP BY anchor_id ORDER BY co DESC";
+            string query = "SELECT anchor_id,count(*) AS co FROM tag_map WHERE tag_id IN  (SELECT id FROM tag WHERE name IN " + select + ") GROUP BY anchor_id ORDER BY co DESC";// ORDER BY co DESC";
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectArticle(string[] tagIDArr)
+        {
+            string select = string.Join("','", tagIDArr);
+            select = "('" + select + "')";
+            //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
+            //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
+            string query = "SELECT * FROM pali_text WHERE id IN " + select + "  ORDER BY level ASC , paragraph ASC";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectArticleChildren(string bookID, string min, string max)
+        {
+            string query = "SELECT * FROM pali_text WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
+            //string query = "SELECT * FROM pali_text WHERE id = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max;// + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
+            //string query = "SELECT * FROM pali_text WHERE paragraph > " + min + " AND paragraph < " + max;// + " AND level > 2 AND level < 100 ORDER BY paragraph ASC ";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectArticle(int bookID, int pargraph)
+        {
+            string query = "SELECT * FROM pali_text WHERE book = " + bookID + " AND paragraph = " + pargraph;// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectChapter(int[] bookIDArr)
+        {
+            string select = string.Join("','", bookIDArr);
+            select = "('" + select + "')";
+            string query = "SELECT * FROM chapter WHERE book IN " + select + "  ORDER BY book ASC , paragraph ASC, progress DESC";// "' limit " + limit.ToString();
+            //string query = "SELECT * FROM chapter WHERE book = 9";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectChapter(int bookID)
+        {
+            string query = "SELECT * FROM chapter WHERE book = " + bookID + "  ORDER BY book ASC , paragraph ASC, progress DESC";// "' limit " + limit.ToString();
+            //string query = "SELECT * FROM chapter WHERE book = 9";// "' limit " + limit.ToString();
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectChannel(string[] channelIDArr)
+        {
+            string select = string.Join("','", channelIDArr);
+            select = "('" + select + "')";
+            string query = "SELECT * FROM channel WHERE id IN " + select;//
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectSentence(int bookID, string min, string max)
+        {
+
+            string query = "SELECT * FROM sentence WHERE book = " + bookID + "  AND paragraph > " + min + " AND paragraph < " + max + " ORDER BY paragraph ASC, word_start ASC";//
+            return ExecuteQuery(query);
+        }
+        public SqliteDataReader SelectSentenceTranslation(int bookID, string min, string max, string channel)
+        {
+
+            string query = "SELECT * FROM sentence_translation WHERE book = " + bookID + " AND paragraph > " + min + " AND paragraph < " + max + " AND channel_id = '" + channel + "' ORDER BY paragraph ASC, word_start ASC";//
+            return ExecuteQuery(query);
+        }
+        /// <summary>
+        /// 匹配查询,通用
+        /// </summary>
+        public SqliteDataReader SelectIn(string tableName, string word, string[] inStr)
+        {
+            string select = "";
+            int length = inStr.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (i > 0)
+                    select += ",";
+                //select += string.Format("`{0}`", selects[i]);
+                select += "`";
+                select += inStr[i];
+                select += "`";
+            }
+            //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
+            //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
+            string query = "SELECT id FROM tag WHERE name = 'sutta' OR name = 'dīghanikāya' OR name = 'sīlakkhandhavagga'";// "' limit " + limit.ToString();
             return ExecuteQuery(query);
         }
         #endregion
