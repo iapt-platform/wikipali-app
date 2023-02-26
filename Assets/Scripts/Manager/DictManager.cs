@@ -227,7 +227,7 @@ public class DictManager
     //英语词典
     static string[] dicIDArr_EN = new string[]
     {
-            "u_hau_sein_pali_roma_paper",//60751
+            //"u_hau_sein_pali_roma_paper",//60751  善巧尊者说不需要这个词典
             "concise",//22565
             "pts_papter",//PTS P-E dictionary 16158
             "vir_paper_copy",//13508
