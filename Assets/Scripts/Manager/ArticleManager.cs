@@ -398,6 +398,68 @@ public class ArticleManager
         }, DBManager.SentenceDBurl);
         return data;
     }
+    /// <summary>
+    /// 返回channel数据，key : channelID ,value:channelData
+    /// </summary>
+    public ChannelChapterDBData GetChannelDataByID(string channelID)
+    {
+        ChannelChapterDBData data = null;
+
+        dbManager.Getdb(db =>
+        {
+
+            var readerPali = db.SelectChannel(channelID);
+            Dictionary<string, object> paliPair = SQLiteTools.GetValue(readerPali);
+            if (paliPair != null)
+            {
+
+                //?????默认为null的是中文？
+                Language l = Language.ZH_CN;
+                if (paliPair.ContainsKey("language"))
+                {
+                    string language = paliPair["language"].ToString();
+                    switch (language)
+                    {
+                        case "zh":
+                        case "zh-cn":
+                            l = Language.ZH_CN;
+                            break;
+                        case "zh-tw":
+                            l = Language.ZH_TW;
+                            break;
+                        case "en":
+                        case "jp":
+                            l = Language.EN;
+                            break;
+                        case "my":
+                            l = Language.MY;
+                            break;
+                        case "si":
+                            l = Language.MY;
+                            break;
+                    }
+                }
+
+                string summary = "";
+                if (paliPair.ContainsKey("summary"))
+                    summary = paliPair["summary"].ToString();
+                string name = "";
+                if (paliPair.ContainsKey("name"))
+                    name = paliPair["name"].ToString();
+
+                ChannelChapterDBData c = new ChannelChapterDBData()
+                {
+                    channel_id = paliPair["id"].ToString(),
+                    name = name,
+                    language = l,
+                    summary = summary,
+                };
+                data = c;
+            }
+
+        }, DBManager.SentenceDBurl);
+        return data;
+    }
     #endregion
     #region 读取数据库句子与释义
     public class SentenceDBData

@@ -465,6 +465,11 @@ namespace Imdork.SQLite
             string query = "SELECT * FROM channel WHERE id IN " + select;//
             return ExecuteQuery(query);
         }
+        public SqliteDataReader SelectChannel(string channelID)
+        {
+            string query = "SELECT * FROM channel WHERE id = '" + channelID+ "'";//
+            return ExecuteQuery(query);
+        }
         public SqliteDataReader SelectSentence(int bookID, string min, string max)
         {
 

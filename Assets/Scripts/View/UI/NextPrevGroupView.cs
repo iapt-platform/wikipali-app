@@ -92,6 +92,8 @@ public class NextPrevGroupView : MonoBehaviour
             {
                 if (cDatas[i].channel_id == currChannlID)
                 {
+                    //todo:在此处获取channelData是否合适
+                    cDatas[i].channelData = ArticleManager.Instance().GetChannelDataByID(cDatas[i].channel_id);
                     articleView.ShowPaliContentTrans(prevBook, cDatas[i], true);
                     return;
                 }
@@ -112,6 +114,8 @@ public class NextPrevGroupView : MonoBehaviour
             {
                 if (cDatas[i].channel_id == currChannlID)
                 {
+                    //todo:在此处获取channelData是否合适
+                    cDatas[i].channelData = ArticleManager.Instance().GetChannelDataByID(cDatas[i].channel_id);
                     articleView.ShowPaliContentTrans(nextBook, cDatas[i], true);
                     return;
                 }

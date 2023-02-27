@@ -293,9 +293,17 @@ public class ArticleView : MonoBehaviour
             Debug.LogError("!!!!");
         if (isTrans && cNode.channelData == null)
             Debug.LogError("!!!!");
-        if (isTrans && cNode.channelData.channel_id == null)
+         if (isTrans && cNode.channelData != null && cNode.channelData.channel_id == null)
             Debug.LogError("!!!!");
-        nextAndPrevGroupView.SetChapter(book, (isTrans ? cNode.channelData.channel_id : ""), isTrans);
+        string channel = "";
+        if (isTrans)
+        {
+            if (cNode.channelData == null)
+                channel = cNode.channel_id;
+            else
+                channel = cNode.channelData.channel_id;
+        }
+        nextAndPrevGroupView.SetChapter(book, (isTrans ? channel : ""), isTrans);
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
         //每50行新建一个text
