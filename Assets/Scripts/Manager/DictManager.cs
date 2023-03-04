@@ -340,4 +340,92 @@ public class DictManager
     }
     #endregion
 
+
+    #region 词典分组
+    public class DicGroupInfo
+    {
+        public int groupID;
+        public string groupName;
+        public List<string> wordList;
+    }
+    //所有单词本
+    public List<DicGroupInfo> allDicGroup = new List<DicGroupInfo>();
+    public int dicGroupCount;
+    /// <summary>
+    /// 加载所有单词本
+    /// </summary>
+    public void LoadAllDicGroup()
+    {
+        int groupCount = PlayerPrefs.GetInt("dicGroupCount");
+        string[] dicGroupNameArr = PlayerPrefsX.GetStringArray("dicGroupName");
+        allDicGroup.Clear();
+        for (int i = 0; i < groupCount; i++)
+        {
+            DicGroupInfo dg = new DicGroupInfo();
+            dg.groupID = i;
+            dg.groupName = dicGroupNameArr[i];
+            string[] wordArr = PlayerPrefsX.GetStringArray("dic" + i);
+            int wl = wordArr.Length;
+            for (int j = 0; j < wl; j++)
+            {
+                dg.wordList.Add(wordArr[j]);
+            }
+            allDicGroup.Add(dg);
+        }
+
+    }
+    void ClearDicGroupData()
+    {
+        PlayerPrefs.DeleteKey("dicGroupName");
+        for (int i = 0; i < dicGroupCount; i++)
+        {
+            PlayerPrefs.DeleteKey("dic" + i);
+        }
+        //dicGroupCount = 0;
+    }
+    void ModifyDicGroup()
+    {
+        PlayerPrefs.SetInt("dicGroupCount", allDicGroup.Count);
+        ClearDicGroupData();
+        List<string> dicNameList = new List<string>();
+        for (int i = 0; i < dicGroupCount; i++)
+        {
+            dicNameList.Add(allDicGroup[i].groupName);
+            PlayerPrefsX.SetStringArray("dic" + i, allDicGroup[i].wordList.ToArray());
+
+        }
+        PlayerPrefsX.SetStringArray("dicGroupName", dicNameList.ToArray());
+    }
+    public void DelGroup(int id)
+    {
+        allDicGroup.RemoveAt(id);
+        int groupCount = allDicGroup.Count;
+        dicGroupCount = groupCount;
+        for (int i = 0; i < groupCount; i++)
+        {
+            allDicGroup[i].groupID = i;
+        }
+        ModifyDicGroup();
+    }
+    public void AddGroup(string gName)
+    {
+        DicGroupInfo group = new DicGroupInfo();
+        group.groupName = gName;
+        group.groupID = dicGroupCount;
+        allDicGroup.Add(group);
+        int groupCount = allDicGroup.Count;
+        dicGroupCount = groupCount;
+        ModifyDicGroup();
+    }
+    public void DelWord(int groupID, string word)
+    {
+        allDicGroup[groupID].wordList.Remove(word);
+        PlayerPrefsX.SetStringArray("dic" + groupID, allDicGroup[groupID].wordList.ToArray());
+    }
+    public void AddWord(int groupID, string word)
+    {
+        allDicGroup[groupID].wordList.Add(word);
+        PlayerPrefsX.SetStringArray("dic" + groupID, allDicGroup[groupID].wordList.ToArray());
+    }
+    #endregion
 }
