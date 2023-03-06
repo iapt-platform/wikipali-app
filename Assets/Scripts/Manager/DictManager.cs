@@ -383,7 +383,7 @@ public class DictManager
         }
         //dicGroupCount = 0;
     }
-    void ModifyDicGroup()
+    public void ModifyDicGroup()
     {
         PlayerPrefs.SetInt("dicGroupCount", allDicGroup.Count);
         ClearDicGroupData();
@@ -427,5 +427,13 @@ public class DictManager
         allDicGroup[groupID].wordList.Add(word);
         PlayerPrefsX.SetStringArray("dic" + groupID, allDicGroup[groupID].wordList.ToArray());
     }
+    //改组名
+    public void ChangeGroupName(int groupID,string name)
+    { 
+        string[] nameArr = PlayerPrefsX.GetStringArray("dicGroupName");
+        nameArr[groupID] = name;
+        PlayerPrefsX.SetStringArray("dicGroupName", nameArr);
+    }
+
     #endregion
 }

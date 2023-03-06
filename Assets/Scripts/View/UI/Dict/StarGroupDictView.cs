@@ -16,8 +16,8 @@ public class StarGroupDictView : MonoBehaviour
     }
     void OnToggleValueChanged(bool value)
     {
+        popView.RefreshGroupList();
         popView.gameObject.SetActive(true);
-
     }
     // Update is called once per frame
     void Update()
