@@ -144,6 +144,12 @@ public class DicView : MonoBehaviour
         //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦，，，要改 有多个相同词条存在
         DisplayWordDetail(word.word);
     }
+    public void OnItemDicClick(string word)
+    {
+        SetSummaryOff();
+        //TODO 根据查到的word的id和dicID查询，而不是直接用word全查？？？？但是太麻烦，，，要改 有多个相同词条存在
+        DisplayWordDetail(word);
+    }
     List<GameObject> detailDicItemList = new List<GameObject>();
     void DisplayWordDetail(string word)
     {
@@ -159,6 +165,8 @@ public class DicView : MonoBehaviour
         isComplement = false;
 
         MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
+        dicManager.currWord = word;
+        dicManager.SetWordStar(word);
         int length = matchedWordArr.Length;
         //float height = 0;
         for (int i = 0; i < length; i++)

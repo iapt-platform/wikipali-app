@@ -7,15 +7,17 @@ using static DictManager;
 public class DicGroupView : MonoBehaviour
 {
     public Button returnBtn;
+    public Button addBtn;
 
     //DicGroupPopView
     public DicGroupPopView dicGroupPopView;
     public ItemDicGroupEditView editItem;
-
+    public PopView popView;
     // Start is called before the first frame update
     void Start()
     {
         returnBtn.onClick.AddListener(OnCloseBtnClick);
+        addBtn.onClick.AddListener(OnAddBtnClick);
 
     }
     List<ItemDicGroupEditView> itemList = new List<ItemDicGroupEditView>();
@@ -29,6 +31,7 @@ public class DicGroupView : MonoBehaviour
         {
             Destroy(itemList[i].gameObject);
         }
+        itemList.Clear();
         List<DicGroupInfo> allDicGroup = DictManager.Instance().allDicGroup;
         int gl = allDicGroup.Count;
         for (int i = 0; i < gl; i++)
@@ -45,11 +48,19 @@ public class DicGroupView : MonoBehaviour
     }
     public void OnCloseBtnClick()
     {
+        //todo:?????强制刷新上一级列表，会导致勾选结果取消
+        popView.RefreshGroupList();
         this.gameObject.SetActive(false);
+    }
+    public void OnAddBtnClick()
+    {
+        //RefreshGroupList();
+        dicGroupPopView.gameObject.SetActive(true);
+        dicGroupPopView.SetAdd();
     }
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

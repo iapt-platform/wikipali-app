@@ -306,6 +306,8 @@ public class DictManager
         }
 
     }
+    //当前查询的单词
+    public string currWord = "";
     //查询每个词典，准确匹配
     public MatchedWordDetail[] MatchWordDetail(string word)
     {
@@ -342,11 +344,12 @@ public class DictManager
 
 
     #region 词典分组
+    public StarGroupDictView dicStarGroup;
     public class DicGroupInfo
     {
         public int groupID;
         public string groupName;
-        public List<string> wordList;
+        public List<string> wordList = new List<string>();
     }
     //所有单词本
     public List<DicGroupInfo> allDicGroup = new List<DicGroupInfo>();
@@ -372,7 +375,7 @@ public class DictManager
             }
             allDicGroup.Add(dg);
         }
-
+        dicGroupCount = groupCount;
     }
     void ClearDicGroupData()
     {
@@ -386,6 +389,7 @@ public class DictManager
     public void ModifyDicGroup()
     {
         PlayerPrefs.SetInt("dicGroupCount", allDicGroup.Count);
+        dicGroupCount = allDicGroup.Count;
         ClearDicGroupData();
         List<string> dicNameList = new List<string>();
         for (int i = 0; i < dicGroupCount; i++)
@@ -434,6 +438,31 @@ public class DictManager
         nameArr[groupID] = name;
         PlayerPrefsX.SetStringArray("dicGroupName", nameArr);
     }
-
+    /// <summary>
+    /// 当前单词是否被收藏
+    /// </summary>
+    /// <param name="word"></param>
+    public void SetWordStar(string word)
+    {
+        bool isStar = false;
+        int l = allDicGroup.Count;
+        for (int i = 0; i < l; i++)
+        {
+            if (allDicGroup[i].wordList.Contains(word))
+            {
+                isStar = true;
+                break;
+            }
+        }
+        dicStarGroup.SetToggleValue(isStar);
+    }
+    public bool IsContainsWord(int groupId, string word)
+    {
+        if (allDicGroup[groupId].wordList.Contains(word))
+        {
+            return true;
+        }
+        return false;
+    }
     #endregion
 }

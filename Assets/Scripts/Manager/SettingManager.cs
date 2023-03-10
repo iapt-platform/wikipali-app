@@ -46,6 +46,8 @@ public class SettingManager
             ZipManager.Instance().UnZipDB();
 
         }
+        //加载单词本
+        DictManager.Instance().LoadAllDicGroup();
     }
     public void UnZipFin()
     {

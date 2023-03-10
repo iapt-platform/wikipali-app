@@ -11,9 +11,6 @@ public class PopView : MonoBehaviour
     public Button okBtn;
     public DicGroupView dicGroupView;
     public ItemDicGroupPopView groupItem;
-    //todo??????
-
-    public string currWord;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,36 +24,43 @@ public class PopView : MonoBehaviour
         dicGroupView.RefreshGroupList();
         dicGroupView.gameObject.SetActive(true);
     }
-    public void OnCloseBtnClick()
-    {
-        this.gameObject.SetActive(false);
-    }
+    //public void OnCloseBtnClick()
+    //{
+    //    DictManager.Instance().SetWordStar(DictManager.Instance().currWord);
+    //    this.gameObject.SetActive(false);
+    //}
     public void OnCloseBackBtnClick()
     {
+        DictManager.Instance().SetWordStar(DictManager.Instance().currWord);
         this.gameObject.SetActive(false);
     }
     public void OnOkBtnClick()
     {
         int l = itemList.Count;
+        bool isDirty = false;
         for (int i = 0; i < l; i++)
         {
             if (itemList[i].GetSelectState())
             {
-                if (!itemList[i].dicGroupInfo.wordList.Contains(currWord))
+                if (!itemList[i].dicGroupInfo.wordList.Contains(DictManager.Instance().currWord))
                 {
-                    itemList[i].dicGroupInfo.wordList.Add(currWord);
+                    itemList[i].dicGroupInfo.wordList.Add(DictManager.Instance().currWord);
+                    isDirty = true;
                 }
             }
             else
             {
-                if (itemList[i].dicGroupInfo.wordList.Contains(currWord))
+                if (itemList[i].dicGroupInfo.wordList.Contains(DictManager.Instance().currWord))
                 {
-                    itemList[i].dicGroupInfo.wordList.Remove(currWord);
+                    itemList[i].dicGroupInfo.wordList.Remove(DictManager.Instance().currWord);
+                    isDirty = true;
                 }
             }
         }
         this.gameObject.SetActive(false);
-        DictManager.Instance().ModifyDicGroup();
+        if (isDirty)
+            DictManager.Instance().ModifyDicGroup();
+        DictManager.Instance().SetWordStar(DictManager.Instance().currWord);
     }
     List<ItemDicGroupPopView> itemList = new List<ItemDicGroupPopView>();
     /// <summary> 
@@ -69,6 +73,8 @@ public class PopView : MonoBehaviour
         {
             Destroy(itemList[i].gameObject);
         }
+        itemList.Clear();
+
         List<DicGroupInfo> allDicGroup = DictManager.Instance().allDicGroup;
         int gl = allDicGroup.Count;
         for (int i = 0; i < gl; i++)

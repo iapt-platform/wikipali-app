@@ -17,16 +17,16 @@ public class ItemDicGroupPopView : MonoBehaviour
         if (dicGroupInfo.wordList != null)
             wordCountText.text = dicGroupInfo.wordList.Count.ToString();
         wordGroupName.text = dicGroupInfo.groupName;
-
+        bool isOn = DictManager.Instance().IsContainsWord(dicGroupInfo.groupID, DictManager.Instance().currWord);
+        SetToggleValue(isOn);
     }
     public bool GetSelectState()
     {
         return selectToggle.isOn;
     }
-    public void SetToggle()
-    { 
-    
-    
+    public void SetToggleValue(bool isOn)
+    {
+        selectToggle.isOn = isOn;
     }
     // Start is called before the first frame update
     void Start()

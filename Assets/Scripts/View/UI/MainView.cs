@@ -25,6 +25,10 @@ public class MainView : MonoBehaviour
         userToggle.onValueChanged.AddListener(OnUserToggleValueChanged);
         settingToggle.onValueChanged.AddListener(OnSettingToggleValueChanged);
     }
+    public void SetDicOn()
+    {
+        dicToggle.isOn = true;
+    }
     void OnDicToggleValueChanged(bool value)
     {
         dicView.gameObject.SetActive(value);
