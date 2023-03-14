@@ -293,7 +293,7 @@ public class ArticleView : MonoBehaviour
             Debug.LogError("!!!!");
         if (isTrans && cNode.channelData == null)
             Debug.LogError("!!!!");
-         if (isTrans && cNode.channelData != null && cNode.channelData.channel_id == null)
+        if (isTrans && cNode.channelData != null && cNode.channelData.channel_id == null)
             Debug.LogError("!!!!");
         string channel = "";
         if (isTrans)
@@ -323,7 +323,7 @@ public class ArticleView : MonoBehaviour
             inst.name = i.ToString();
             inst.transform.position = contentText.transform.position;
             Text contentTextInst = inst.GetComponent<Text>();
-            contentTextInst.text = text[i];
+            contentTextInst.text = MarkdownText.PreprocessText(text[i]);
             inst.SetActive(true);
             contentTextInst.rectTransform.sizeDelta = new Vector2(contentTextInst.rectTransform.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
             contentList.Add(inst);

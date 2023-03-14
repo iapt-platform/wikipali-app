@@ -17,7 +17,8 @@ public class CalendarController : MonoBehaviour
 
     private DateTime _dateTime;
     public static CalendarController _calendarInstance;
-
+    const int SCALE_POS = 5;
+    public CalendarView cView;
     void Start()
     {
         _calendarInstance = this;
@@ -32,7 +33,7 @@ public class CalendarController : MonoBehaviour
             item.transform.SetParent(_item.transform.parent);
             item.transform.localScale = Vector3.one;
             item.transform.localRotation = Quaternion.identity;
-            item.transform.localPosition = new Vector3((i % 7) * 31 + startPos.x, startPos.y - (i / 7) * 25, startPos.z);
+            item.transform.localPosition = new Vector3((i % 7) * 31 * SCALE_POS + startPos.x, startPos.y - (i / 7) * 25 * SCALE_POS, startPos.z);
 
             _dateItems.Add(item);
         }
@@ -41,7 +42,7 @@ public class CalendarController : MonoBehaviour
 
         CreateCalendar();
 
-        _calendarPanel.SetActive(false);
+        //_calendarPanel.SetActive(false);
     }
 
     void CreateCalendar()
@@ -69,6 +70,7 @@ public class CalendarController : MonoBehaviour
         }
         _yearNumText.text = _dateTime.Year.ToString();
         _monthNumText.text = _dateTime.Month.ToString();
+        cView.GetSunTime(firstDay);
     }
 
     int GetDays(DayOfWeek day)
@@ -110,17 +112,20 @@ public class CalendarController : MonoBehaviour
         CreateCalendar();
     }
 
-    public void ShowCalendar(Text target)
-    {
-        _calendarPanel.SetActive(true);
-        _target = target;
-        _calendarPanel.transform.position = Input.mousePosition-new Vector3(0,120,0);
-    }
+    //public void ShowCalendar(Text target)
+    //{
+    //    _calendarPanel.SetActive(true);
+    //    _target = target;
+    //    _calendarPanel.transform.position = Input.mousePosition-new Vector3(0,120,0);
+    //}
 
     Text _target;
     public void OnDateItemClick(string day)
     {
-        _target.text = _yearNumText.text + "年" + _monthNumText.text + "月" + day+"日";
-        _calendarPanel.SetActive(false);
+        //_target.text = _yearNumText.text + "年" + _monthNumText.text + "月" + day + "日";
+        //_calendarPanel.SetActive(false);
+        //不能用UTC时间
+        cView.GetSunTime(new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day)));//,0,0,0, DateTimeKind.Utc));
+
     }
 }
