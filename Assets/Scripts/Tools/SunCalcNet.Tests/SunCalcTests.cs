@@ -1,4 +1,4 @@
-﻿using CoordinateSharp;
+﻿//using CoordinateSharp;
 using SunCalcNet.Model;
 using System;
 using System.Collections.Generic;
@@ -45,14 +45,14 @@ namespace SunCalcNet.Tests
             var date = DateTime.UtcNow;// new DateTime(2013, 3, 5, 0, 0, 0, DateTimeKind.Utc);
             var lat = 24;
             var lng = 103;
-            var height = 2000;
+            var height = 0;// 2000;
             TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(date);
-            Celestial cel = Celestial.CalculateCelestialTimes(lat, lng, date, ts.Hours);
-            Debug.LogError("   SunRise   " + cel.SunRise);
-            Debug.LogError("   SolarNoon   " + cel.SolarNoon);
+            //Celestial cel = Celestial.CalculateCelestialTimes(lat, lng, date, ts.Hours);
+            //Debug.LogError("   SunRise   " + cel.SunRise);
+            //Debug.LogError("   SolarNoon   " + cel.SolarNoon);
 
             //Act
-            var sunPhases = SunCalc.GetSunPhases(date, lat, lng, height).ToList();
+            var sunPhases = SunCalc.GetSunPhases(date, lat, lng, height, ts.Hours).ToList();
 
             //Assert
             foreach (var testSunPhase in heightTestData)
@@ -61,7 +61,7 @@ namespace SunCalcNet.Tests
 
                 var testDataPhaseTime = testSunPhase.PhaseTime.ToString("yyyy-MM-dd HH:mm:ss");
                 var sunPhaseTime = sunPhaseValue.PhaseTime.ToString("yyyy-MM-dd HH:mm:ss");
-                Debug.LogError(testSunPhase.Name + "   ----   " + testDataPhaseTime + "  ----  " + sunPhaseTime + cel.SunRise);
+                Debug.LogError(testSunPhase.Name + "   ----   " + testDataPhaseTime + "  ----  " + sunPhaseTime);// + cel.SunRise);
                 ////Assert.Equal(testDataPhaseTime, sunPhaseTime);
             }
 

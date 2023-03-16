@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SunCalcNet;
+using SunCalcNet.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,15 +12,78 @@ public class CalendarController : MonoBehaviour
     public Text _yearNumText;
     public Text _monthNumText;
 
-    public GameObject _item;
+    public CalendarDateItem _item;
 
-    public List<GameObject> _dateItems = new List<GameObject>();
+    public List<CalendarDateItem> _dateItems = new List<CalendarDateItem>();
     const int _totalDateNum = 42;
 
     private DateTime _dateTime;
     public static CalendarController _calendarInstance;
     const int SCALE_POS = 5;
+    const int SCALE_POS_Y = 2;
     public CalendarView cView;
+
+    public enum MoonType
+    {
+        MoonOther = 0,//其他月亮
+        Moon0 = 1,//黑月---新月
+        Moon1 = 2,//左黑右白---上弦月
+        Moon2 = 3,//白月---满月
+        Moon3 = 4,//左白右黑---下弦月
+    }
+    #region 月亮
+    //https://github.com/ariyamaggika/suncalc
+    //MoonCalc.GetMoonIllumination(/*Date*/ timeAndDate)
+    //fraction: illuminated fraction of the moon; varies from 0.0 (new moon) to 1.0 (full moon)
+    //phase: moon phase; varies from 0.0 to 1.0, described below
+    //angle: midpoint angle in radians of the illuminated limb of the moon reckoned eastward from the north point of the disk; the moon is waxing if the angle is negative, and waning if positive
+    //Moon phase value should be interpreted like this:
+    //Phase Name
+    //0 New Moon
+
+    //Waxing Crescent
+    //0.25 	First Quarter
+
+    //Waxing Gibbous
+    //0.5 	Full Moon
+
+    //Waning Gibbous
+    //0.75 	Last Quarter
+
+    //Waning Crescent
+    //获取月亮类型
+    const float MOON_OFFST = 0.04f;
+    MoonType GetMoonType(DateTime date)
+    {
+
+        DateTime time0 = new DateTime(date.Year,date.Month,date.Day,0,0,1);
+        DateTime time24 = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+        MoonIllumination moonIllum0 = MoonCalc.GetMoonIllumination(time0);
+        MoonIllumination moonIllum24 = MoonCalc.GetMoonIllumination(time24);
+        //范围判断
+        if ((moonIllum0.Phase >= 0.9f) && (moonIllum24.Phase <=0.1f))//New Moon
+        {
+            return MoonType.Moon0;
+        }
+        else if ((moonIllum0.Phase <= 0.25f)&& (moonIllum24.Phase >= 0.25f))//First Quarter
+        {
+            return MoonType.Moon1;
+        }
+        else if ((moonIllum0.Phase <= 0.5f) && (moonIllum24.Phase >= 0.5f))//Full Moon
+        {
+            return MoonType.Moon2;
+        }
+        else if ((moonIllum0.Phase <= 0.75f) && (moonIllum24.Phase >= 0.75f))//Last Quarter
+        {
+            return MoonType.Moon3;
+        }
+        return MoonType.MoonOther;
+
+    }
+
+
+    #endregion
+
     void Start()
     {
         _calendarInstance = this;
@@ -28,14 +93,15 @@ public class CalendarController : MonoBehaviour
 
         for (int i = 1; i < _totalDateNum; i++)
         {
-            GameObject item = GameObject.Instantiate(_item) as GameObject;
+            GameObject item = GameObject.Instantiate(_item.gameObject) as GameObject;
+            CalendarDateItem dItem = item.GetComponent<CalendarDateItem>();
             item.name = "Item" + (i + 1).ToString();
             item.transform.SetParent(_item.transform.parent);
             item.transform.localScale = Vector3.one;
             item.transform.localRotation = Quaternion.identity;
-            item.transform.localPosition = new Vector3((i % 7) * 31 * SCALE_POS + startPos.x, startPos.y - (i / 7) * 25 * SCALE_POS, startPos.z);
+            item.transform.localPosition = new Vector3((i % 7) * 31 * SCALE_POS + startPos.x, startPos.y - (i / 7) * 25 * SCALE_POS* SCALE_POS_Y, startPos.z);
 
-            _dateItems.Add(item);
+            _dateItems.Add(dItem);
         }
 
         _dateTime = DateTime.Now;
@@ -54,15 +120,17 @@ public class CalendarController : MonoBehaviour
         for (int i = 0; i < _totalDateNum; i++)
         {
             Text label = _dateItems[i].GetComponentInChildren<Text>();
-            _dateItems[i].SetActive(false);
+            _dateItems[i].gameObject.SetActive(false);
 
             if (i >= index)
             {
                 DateTime thatDay = firstDay.AddDays(date);
                 if (thatDay.Month == firstDay.Month)
                 {
-                    _dateItems[i].SetActive(true);
-
+                    _dateItems[i].gameObject.SetActive(true);
+                    _dateItems[i].Init(thatDay);
+                    MoonType moon = GetMoonType(thatDay);
+                    _dateItems[i].SetMoon(moon);
                     label.text = (date + 1).ToString();
                     date++;
                 }

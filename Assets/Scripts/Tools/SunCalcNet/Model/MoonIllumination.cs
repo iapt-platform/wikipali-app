@@ -9,6 +9,8 @@ namespace SunCalcNet.Model
 
         public double Phase { get; }
 
+
+
         public double Angle { get; }
 
         public MoonIllumination(double fraction, double phase, double angle)

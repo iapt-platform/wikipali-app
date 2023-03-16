@@ -39,8 +39,9 @@ namespace SunCalcNet
         /// <param name="lng"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public static IEnumerable<SunPhase> GetSunPhases(DateTime date, double lat, double lng, double height = 0)
+        public static IEnumerable<SunPhase> GetSunPhases(DateTime date, double lat, double lng, double height = 0,double offset = 0)
         {
+            double julianOffset = offset * .04166667;
             var lw = Constants.Rad * -lng;
             var phi = Constants.Rad * lat;
 
@@ -55,7 +56,7 @@ namespace SunCalcNet
             var l = Sun.GetEclipticLongitude(m);
             var dec = Position.GetDeclination(l, 0);
 
-            var jnoon = SunTime.GetSolarTransitJ(ds, m, l);
+            var jnoon = SunTime.GetSolarTransitJ(ds, m, l)+ julianOffset;
             var solarNoon = jnoon.FromJulian();
             var nadir = (jnoon - 0.5).FromJulian();
 
@@ -68,7 +69,7 @@ namespace SunCalcNet
             foreach (var sunPhase in SunPhaseAngle.List)
             {
                 var h0 = (sunPhase.Angle + dh) * Constants.Rad;
-                var jset = SunTime.GetSetJ(h0, lw, phi, dec, n, m, l);
+                var jset = SunTime.GetSetJ(h0, lw, phi, dec, n, m, l) + julianOffset;
 
                 if (double.IsNaN(jset) || double.IsInfinity(jset))
                 {
