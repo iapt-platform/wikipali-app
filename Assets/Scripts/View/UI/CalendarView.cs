@@ -14,12 +14,31 @@ public class CalendarView : MonoBehaviour
 {
     public Text sunriseText;
     public Text solarNoonText;
+    public Text latText;
+    public Text lngText;
+    public CalendarController controllerView;
     // Start is called before the first frame update
+    void Awake()
+    {
+        latText.text = "定位中...";
+        lngText.text = "定位中...";
+        sunriseText.text = "定位中...";
+        solarNoonText.text = "定位中...";
+    }
     void Start()
     {
-        SunCalcTests sunCalcTests = new SunCalcTests();
-        sunCalcTests.Get_Sun_Phases_Returns_Sun_Phases_For_The_Given_Date_And_Location();
-        GetSunTime(DateTime.Today);
+        //SunCalcTests sunCalcTests = new SunCalcTests();
+        //sunCalcTests.Get_Sun_Phases_Returns_Sun_Phases_For_The_Given_Date_And_Location();
+
+        //GetSunTime(DateTime.Today);
+        //float lat = 24;
+        //float lng = 103;
+        //(lat, lng) = CalendarManager.Instance().GetLocation();
+        //latText.text = lat.ToString();
+        //lngText.text = lng.ToString();
+
+        // CalendarManager.Instance().StopLocation();
+
     }
     //todo 整理到CalendarManager中
     public void GetSunTime(DateTime time)
@@ -34,8 +53,9 @@ public class CalendarView : MonoBehaviour
         //var date = new DateTime(2013, 3, 5, 0, 0, 0, DateTimeKind.Utc);
         //lat:是Latitude的简写,表示纬度。lng:是Longtitude的简写,表示经度
         //wikipali办公室当前经纬度
-        var lat = 24;
-        var lng = 103;
+        float lat = 24;
+        float lng = 103;
+        (lat, lng) = CalendarManager.Instance().GetLocation();
         var height = 0;// 2000;
         TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(time);
         //Act
@@ -47,7 +67,7 @@ public class CalendarView : MonoBehaviour
         var sunPhaseValueDawn = sunPhases.First(x => x.Name.Value == dawn.Name.Value);
         var sunPhaseValueNauticalDawn = sunPhases.First(x => x.Name.Value == nauticalDawn.Name.Value);
         //航海曙光+日出-曙光升起
-        TimeSpan tsd = new TimeSpan(sunPhaseValueSunrise.PhaseTime.Ticks-sunPhaseValueDawn.PhaseTime.Ticks);
+        TimeSpan tsd = new TimeSpan(sunPhaseValueSunrise.PhaseTime.Ticks - sunPhaseValueDawn.PhaseTime.Ticks);
         DateTime lightTime = sunPhaseValueNauticalDawn.PhaseTime + tsd;// sunPhaseValueSunrise.PhaseTime - sunPhaseValueDawn.PhaseTime;
         //var sunPhaseTime = sunPhaseValue.PhaseTime.ToString("yyyy-MM-dd hh:mm:ss");
         string sunPhaseTimeSolarNoon = sunPhaseValueSolarNoon.PhaseTime.ToString("HH:mm:ss");
@@ -77,8 +97,24 @@ public class CalendarView : MonoBehaviour
     //    solarNoonText.text = sunPhaseTimeSolarNoon;
     //}
     // Update is called once per frame
+    bool locationed = false;
+
     void Update()
     {
+
+        if (!locationed && CalendarManager.Instance().isLocationed())
+        {
+            float lat = 24;
+            float lng = 103;
+            (lat, lng) = CalendarManager.Instance().GetLocation();
+            latText.text = lat.ToString();
+            lngText.text = lng.ToString();
+            locationed = true;
+            GetSunTime(DateTime.Today);
+            //todo
+            CalendarManager.Instance().StopLocation();
+            controllerView.Start();
+        }
 
     }
 }

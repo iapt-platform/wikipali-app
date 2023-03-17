@@ -25,7 +25,11 @@ public class CalendarDateItem : MonoBehaviour
         }
 
         //经纬度
-        solarNoonText.text = CalendarManager.Instance().GetSunSolarNoonTime(time, 24, 103);
+        solarNoonText.text = CalendarManager.Instance().GetSunSolarNoonTime(time);
+    }
+    public void SetSolarNoonTextActive(bool active)
+    {
+        solarNoonText.gameObject.SetActive(active);
     }
     public void OnDateItemClick()
     {

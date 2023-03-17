@@ -48,6 +48,7 @@ public class SettingManager
         }
         //加载单词本
         DictManager.Instance().LoadAllDicGroup();
+        CalendarManager.Instance().StartLocation();
     }
     public void UnZipFin()
     {

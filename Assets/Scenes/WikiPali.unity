@@ -22037,7 +22037,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1788246399
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22118,6 +22118,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sunriseText: {fileID: 464328663}
   solarNoonText: {fileID: 1593394641}
+  latText: {fileID: 684409834}
+  lngText: {fileID: 524835129}
+  controllerView: {fileID: 114000012041846606}
 --- !u!1 &1800625196
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,16 +56,16 @@ public class CalendarController : MonoBehaviour
     MoonType GetMoonType(DateTime date)
     {
 
-        DateTime time0 = new DateTime(date.Year,date.Month,date.Day,0,0,1);
+        DateTime time0 = new DateTime(date.Year, date.Month, date.Day, 0, 0, 1);
         DateTime time24 = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
         MoonIllumination moonIllum0 = MoonCalc.GetMoonIllumination(time0);
         MoonIllumination moonIllum24 = MoonCalc.GetMoonIllumination(time24);
         //范围判断
-        if ((moonIllum0.Phase >= 0.9f) && (moonIllum24.Phase <=0.1f))//New Moon
+        if ((moonIllum0.Phase >= 0.9f) && (moonIllum24.Phase <= 0.1f))//New Moon
         {
             return MoonType.Moon0;
         }
-        else if ((moonIllum0.Phase <= 0.25f)&& (moonIllum24.Phase >= 0.25f))//First Quarter
+        else if ((moonIllum0.Phase <= 0.25f) && (moonIllum24.Phase >= 0.25f))//First Quarter
         {
             return MoonType.Moon1;
         }
@@ -84,7 +84,7 @@ public class CalendarController : MonoBehaviour
 
     #endregion
 
-    void Start()
+    public void Start()
     {
         _calendarInstance = this;
         Vector3 startPos = _item.transform.localPosition;
@@ -99,7 +99,7 @@ public class CalendarController : MonoBehaviour
             item.transform.SetParent(_item.transform.parent);
             item.transform.localScale = Vector3.one;
             item.transform.localRotation = Quaternion.identity;
-            item.transform.localPosition = new Vector3((i % 7) * 31 * SCALE_POS + startPos.x, startPos.y - (i / 7) * 25 * SCALE_POS* SCALE_POS_Y, startPos.z);
+            item.transform.localPosition = new Vector3((i % 7) * 31 * SCALE_POS + startPos.x, startPos.y - (i / 7) * 25 * SCALE_POS * SCALE_POS_Y, startPos.z);
 
             _dateItems.Add(dItem);
         }
@@ -129,8 +129,18 @@ public class CalendarController : MonoBehaviour
                 {
                     _dateItems[i].gameObject.SetActive(true);
                     _dateItems[i].Init(thatDay);
-                    MoonType moon = GetMoonType(thatDay);
-                    _dateItems[i].SetMoon(moon);
+
+                    if (CalendarManager.Instance().isLocationed())
+                    {
+                        MoonType moon = GetMoonType(thatDay);
+                        _dateItems[i].SetMoon(moon);
+                        _dateItems[i].SetSolarNoonTextActive(true);
+                    }
+                    else
+                    {
+                        _dateItems[i].SetMoon(MoonType.MoonOther);
+                        _dateItems[i].SetSolarNoonTextActive(false);
+                    }
                     label.text = (date + 1).ToString();
                     date++;
                 }
@@ -138,7 +148,6 @@ public class CalendarController : MonoBehaviour
         }
         _yearNumText.text = _dateTime.Year.ToString();
         _monthNumText.text = _dateTime.Month.ToString();
-        cView.GetSunTime(firstDay);
     }
 
     int GetDays(DayOfWeek day)
@@ -193,7 +202,8 @@ public class CalendarController : MonoBehaviour
         //_target.text = _yearNumText.text + "年" + _monthNumText.text + "月" + day + "日";
         //_calendarPanel.SetActive(false);
         //不能用UTC时间
-        cView.GetSunTime(new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day)));//,0,0,0, DateTimeKind.Utc));
+        if (CalendarManager.Instance().isLocationed())
+            cView.GetSunTime(new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day)));//,0,0,0, DateTimeKind.Utc));
 
     }
 }
