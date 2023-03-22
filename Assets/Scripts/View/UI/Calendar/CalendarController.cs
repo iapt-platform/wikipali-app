@@ -20,7 +20,7 @@ public class CalendarController : MonoBehaviour
     private DateTime _dateTime;
     public static CalendarController _calendarInstance;
     const int SCALE_POS = 5;
-    const int SCALE_POS_Y = 2;
+    const float SCALE_POS_Y = 1.8f;
     public CalendarView cView;
 
     public enum MoonType
@@ -80,8 +80,78 @@ public class CalendarController : MonoBehaviour
         return MoonType.MoonOther;
 
     }
+    //过去一个月后前八天是否有新月或满月
+    void GetLastMonthMyanmarMoon(DateTime date)
+    {
+        TimeSpan d1 = new TimeSpan(1, 0, 0, 0);
+        DateTime ldate = new DateTime(date.Year, date.Month, date.Day,0,0,0,0);
+
+        for (int i = 0; i < 8; i++)
+        {
+            ldate -= d1;
+            MyanmarDate myanmarDate = MyanmarDateConverter.convert(ldate.Year, ldate.Month, ldate.Day);
+            int moon = myanmarDate.moonPhase;
+            switch (moon)
+            {
+                //case 0:
+                //    return MoonType.Moon1;
+                //    break;
+                case 1:
+                    TimeSpan d8 = new TimeSpan(8, 0, 0, 0);
+                    //date += 7;
+                    nextMoon3date = ldate + d8;
+                    return;
+                    break;
+                //case 2:
+                //    return MoonType.Moon3;
+                //    break;
+                case 3:
+                    TimeSpan d82 = new TimeSpan(8, 0, 0, 0);
+                    //date += 7;
+                    nextMoon1date = ldate + d82;
+                    return;
+                    break;
+            }
+
+        }
 
 
+    }
+    DateTime nextMoon1date;
+    DateTime nextMoon3date;
+    MoonType GetMoonTypeMyanmar(DateTime date)
+    {
+        MyanmarDate myanmarDate = MyanmarDateConverter.convert(date.Year, date.Month, date.Day);
+        //Debug.LogError(myanmarDate.getFortnightDay());
+        //mp :moon phase [0=waxing, 1=full moon, 2=waning, 3=new moon],
+        int moon = myanmarDate.moonPhase;
+        if (nextMoon1date != null && date.Year == nextMoon1date.Year && date.Month == nextMoon1date.Month && date.Day == nextMoon1date.Day)
+            return MoonType.Moon1;
+        if (nextMoon3date != null && date.Year == nextMoon3date.Year && date.Month == nextMoon3date.Month && date.Day == nextMoon3date.Day)
+            return MoonType.Moon3;
+        switch (moon)
+        {
+            //case 0:
+            //    return MoonType.Moon1;
+            //    break;
+            case 1:
+                TimeSpan d8 = new TimeSpan(8, 0, 0, 0);
+                //date += 7;
+                nextMoon3date = date + d8;
+                return MoonType.Moon2;
+                break;
+            //case 2:
+            //    return MoonType.Moon3;
+            //    break;
+            case 3:
+                TimeSpan d82 = new TimeSpan(8, 0, 0, 0);
+                //date += 7;
+                nextMoon1date = date + d82;
+                return MoonType.Moon0;
+                break;
+        }
+        return MoonType.MoonOther;
+    }
     #endregion
 
     public void Start()
@@ -103,7 +173,6 @@ public class CalendarController : MonoBehaviour
 
             _dateItems.Add(dItem);
         }
-
         _dateTime = DateTime.Now;
 
         CreateCalendar();
@@ -114,6 +183,7 @@ public class CalendarController : MonoBehaviour
     void CreateCalendar()
     {
         DateTime firstDay = _dateTime.AddDays(-(_dateTime.Day - 1));
+        GetLastMonthMyanmarMoon(firstDay);
         int index = GetDays(firstDay.DayOfWeek);
 
         int date = 0;
@@ -132,7 +202,8 @@ public class CalendarController : MonoBehaviour
 
                     if (CalendarManager.Instance().isLocationed())
                     {
-                        MoonType moon = GetMoonType(thatDay);
+                        //MoonType moon = GetMoonType(thatDay);
+                        MoonType moon = GetMoonTypeMyanmar(thatDay);
                         _dateItems[i].SetMoon(moon);
                         _dateItems[i].SetSolarNoonTextActive(true);
                     }
@@ -201,9 +272,11 @@ public class CalendarController : MonoBehaviour
     {
         //_target.text = _yearNumText.text + "年" + _monthNumText.text + "月" + day + "日";
         //_calendarPanel.SetActive(false);
+        DateTime time = new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day));
+        cView.SetEra(time);
         //不能用UTC时间
         if (CalendarManager.Instance().isLocationed())
-            cView.GetSunTime(new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day)));//,0,0,0, DateTimeKind.Utc));
+            cView.GetSunTime(time);//,0,0,0, DateTimeKind.Utc));
 
     }
 }

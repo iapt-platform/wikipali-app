@@ -16,6 +16,8 @@ public class CalendarView : MonoBehaviour
     public Text solarNoonText;
     public Text latText;
     public Text lngText;
+    public Text westEraText;
+    public Text buddhistEraText;
     public CalendarController controllerView;
     // Start is called before the first frame update
     void Awake()
@@ -38,7 +40,14 @@ public class CalendarView : MonoBehaviour
         //lngText.text = lng.ToString();
 
         // CalendarManager.Instance().StopLocation();
-
+        SetEra(DateTime.Today);
+    }
+    public void SetEra(DateTime time)
+    {
+        westEraText.text = time.Year + "年" + time.Month + "月" + time.Day + "日";
+        MyanmarDate myanmarDate = MyanmarDateConverter.convert(time.Year, time.Month, time.Day);
+        buddhistEraText.text = myanmarDate.getBuddhistEraInt() + "年";
+        //Debug.LogError(myanmarDate.getBuddhistEraInt());
     }
     //todo 整理到CalendarManager中
     public void GetSunTime(DateTime time)

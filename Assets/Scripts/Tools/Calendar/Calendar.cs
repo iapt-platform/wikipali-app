@@ -594,7 +594,7 @@ public class Calendar
     /// <summary>
     /// 获得当前时间的时辰
     /// </summary> 
-    private String GetChineseHour(DateTime dt)
+    private string GetChineseHour(DateTime dt)
     {
         int _hour, _minute, offset, i;
         int indexGan;
@@ -667,7 +667,7 @@ public class Calendar
     /// <summary>
     /// 将0-9转成汉字形式
     /// </summary>
-    private String ConvertNumToChineseNum(char n)
+    private string ConvertNumToChineseNum(char n)
     {
         if ((n < '0') || (n > '9')) return "";
         switch (n)
@@ -1175,7 +1175,7 @@ public class Calendar
 
                 if (newDate.DayOfYear < _date.DayOfYear)
                 {
-                    tempStr = String.Format("{0}[{1}]", SolarTerm[i - 1], newDate.ToString("yyyy-MM-dd"));
+                    tempStr = string.Format("{0}[{1}]", SolarTerm[i - 1], newDate.ToString("yyyy-MM-dd"));
                     break;
                 }
             }
@@ -1206,7 +1206,7 @@ public class Calendar
 
                 if (newDate.DayOfYear > _date.DayOfYear)
                 {
-                    tempStr = String.Format("{0}[{1}]", SolarTerm[i - 1], newDate.ToString("yyyy-MM-dd"));
+                    tempStr = string.Format("{0}[{1}]", SolarTerm[i - 1], newDate.ToString("yyyy-MM-dd"));
                     break;
                 }
             }
