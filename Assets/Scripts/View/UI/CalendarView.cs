@@ -19,6 +19,9 @@ public class CalendarView : MonoBehaviour
     public Text westEraText;
     public Text buddhistEraText;
     public CalendarController controllerView;
+    public Toggle mmCalToggle;
+    public Toggle realCalToggle;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -26,6 +29,18 @@ public class CalendarView : MonoBehaviour
         lngText.text = "定位中...";
         sunriseText.text = "定位中...";
         solarNoonText.text = "定位中...";
+        int isMMCal = SettingManager.Instance().GetCalType();
+        if (isMMCal == 1)
+        {
+            mmCalToggle.isOn = true;
+            realCalToggle.isOn = false;
+        }
+        else
+        {
+            mmCalToggle.isOn = false;
+            realCalToggle.isOn = true;
+        }
+        mmCalToggle.onValueChanged.AddListener(OnMMToggleValueChanged);
     }
     void Start()
     {
@@ -41,6 +56,15 @@ public class CalendarView : MonoBehaviour
 
         // CalendarManager.Instance().StopLocation();
         SetEra(DateTime.Today);
+    }
+    void OnMMToggleValueChanged(bool value)
+    {
+        //Debug.LogError(value);
+        if (value)
+            SettingManager.Instance().SetCalType(1);
+        else
+            SettingManager.Instance().SetCalType(0);
+        controllerView.Start();
     }
     public void SetEra(DateTime time)
     {
@@ -119,7 +143,7 @@ public class CalendarView : MonoBehaviour
             latText.text = lat.ToString();
             lngText.text = lng.ToString();
             locationed = true;
-            GetSunTime(DateTime.Today);
+            GetSunTime(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day,0,1,0));
             //todo
             CalendarManager.Instance().StopLocation();
             controllerView.Start();

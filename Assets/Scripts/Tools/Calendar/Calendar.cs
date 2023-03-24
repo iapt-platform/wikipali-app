@@ -1399,4 +1399,112 @@ public class Calendar
     #endregion
     #endregion
 
+
+    #region 星象
+    //根据时间计算偏角，输出
+    //function get_position(date_time)
+    //{
+    //    let planets_position = new Object();
+    //    planets = window.lagrange.planet_positions.getPositions(date_time);
+    //    //planets = global.planet_positions.getPositions(today);
+    //    //console.log(planets)//输出到控制台
+    //    earth_position = window.lagrange.planet_positions.getPositions(date_time)[3];
+    //    lunar_position = window.lagrange.planet_positions.getPositions(date_time)[11];
+    //    let lunar_position_angle = 0;
+    //    let lunar_station = 0;
+    //    let earth_position_angle = 0;
+    //    let earth_station = 0;
+    //    let earth_position_angle_round = 0;
+    //    let lunar_position_angle_round = 0;
+    //    //太阳相对地球的黄道偏角
+    //    if (earth_position.position.y >= 0)
+    //    {
+    //        earth_position_angle = Math.atan2(earth_position.position.y, earth_position.position.x);
+    //    }
+    //    else
+    //    {
+    //        earth_position_angle =
+    //            Math.PI * 2 + Math.atan2(earth_position.position.y, earth_position.position.x);
+    //    }
+    //    earth_position_angle_round = earth_position_angle / Math.PI / 2 + 0.5;
+    //    earth_position_angle_round = earth_position_angle_round - Math.floor(earth_position_angle_round);
+    //    earth_station = earth_position_angle_round * 12;
+    //    planets_position.solar_station = earth_station;
+    //    planets_position.solar_position_angle = earth_position_angle_round * Math.PI * 2;
+    //    planets_position.solar_position_angle_round = earth_position_angle_round;
+    //    //月球相对地球的黄道偏角——角度差算法
+    //    lunar_position_angle_round = earth_position_angle_round + phase(date_time).phase;
+    //    lunar_position_angle_round = lunar_position_angle_round - Math.floor(lunar_position_angle_round);
+    //    lunar_position_angle = lunar_position_angle_round * Math.PI * 2;
+    //    lunar_station = lunar_position_angle_round * 27;
+    //    //月球相对地球的黄道偏角算法——向量差算法
+    //    let lunar_to_earth = new Object();
+    //    lunar_to_earth.y = lunar_position.position.y - earth_position.position.y;
+    //    lunar_to_earth.x = lunar_position.position.x - earth_position.position.x;
+    //    if (lunar_to_earth.y >= 0)
+    //    {
+    //        lunar_position_angle2 = Math.atan2(lunar_to_earth.y, lunar_to_earth.x);
+    //    }
+    //    else
+    //    {
+    //        lunar_position_angle2 = Math.PI * 2 + Math.atan2(lunar_to_earth.y, lunar_to_earth.x);
+    //    }
+    //    lunar_position_angle_round2 = lunar_position_angle2 / Math.PI / 2;
+    //    //lunar_position_angle_round = lunar_position_angle_round - Math.floor(lunar_position_angle_round)
+    //    lunar_position_angle2 = lunar_position_angle_round2 * Math.PI * 2;
+
+    //    lunar_station2 = lunar_position_angle_round2 * 27;
+
+    //    planets_position.lunar_station = lunar_station; //月站值【角度差算夹角】
+    //    planets_position.lunar_position_angle = lunar_position_angle; //月站角【角度差算夹角】
+    //    planets_position.lunar_position_angle_round = lunar_position_angle_round; //月站圆周比率【角度差算夹角】
+    //    planets_position.lunar_station2 = lunar_station2; //月站值【矢量差算夹角】
+    //    planets_position.lunar_position_angle2 = lunar_position_angle2; //月站角【矢量差算夹角】
+    //    planets_position.lunar_position_angle_round2 = lunar_position_angle_round2; //月站圆周比率【矢量差算夹角】
+    //    return planets_position;
+    //}
+    ////根据;
+    //function get_station_name(data_time)
+    //{
+    //    //获取星象信息
+    //    var x_m = 0;
+    //    let solar_num = 0;
+    //    let lunar_num = 0;
+    //    let result = new Object();
+    //    solar_num = get_position(data_time).solar_station;
+    //    solar_num = Math.floor(solar_num);
+    //    lunar_num = get_position(data_time).lunar_station;
+    //    next_month = new Date()
+
+    //        next_month.setDate(data_time.getDate() + 30)
+
+    //        lunar_month_num = get_position(phaseRange(data_time, next_month, FULL)[0]).lunar_station
+
+    //        for (x_m in pali_month_name)
+    //    {
+    //        if (lunar_month_num > pali_month_name[x_m].position && lunar_month_num < pali_month_name[Number(x_m) + 1].position)
+    //        {
+    //            result.month_name = pali_month_name[x_m]
+
+    //                break;
+    //        }
+    //        else if (lunar_month_num < 1.25 || lunar_month_num >= 26)
+    //        {
+    //            result.month_name = pali_month_name[0]
+
+    //                break;
+    //        }
+
+    //    }
+    //    lunar_num = Math.floor(lunar_num);
+
+    //    result.solar = horoscope_name[solar_num]; //黄道十二宫星象名称
+    //    result.lunar = pali_nakkhatta_name[lunar_num]; //27星宿月站名称
+    //    result.nextfullmoon = phaseRange(data_time, next_month, FULL)[0]
+
+    //        return result;
+    //}
+
+    #endregion
+
 }

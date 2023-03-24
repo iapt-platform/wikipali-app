@@ -374,6 +374,8 @@ public class ArticleController
     {
         if (book == null)
             return null;
+        //译文显示pali原文选项
+        bool transContent = SettingManager.Instance().GetTransContent() == 1;
         List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
         List<SentenceDBData> sentenceTrans = null;
         if (isTrans)
@@ -389,8 +391,11 @@ public class ArticleController
         int lineCount = 0;
         for (int i = 0; i < l; i++)
         {
-            sb.AppendLine(sentence[i].content);
-            sb.AppendLine("");
+            if (!isTrans || transContent)
+            {
+                sb.AppendLine(sentence[i].content);
+                sb.AppendLine("");
+            }
             lineCount += 2;
             //todo 优化
             if (isTrans)

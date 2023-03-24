@@ -20,7 +20,7 @@ public class CalendarController : MonoBehaviour
     private DateTime _dateTime;
     public static CalendarController _calendarInstance;
     const int SCALE_POS = 5;
-    const float SCALE_POS_Y = 1.8f;
+    const float SCALE_POS_Y = 1.63f;
     public CalendarView cView;
 
     public enum MoonType
@@ -84,7 +84,7 @@ public class CalendarController : MonoBehaviour
     void GetLastMonthMyanmarMoon(DateTime date)
     {
         TimeSpan d1 = new TimeSpan(1, 0, 0, 0);
-        DateTime ldate = new DateTime(date.Year, date.Month, date.Day,0,0,0,0);
+        DateTime ldate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 0);
 
         for (int i = 0; i < 8; i++)
         {
@@ -153,17 +153,26 @@ public class CalendarController : MonoBehaviour
         return MoonType.MoonOther;
     }
     #endregion
-
+    void DestoryItemGOList()
+    {
+        int c = _dateItems.Count;
+        for (int i = 0; i < c; i++)
+        {
+            Destroy(_dateItems[i].gameObject);
+        }
+        _dateItems.Clear();
+    }
     public void Start()
     {
         _calendarInstance = this;
         Vector3 startPos = _item.transform.localPosition;
-        _dateItems.Clear();
-        _dateItems.Add(_item);
+        DestoryItemGOList();
+        //_dateItems.Add(_item);
 
-        for (int i = 1; i < _totalDateNum; i++)
+        for (int i = 0; i < _totalDateNum; i++)
         {
             GameObject item = GameObject.Instantiate(_item.gameObject) as GameObject;
+            item.SetActive(true);
             CalendarDateItem dItem = item.GetComponent<CalendarDateItem>();
             item.name = "Item" + (i + 1).ToString();
             item.transform.SetParent(_item.transform.parent);
@@ -187,6 +196,7 @@ public class CalendarController : MonoBehaviour
         int index = GetDays(firstDay.DayOfWeek);
 
         int date = 0;
+        bool isMMCal = SettingManager.Instance().GetCalType() == 1;
         for (int i = 0; i < _totalDateNum; i++)
         {
             Text label = _dateItems[i].GetComponentInChildren<Text>();
@@ -199,17 +209,27 @@ public class CalendarController : MonoBehaviour
                 {
                     _dateItems[i].gameObject.SetActive(true);
                     _dateItems[i].Init(thatDay);
-
+                    //缅历不需要定位
                     if (CalendarManager.Instance().isLocationed())
                     {
-                        //MoonType moon = GetMoonType(thatDay);
-                        MoonType moon = GetMoonTypeMyanmar(thatDay);
+                        MoonType moon = MoonType.MoonOther;
+                        if (isMMCal)
+                            moon = GetMoonTypeMyanmar(thatDay);
+                        else
+                            moon = GetMoonType(thatDay);
                         _dateItems[i].SetMoon(moon);
                         _dateItems[i].SetSolarNoonTextActive(true);
                     }
                     else
                     {
-                        _dateItems[i].SetMoon(MoonType.MoonOther);
+                        MoonType moon = MoonType.MoonOther;
+                        if (isMMCal)
+                        {
+                            moon = GetMoonTypeMyanmar(thatDay);
+                            _dateItems[i].SetMoon(moon);
+                        }
+                        else
+                            _dateItems[i].SetMoon(MoonType.MoonOther);
                         _dateItems[i].SetSolarNoonTextActive(false);
                     }
                     label.text = (date + 1).ToString();
@@ -272,7 +292,7 @@ public class CalendarController : MonoBehaviour
     {
         //_target.text = _yearNumText.text + "年" + _monthNumText.text + "月" + day + "日";
         //_calendarPanel.SetActive(false);
-        DateTime time = new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day));
+        DateTime time = new DateTime(int.Parse(_yearNumText.text), int.Parse(_monthNumText.text), int.Parse(day), 0, 1, 0);
         cView.SetEra(time);
         //不能用UTC时间
         if (CalendarManager.Instance().isLocationed())

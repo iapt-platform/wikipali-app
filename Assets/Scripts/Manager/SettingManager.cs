@@ -29,6 +29,8 @@ public class SettingManager
     public Language language = Language.ZH_CN;
     public void InitGame()
     {
+        //在此处无法解压缩？？？？？？？
+        //??????CalendarManager.Instance().StartLocation();
         //初始化单词本
         if (!PlayerPrefs.HasKey("dicGroupCount"))
         {
@@ -36,7 +38,14 @@ public class SettingManager
             PlayerPrefs.SetString("dicGroupName", "默认单词本");
             PlayerPrefs.SetString("dic0", "");
         }
-
+        if (!PlayerPrefs.HasKey("CalType"))
+        {
+            SettingManager.Instance().SetCalType(1);
+        }
+        if (!PlayerPrefs.HasKey("TransContent"))
+        {
+            SettingManager.Instance().SetTransContent(1);
+        }
         //todo 目前是只在最开始解压数据库，要添加用户误删数据库的情况，判断数据库是否Exist，压缩包是否Exist，不Exist提示重新安装
         //是否已解压数据库
         //PlayerPrefs.SetInt("isUnZiped", 0);
@@ -46,14 +55,38 @@ public class SettingManager
             ZipManager.Instance().UnZipDB();
 
         }
+        CalendarManager.Instance().StartLocation();
         //加载单词本
         DictManager.Instance().LoadAllDicGroup();
-        CalendarManager.Instance().StartLocation();
+        //??????没执行到这里，有报错？？？
+        //CalendarManager.Instance().StartLocation();
+
     }
     public void UnZipFin()
     {
         Debug.LogError("解压缩结束");
         PlayerPrefs.SetInt("isUnZiped", 1);
 
+    }
+    //设置日历类型
+    public void SetCalType(int isMM)
+    {
+        PlayerPrefs.SetInt("CalType", isMM);
+    }
+    //获取日历类型
+    public int GetCalType()//isMM
+    {
+        return PlayerPrefs.GetInt("CalType");
+    }
+
+    //设置译文显示pali原文
+    public void SetTransContent(int boolean)
+    {
+        PlayerPrefs.SetInt("TransContent", boolean);
+    }
+    //获取译文显示pali原文
+    public int GetTransContent()//isMM
+    {
+        return PlayerPrefs.GetInt("TransContent");
     }
 }

@@ -40,16 +40,18 @@ public class CalendarManager
     //日中时间
     public string GetSunSolarNoonTime(DateTime time)//, float lat, float lng, float height = 0)
     {
-        SunPhase solarNoon = new SunPhase(SunPhaseName.SolarNoon, time);
 
-        TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(time);
+        DateTime newDate = new DateTime(time.Year, time.Month, time.Day, 0, 1, 0);
+        SunPhase solarNoon = new SunPhase(SunPhaseName.SolarNoon, newDate);
+
+        TimeSpan ts = TimeZoneInfo.Local.GetUtcOffset(newDate);
         float lat = 24;
         float lng = 103;
         (lat, lng) = GetLocation();
 
         var height = 0;// 2000;
         //Act
-        var sunPhases = SunCalc.GetSunPhases(time, lat, lng, height, ts.Hours).ToList();
+        var sunPhases = SunCalc.GetSunPhases(newDate, lat, lng, height, ts.Hours).ToList();
 
         var sunPhaseValueSolarNoon = sunPhases.First(x => x.Name.Value == solarNoon.Name.Value);
         string sunPhaseTimeSolarNoon = sunPhaseValueSolarNoon.PhaseTime.ToString("HH:mm:ss");
