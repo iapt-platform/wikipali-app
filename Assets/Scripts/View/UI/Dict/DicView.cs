@@ -16,6 +16,7 @@ public class DicView : MonoBehaviour
     public InputField userInput;
     public Button itemDicBtn;
     public DetailDicItemView detailDicItem;
+    public OtherWordItemView otherWordItemView;
     public RectTransform summaryScrollContent;
     public RectTransform detailScrollContent;
     //单词列表面板
@@ -165,6 +166,10 @@ public class DicView : MonoBehaviour
         isComplement = false;
 
         MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
+        //去格位除尾查
+        List<string> caseWordList = DicCase.CaseEnding(new List<string>(), word);
+        //if(caseWordList.Count == 0)
+        otherWordItemView.Init(caseWordList);
         dicManager.currWord = word;
         dicManager.SetWordStar(word);
         int length = matchedWordArr.Length;
@@ -182,6 +187,8 @@ public class DicView : MonoBehaviour
             inst.SetActive(true);
             detailDicItemList.Add(inst);
         }
+        //去格位除尾查，最后显示
+        otherWordItemView.SetLayerEnd();
         //等下一帧UI刷新后获取位置
         StartCoroutine(SetHeight());
 
