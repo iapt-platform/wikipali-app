@@ -15,8 +15,19 @@ public class ItemDicView : MonoBehaviour
     public Text nameTxt;
     public Text detailTxt;
     public DicView dicView;
+    //是否查不到结果进行除尾查询
+    bool isCaseWord;
+    string caseWord;
+    public void SetCaseWord(string input)
+    {
+        nameTxt.text = "除尾查询";
+        detailTxt.text = "";
+        isCaseWord = true;
+        caseWord = input;
+    }
     public void SetMeaning(MatchedWord matchedWord)
     {
+        isCaseWord = false;
         //解释限制1行
         string mean = new System.IO.StringReader(matchedWord.meaning).ReadLine();
         nameTxt.text = matchedWord.word;
@@ -34,7 +45,14 @@ public class ItemDicView : MonoBehaviour
     {
         //SetSummaryOff();
 
-        dicView.OnItemDicClick(word);
+        if (isCaseWord)//除尾查
+        {
+            dicView.OnItemDicClick(caseWord);
+        }
+        else
+        {
+            dicView.OnItemDicClick(word);
+        }
     }
     //void SetSummaryOff()
     //{

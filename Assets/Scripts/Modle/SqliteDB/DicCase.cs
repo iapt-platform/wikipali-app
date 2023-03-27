@@ -8,8 +8,9 @@ public class DicCase
     {
         public string word;
         public List<string> wordType = new List<string>();
-    
+
     }
+
     //public (string, string, string, string, double)[] ending =
 
     //     {  ("ti", "tuṃ", ".v:ind.", ".inf.", 0.99f),
@@ -3200,8 +3201,8 @@ public class DicCase
         ("oti","āpeti",".v:base.",".pp.",0.99f),
         ("oti","yati",".v:base.",".pp.",0.99f),
     };
-    //24
-    public static List<string> CaseEnding(List<string> firstCaseWordList, string word, int times = 0)
+    //key: word,value: wordType
+    public static Dictionary<string, List<string>> CaseEnding(Dictionary<string, List<string>> firstCaseWordList, string word, int times = 0)
     {
         // List<string> wordList = new List<string>();
         int l = ending.Length;
@@ -3218,21 +3219,21 @@ public class DicCase
             //去尾两次
             //if (times == 0)
             //    firstCaseWordList = CaseEnding(firstCaseWordList, tempStart, 1);
-            if (!firstCaseWordList.Contains(newWord))
+            if (!firstCaseWordList.ContainsKey(newWord))
             {
-                firstCaseWordList.Add(newWord);
+                List<string> typeList = new List<string>();
+                typeList.Add(ending[i].Item4);
+                firstCaseWordList.Add(newWord, typeList);
                 //去尾两次
                 //if (times == 0)
                 //    firstCaseWordList = CaseEnding(firstCaseWordList, newWord, 1);
-                Debug.LogError(newWord);
+                //Debug.LogError(newWord);
             }
-            //else
-            //{
-            //    int id = firstCaseWordList.IndexOf(newWord);
-            //    if (!firstCaseWordList[id].wordType.Contains(ending[i].Item4))
-            //        firstCaseWordList[id].wordType.Add(ending[i].Item4);
+            else
+            {
+                firstCaseWordList[newWord].Add(ending[i].Item4);
 
-            //}
+            }
         }
 
         return firstCaseWordList;

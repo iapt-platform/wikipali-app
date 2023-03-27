@@ -28,7 +28,11 @@ public class DicView : MonoBehaviour
     public bool isDelBtnOn = false;
     //是否是补全单词，补全不是用户输入
     public bool isComplement = false;
-
+    public void SetSummaryText(string text)
+    {
+        SetSummaryOn();
+        userInput.text = text;
+    }
     public void OnDelBtnClick()
     {
         SetSummaryOn();
@@ -63,6 +67,19 @@ public class DicView : MonoBehaviour
         //限制了//由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
         int length = matchedWordArr.Length;// matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;
+        //去格位除尾查
+        //if (matchedWordArr.Length == 0)
+        //{
+        //    GameObject inst = Instantiate(itemDicBtn.gameObject, summaryScrollContent, false);
+        //    inst.transform.position = itemDicBtn.transform.position;
+        //    inst.GetComponent<ItemDicView>().SetCaseWord(inputStr);
+        //    inst.SetActive(true);
+        //    itemDicList.Add(inst);
+        //    summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * 1);
+
+        //}
+        //else
+        //{
         for (int i = 0; i < length; i++)
         {
             GameObject inst = Instantiate(itemDicBtn.gameObject, summaryScrollContent, false);
@@ -75,7 +92,15 @@ public class DicView : MonoBehaviour
             inst.SetActive(true);
             itemDicList.Add(inst);
         }
-        summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * length);
+        //去格位除尾查
+        GameObject instC = Instantiate(itemDicBtn.gameObject, summaryScrollContent, false);
+        instC.transform.position = itemDicBtn.transform.position;
+        instC.GetComponent<ItemDicView>().SetCaseWord(inputStr);
+        instC.SetActive(true);
+        itemDicList.Add(instC);
+        //summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * 1);
+        summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * (length + 1));
+        // }
 
     }
     //销毁下拉列表GO
@@ -167,7 +192,7 @@ public class DicView : MonoBehaviour
 
         MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
         //去格位除尾查
-        List<string> caseWordList = DicCase.CaseEnding(new List<string>(), word);
+        Dictionary<string, List<string>> caseWordList = DicCase.CaseEnding(new Dictionary<string, List<string>>(), word);
         //if(caseWordList.Count == 0)
         otherWordItemView.Init(caseWordList);
         dicManager.currWord = word;
