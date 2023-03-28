@@ -340,6 +340,35 @@ public class DictManager
 
         return matchedWordList.ToArray();
     }
+    //是否存在该词，只查最全面的巴缅词典
+    public bool IsHaveWord(string word)
+    {
+        if (string.IsNullOrEmpty(word))
+            return false;
+        bool res = false;
+        dbManager.Getdb(db =>
+        {
+            var reader = db.SelectDictExist(dicIDArr_MY[0], word, "word");
+
+            //调用SQLite工具  解析对应数据
+            Dictionary<string, object> pairs = SQLiteTools.GetValue(reader);
+            if (pairs != null && pairs.Count > 0)
+            {
+                res = true;
+            }
+            reader = db.SelectDictExist(dicIDArr_EN[1], word, "word");
+
+            //调用SQLite工具  解析对应数据
+            pairs = SQLiteTools.GetValue(reader);
+            if (pairs != null && pairs.Count > 0)
+            {
+                res = true;
+            }
+        }, DBManager.DictDBurl);
+
+
+        return res;
+    }
     #endregion
 
 
@@ -432,8 +461,8 @@ public class DictManager
         PlayerPrefsX.SetStringArray("dic" + groupID, allDicGroup[groupID].wordList.ToArray());
     }
     //改组名
-    public void ChangeGroupName(int groupID,string name)
-    { 
+    public void ChangeGroupName(int groupID, string name)
+    {
         string[] nameArr = PlayerPrefsX.GetStringArray("dicGroupName");
         nameArr[groupID] = name;
         PlayerPrefsX.SetStringArray("dicGroupName", nameArr);

@@ -44,7 +44,6 @@ public class DicView : MonoBehaviour
         DestroyItemDicList();
         //SqliteDataReader reader = dbManager.db.SelectOrderASC("bh-paper", "word");
         SearchWord(userInput.text);
-
     }
     public void OnSearchValueChanged(string value)
     {
@@ -192,7 +191,7 @@ public class DicView : MonoBehaviour
 
         MatchedWordDetail[] matchedWordArr = dicManager.MatchWordDetail(word);
         //去格位除尾查
-        Dictionary<string, List<string>> caseWordList = DicCase.CaseEnding(new Dictionary<string, List<string>>(), word);
+        Dictionary<string, List<string>> caseWordList = DicCase.CaseEndingUnion2(new Dictionary<string, List<string>>(), word);
         //if(caseWordList.Count == 0)
         otherWordItemView.Init(caseWordList);
         dicManager.currWord = word;

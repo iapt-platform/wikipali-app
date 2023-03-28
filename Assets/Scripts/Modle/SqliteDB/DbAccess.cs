@@ -384,6 +384,14 @@ namespace Imdork.SQLite
             return ExecuteQuery(query);
         }
         /// <summary>
+        /// 匹配查询，查词用
+        /// </summary>
+        public SqliteDataReader SelectDictExist(string tableName, string inputStr, string word)
+        {
+            string query = "SELECT `id` FROM " + "'" + tableName + "'" + " WHERE " + word + " = " + "'" + inputStr + "'";
+            return ExecuteQuery(query);
+        }
+        /// <summary>
         /// 匹配查询词典名
         /// </summary>
         public SqliteDataReader SelectDic(string uuid, string id = "uuid", string tableName = "dict")

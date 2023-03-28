@@ -47,7 +47,7 @@ public class DetailDicItemView : MonoBehaviour
                 {
                     temp = temp + "-";
                 }
-                GameObject inst = Instantiate(detailTxt.gameObject, detailTxt.transform.parent,false);
+                GameObject inst = Instantiate(detailTxt.gameObject, detailTxt.transform.parent, false);
                 inst.name = i.ToString();
                 inst.transform.position = detailTxt.transform.position;
                 Text contentTextInst = inst.GetComponent<Text>();
@@ -58,6 +58,7 @@ public class DetailDicItemView : MonoBehaviour
                 //height += contentTextInst.rectTransform.sizeDelta.y;
                 splitTextList.Add(contentTextInst);
             }
+            //detailTxt.text = "";
             detailTxt.gameObject.SetActive(false);
         }
         else
@@ -99,7 +100,16 @@ public class DetailDicItemView : MonoBehaviour
         {
             Vector2 size = this.GetComponent<RectTransform>().sizeDelta;
             this.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, itemHeight);
-            detailTxt.gameObject.SetActive(true);
+            if (splitTextList != null && splitTextList.Count > 0)
+            {
+                for (int i = 0; i < splitTextList.Count; i++)
+                {
+                    splitTextList[i].gameObject.SetActive(true);
+                }
+            }
+            else
+                detailTxt.gameObject.SetActive(true);
+
             gameObject.SetActive(false);
             gameObject.SetActive(true);
             dropDownImg.rectTransform.localRotation = Quaternion.Euler(0, 0, 180);
@@ -109,7 +119,16 @@ public class DetailDicItemView : MonoBehaviour
         {
             Vector2 size = this.GetComponent<RectTransform>().sizeDelta;
             this.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, titleBtn.GetComponent<RectTransform>().sizeDelta.y);
-            detailTxt.gameObject.SetActive(false);
+            if (splitTextList != null && splitTextList.Count > 0)
+            {
+                for (int i = 0; i < splitTextList.Count; i++)
+                {
+                    splitTextList[i].gameObject.SetActive(false);
+                }
+
+            }
+            else
+                detailTxt.gameObject.SetActive(false);
             gameObject.SetActive(false);
             gameObject.SetActive(true);
             dropDownImg.rectTransform.localRotation = Quaternion.Euler(0, 0, 0);

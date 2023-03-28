@@ -29,7 +29,6 @@ public class SettingView : MonoBehaviour
         else
         {
             transContentSliderToggle.value = 1;
-
         }
     }
     // Update is called once per frame
