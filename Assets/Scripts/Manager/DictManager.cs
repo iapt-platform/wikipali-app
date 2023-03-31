@@ -356,14 +356,15 @@ public class DictManager
             {
                 res = true;
             }
-            reader = db.SelectDictExist(dicIDArr_EN[1], word, "word");
+            //查两个词典太慢了
+            //reader = db.SelectDictExist(dicIDArr_EN[1], word, "word");
 
-            //调用SQLite工具  解析对应数据
-            pairs = SQLiteTools.GetValue(reader);
-            if (pairs != null && pairs.Count > 0)
-            {
-                res = true;
-            }
+            ////调用SQLite工具  解析对应数据
+            //pairs = SQLiteTools.GetValue(reader);
+            //if (pairs != null && pairs.Count > 0)
+            //{
+            //    res = true;
+            //}
         }, DBManager.DictDBurl);
 
 

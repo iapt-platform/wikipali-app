@@ -19,8 +19,10 @@ public class CalendarView : MonoBehaviour
     public Text westEraText;
     public Text buddhistEraText;
     public CalendarController controllerView;
+    public ToggleGroup calToggleGroup;
     public Toggle mmCalToggle;
     public Toggle realCalToggle;
+    public Toggle farmerCalToggle;
 
     // Start is called before the first frame update
     void Awake()
@@ -29,18 +31,7 @@ public class CalendarView : MonoBehaviour
         lngText.text = "定位中...";
         sunriseText.text = "定位中...";
         solarNoonText.text = "定位中...";
-        int isMMCal = SettingManager.Instance().GetCalType();
-        if (isMMCal == 1)
-        {
-            mmCalToggle.isOn = true;
-            realCalToggle.isOn = false;
-        }
-        else
-        {
-            mmCalToggle.isOn = false;
-            realCalToggle.isOn = true;
-        }
-        mmCalToggle.onValueChanged.AddListener(OnMMToggleValueChanged);
+
     }
     void Start()
     {
@@ -55,17 +46,52 @@ public class CalendarView : MonoBehaviour
         //lngText.text = lng.ToString();
 
         // CalendarManager.Instance().StopLocation();
+
+        //放awake里会出现两个toggle都是on的bug
+        int isMMCal = SettingManager.Instance().GetCalType();
+        if (isMMCal == 1)
+        {
+            mmCalToggle.isOn = true;
+            realCalToggle.isOn = false;
+            farmerCalToggle.isOn = false;
+        }
+        else if (isMMCal == 2)
+        {
+            realCalToggle.isOn = true;
+            mmCalToggle.isOn = false;
+            farmerCalToggle.isOn = false;
+        }
+        else if (isMMCal == 3)
+        {
+            farmerCalToggle.isOn = true;
+            realCalToggle.isOn = false;
+            mmCalToggle.isOn = false;
+        }
+        mmCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
+        realCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
+        farmerCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
         SetEra(DateTime.Today);
     }
-    void OnMMToggleValueChanged(bool value)
+    int toggleFlag = 0;
+    void OnToggleValueChanged(bool value)
     {
         //Debug.LogError(value);
-        if (value)
-            SettingManager.Instance().SetCalType(1);
-        else
-            SettingManager.Instance().SetCalType(0);
-        controllerView.Start();
+        if (toggleFlag == 0)
+        {
+            if (mmCalToggle.isOn)
+                SettingManager.Instance().SetCalType(1);
+            else if (realCalToggle.isOn)
+                SettingManager.Instance().SetCalType(2);
+            else if (farmerCalToggle.isOn)
+                SettingManager.Instance().SetCalType(3);
+            controllerView.Start();
+        }
+        //3个toggle只会有2个toggle产生变化
+        ++toggleFlag;
+        if (toggleFlag == 2)
+            toggleFlag = 0;
     }
+
     public void SetEra(DateTime time)
     {
         westEraText.text = time.Year + "年" + time.Month + "月" + time.Day + "日";
@@ -143,7 +169,7 @@ public class CalendarView : MonoBehaviour
             latText.text = lat.ToString();
             lngText.text = lng.ToString();
             locationed = true;
-            GetSunTime(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day,0,1,0));
+            GetSunTime(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 0, 1, 0));
             //todo
             CalendarManager.Instance().StopLocation();
             controllerView.Start();

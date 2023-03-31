@@ -528,6 +528,18 @@ public class Calendar
             return 29;
         }
     }
+    private String GetChineseMonthDaysString(int year, int month)
+    {
+        if (BitTest32((LunarDateArray[year - MinYear] & 0x0000FFFF), (16 - month)))
+        {
+            return "三十";
+        }
+        else
+        {
+            return "廿九";
+        }
+        return "三十";
+    }
     #endregion
 
     #region GetChineseLeapMonth
@@ -535,6 +547,10 @@ public class Calendar
     /// 传回农历 y年闰哪个月 1-12 , 没闰传回 0
     /// </summary>
     private Int32 GetChineseLeapMonth(int year)
+    {
+        return LunarDateArray[year - MinYear] & 0xF;
+    }
+    public Int32 GetChineseLeapMonthPublic(int year)
     {
         return LunarDateArray[year - MinYear] & 0xF;
     }
@@ -560,6 +576,24 @@ public class Calendar
         else
         {
             return 0;
+        }
+    }
+    private string GetChineseLeapMonthDaysString(int year)
+    {
+        if (GetChineseLeapMonth(year) != 0)
+        {
+            if ((LunarDateArray[year - MinYear] & 0x10000) != 0)
+            {
+                return "三十";
+            }
+            else
+            {
+                return "廿九";
+            }
+        }
+        else
+        {
+            return "";
         }
     }
     #endregion
@@ -628,6 +662,7 @@ public class Calendar
     /// <summary>
     /// 检查公历日期是否符合要求
     /// </summary>
+    /// ??????????????????????????????????????????????2049年会报错
     private void CheckDateLimit(DateTime dt)
     {
         if ((dt < MinDay) || (dt > MaxDay))
@@ -1039,6 +1074,19 @@ public class Calendar
 
             }
         }
+    }
+    #endregion
+    #region 该月的最后一天
+    public string LastDayOfChineseMonth(int cyear, int cmonth,bool isLeapMonth)
+    {
+        //闰月月份
+        if (isLeapMonth)
+        {
+            //闰月月份日子数量与普通月份不同，需要单独计算
+            return GetChineseLeapMonthDaysString(cyear);
+        }
+        else
+            return GetChineseMonthDaysString(cyear, cmonth);
     }
     #endregion
 

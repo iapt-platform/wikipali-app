@@ -113,7 +113,8 @@ public /*final*/ class HolidayCalculator
 	 *            Moon phase [0=waxing, 1=full moon, 2=waning, 3=new moon]
 	 * @return Name of Holiday Strings List if exist
 	 */
-    public static List<string> myanmarHoliday(double myear, int mmonth, int westMonth, int monthDay, int moonPhase,int lastDayMoonPhase)
+    //获取缅甸节日
+    public static List<string> myanmarHoliday(double myear, int mmonth, int westMonth, int monthDay, int moonPhase, int lastDayMoonPhase)
     {
 
         List<string> holiday = new List<string>();
@@ -175,16 +176,188 @@ public /*final*/ class HolidayCalculator
         return holiday;
     }
 
+    //获取农历节日
+    public static List<string> farmerHoliday(int fmonth, string fday, bool isLeapYear, bool isLeapMon, int leapMon)
+    {
+        //农历 三月15 敬佛节
+        List<string> holiday = new List<string>();
+
+        if ((fmonth == 3) && (fday == "十五"))
+        {
+            holiday.Add("敬佛节");//敬佛节 // Vesak day
+        }
+        //农历  8月15 出雨安居
+        else if (!isLeapMon && (fmonth == 8) && (fday == "十五"))
+        {
+            holiday.Add("出雨安居");
+        }
+        //农历  8月15倒退三个月 入雨安居
+        if (isLeapYear)
+        {
+            //闰月的情况
+            if (leapMon == 8)
+            {
+                if ((fmonth == 5) && (fday == "十五"))
+                {
+                    holiday.Add("入雨安居");
+                }
+            }
+            else if (leapMon == 7)
+            {
+                if ((fmonth == 6) && (fday == "十五"))
+                {
+                    holiday.Add("入雨安居");
+                }
+            }
+            else if (leapMon == 6)
+            {
+                if (!isLeapMon && (fmonth == 6) && (fday == "十五"))
+                {
+                    holiday.Add("入雨安居");
+                }
+            }
+            else if (leapMon == 5)
+            {
+                if (isLeapMon && (fmonth == 5) && (fday == "十五"))
+                {
+                    holiday.Add("入雨安居");
+                }
+            }
+            else
+            {
+                if ((fmonth == 5) && (fday == "十五"))
+                {
+                    holiday.Add("入雨安居");
+                }
+            }
+        }
+        else
+        {
+            if ((fmonth == 5) && (fday == "十五"))
+            {
+                holiday.Add("入雨安居");
+            }
+        }
+
+        //else if ((mmonth == 7) && (moonPhase == 1))
+        //{
+        //    holiday.Add("出雨安居");//出雨安居
+        //    //holiday.Add("End of Buddhist Lent");//出雨安居
+        //}
+
+
+        return holiday;
+    }
+    //获取如实历节日
+    //预先计算一年节日
+    public static Dictionary<DateTime, string> preYearTrueHoliday(int year)
+    {
+        Dictionary<DateTime, string> res = new Dictionary<DateTime, string>();
+        TimeSpan day1 = new TimeSpan(1, 0, 0, 0);
+        //4月16日最近的月圆日，卫塞节(敬佛节)
+        DateTime dateW = new DateTime(year, 4, 16);
+        if (CalendarController.GetMoonType(dateW) == CalendarController.MoonType.Moon2)
+        {
+            res.Add(dateW, "敬佛节");
+        }
+        else
+        {
+            for (int i = 1; i < 15; i++)
+            {
+                TimeSpan dayPass = new TimeSpan(i, 0, 0, 0);
+                DateTime dateWP = dateW - dayPass;
+                DateTime dateWN = dateW + dayPass;
+                if (dateWP.Day == 6)
+                    ;
+                if (CalendarController.GetMoonType(dateWP) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateWP, "敬佛节");
+                    break;
+                }
+                if (CalendarController.GetMoonType(dateWN) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateWN, "敬佛节");
+                    break;
+                }
+            }
+        }
+        //出雨安居 9月27日最近的月圆日
+        DateTime dateC = new DateTime(year, 9, 27);
+        if (CalendarController.GetMoonType(dateC) == CalendarController.MoonType.Moon2)
+        {
+            res.Add(dateC, "出雨安居");
+        }
+        else
+        {
+            for (int i = 1; i < 15; i++)
+            {
+                TimeSpan dayPass = new TimeSpan(i, 0, 0, 0);
+                DateTime dateCP = dateC - dayPass;
+                DateTime dateCN = dateC + dayPass;
+                if (CalendarController.GetMoonType(dateCP) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateCP, "出雨安居");
+                    dateC = dateCP;
+                    break;
+                }
+                if (CalendarController.GetMoonType(dateCN) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateCN, "出雨安居");
+                    dateC = dateCN;
+                    break;
+                }
+            }
+        }
+        //出雨安居 的前三个月圆日的后一天是入雨安居
+        DateTime dateR = new DateTime(dateC.Year, dateC.Month - 3, dateC.Day);
+        if (CalendarController.GetMoonType(dateR) == CalendarController.MoonType.Moon2)
+        {
+            res.Add(dateR + day1, "入雨安居");
+        }
+        else
+        {
+            for (int i = 1; i < 15; i++)
+            {
+                TimeSpan dayPass = new TimeSpan(i, 0, 0, 0);
+                DateTime dateRP = dateR - dayPass;
+                DateTime dateRN = dateR + dayPass;
+                if (CalendarController.GetMoonType(dateRP) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateRP + day1, "入雨安居");
+                    break;
+                }
+                if (CalendarController.GetMoonType(dateRN) == CalendarController.MoonType.Moon2)
+                {
+                    res.Add(dateRN + day1, "入雨安居");
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+    //获取如实历节日
+    public static List<string> trueHoliday(Dictionary<DateTime, string> yearHoliday, DateTime date)
+    {
+        List<string> holiday = new List<string>();
+        DateTime newDate = new DateTime(date.Year, date.Month, date.Day);
+
+        if (yearHoliday.ContainsKey(newDate))
+        {
+            holiday.Add(yearHoliday[newDate]);
+        }
+
+        return holiday;
+    }
     /**
-	 * 
-	 * @param jdn
-	 *            Julian Day Number to check
-	 * @param myear
-	 *            Myanmar year
-	 * @param monthType
-	 *            Myanmar month type [oo=0, hnaung=1
-	 * @return List of holiday string
-	 */
+     * 
+     * @param jdn
+     *            Julian Day Number to check
+     * @param myear
+     *            Myanmar year
+     * @param monthType
+     *            Myanmar month type [oo=0, hnaung=1
+     * @return List of holiday string
+     */
     public static List<string> thingyan(double jdn, double myear, int monthType)
     {
 

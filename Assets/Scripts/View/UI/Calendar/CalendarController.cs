@@ -53,7 +53,8 @@ public class CalendarController : MonoBehaviour
     //Waning Crescent
     //获取月亮类型
     const float MOON_OFFST = 0.04f;
-    MoonType GetMoonType(DateTime date)
+    //如实历月相
+    public static MoonType GetMoonType(DateTime date)
     {
 
         DateTime time0 = new DateTime(date.Year, date.Month, date.Day, 0, 0, 1);
@@ -152,6 +153,39 @@ public class CalendarController : MonoBehaviour
         }
         return MoonType.MoonOther;
     }
+    //农历月相
+    MoonType GetMoonTypeFarmer(DateTime date)
+    {
+        Calendar calender = new Calendar(date);
+        string day = calender.ChineseDayString;
+        int chineseFarmerMonth = calender.ChineseMonth;
+        int chineseFarmerYear = calender.ChineseYear;
+        bool isLeapMon = calender.IsChineseLeapMonth;
+        //MoonOther = 0,//其他月亮
+        //Moon0 = 1,//黑月---新月
+        //Moon1 = 2,//左黑右白---上弦月
+        //Moon2 = 3,//白月---满月
+        //Moon3 = 4,//左白右黑---下弦月
+
+        if (day == "初七")
+        {
+            return MoonType.Moon1;
+        }
+        else if (day == "十五")
+        {
+            return MoonType.Moon2;
+        }
+        else if (day == "廿二")
+        {
+            return MoonType.Moon3;
+        }
+        else if (day == calender.LastDayOfChineseMonth(chineseFarmerYear, chineseFarmerMonth, isLeapMon))
+        {
+            return MoonType.Moon0;
+        }
+        //?月的最后一天是新月
+        return MoonType.MoonOther;
+    }
     #endregion
     void DestoryItemGOList()
     {
@@ -188,15 +222,18 @@ public class CalendarController : MonoBehaviour
 
         //_calendarPanel.SetActive(false);
     }
-
+    Dictionary<DateTime, string> trueCalenderYearHolidays;
     void CreateCalendar()
     {
         DateTime firstDay = _dateTime.AddDays(-(_dateTime.Day - 1));
+        //todo:待优化，目前每下个月计算一次如实历节日
+        trueCalenderYearHolidays = HolidayCalculator.preYearTrueHoliday(firstDay.Year);
         GetLastMonthMyanmarMoon(firstDay);
         int index = GetDays(firstDay.DayOfWeek);
 
         int date = 0;
-        bool isMMCal = SettingManager.Instance().GetCalType() == 1;
+        //1:缅历  2:如实历  3:农历
+        int calType = SettingManager.Instance().GetCalType();
         for (int i = 0; i < _totalDateNum; i++)
         {
             Text label = _dateItems[i].GetComponentInChildren<Text>();
@@ -208,28 +245,37 @@ public class CalendarController : MonoBehaviour
                 if (thatDay.Month == firstDay.Month)
                 {
                     _dateItems[i].gameObject.SetActive(true);
-                    _dateItems[i].Init(thatDay);
+                    _dateItems[i].Init(thatDay, trueCalenderYearHolidays);
                     //缅历不需要定位
                     if (CalendarManager.Instance().isLocationed())
                     {
                         MoonType moon = MoonType.MoonOther;
-                        if (isMMCal)
+                        if (calType == 1)
                             moon = GetMoonTypeMyanmar(thatDay);
-                        else
+                        else if (calType == 2)
                             moon = GetMoonType(thatDay);
+                        else if (calType == 3)
+                            moon = GetMoonTypeFarmer(thatDay);
+
                         _dateItems[i].SetMoon(moon);
                         _dateItems[i].SetSolarNoonTextActive(true);
                     }
                     else
                     {
                         MoonType moon = MoonType.MoonOther;
-                        if (isMMCal)
+                        if (calType == 1)
                         {
                             moon = GetMoonTypeMyanmar(thatDay);
                             _dateItems[i].SetMoon(moon);
                         }
-                        else
+                        else if (calType == 2)
                             _dateItems[i].SetMoon(MoonType.MoonOther);
+                        else if (calType == 3)
+                        {
+                            moon = GetMoonTypeFarmer(thatDay);
+                            _dateItems[i].SetMoon(moon);
+                        }
+
                         _dateItems[i].SetSolarNoonTextActive(false);
                     }
                     label.text = (date + 1).ToString();

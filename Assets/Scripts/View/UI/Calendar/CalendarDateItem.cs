@@ -15,10 +15,11 @@ public class CalendarDateItem : MonoBehaviour
     public Image moon1Img;
     public Image moon2Img;
     public Image moon3Img;
-    public void Init(DateTime time)
+    public void Init(DateTime time, Dictionary<DateTime, string> trueCalenderYearHolidays)
     {
         Calendar calender = new Calendar(time);
         chineseDateText.text = calender.ChineseDayString;
+        int chineseFarmerMonth = calender.ChineseMonth;
         string chineseTwentyFourDay = calender.ChineseTwentyFourDay;
         if (!string.IsNullOrEmpty(chineseTwentyFourDay))
         {
@@ -26,16 +27,31 @@ public class CalendarDateItem : MonoBehaviour
         }
         MyanmarDate myanmarDate = MyanmarDateConverter.convert(time.Year, time.Month, time.Day);
         List<string> mhd = new List<string>();
-        if (time.Month == 7)
+        int isMMCal = SettingManager.Instance().GetCalType();
+        //缅历节日
+        if (isMMCal == 1)
         {
-            TimeSpan d1 = new TimeSpan(1, 0, 0, 0);
-            DateTime lastDay = time - d1;
-            MyanmarDate myanmarDateLastDay = MyanmarDateConverter.convert(lastDay.Year, lastDay.Month, lastDay.Day);
-            mhd = HolidayCalculator.myanmarHoliday(myanmarDate.myear, myanmarDate.mmonth, time.Month, myanmarDate.monthDay, myanmarDate.moonPhase, myanmarDateLastDay.moonPhase);
+            if (time.Month == 7)
+            {
+                TimeSpan d1 = new TimeSpan(1, 0, 0, 0);
+                DateTime lastDay = time - d1;
+                MyanmarDate myanmarDateLastDay = MyanmarDateConverter.convert(lastDay.Year, lastDay.Month, lastDay.Day);
+                mhd = HolidayCalculator.myanmarHoliday(myanmarDate.myear, myanmarDate.mmonth, time.Month, myanmarDate.monthDay, myanmarDate.moonPhase, myanmarDateLastDay.moonPhase);
+            }
+            else
+            {
+                mhd = HolidayCalculator.myanmarHoliday(myanmarDate.myear, myanmarDate.mmonth, time.Month, myanmarDate.monthDay, myanmarDate.moonPhase, -1);
+            }
         }
-        else
+        else if (isMMCal == 2)
         {
-            mhd = HolidayCalculator.myanmarHoliday(myanmarDate.myear, myanmarDate.mmonth, time.Month, myanmarDate.monthDay, myanmarDate.moonPhase, -1);
+
+            mhd = HolidayCalculator.trueHoliday(trueCalenderYearHolidays, time);
+
+        }
+        else if (isMMCal == 3)
+        {
+            mhd = HolidayCalculator.farmerHoliday(chineseFarmerMonth, calender.ChineseDayString, calender.IsChineseLeapYear, calender.IsChineseLeapMonth, calender.GetChineseLeapMonthPublic(calender.ChineseYear));
         }
         if (mhd != null && mhd.Count > 0)
         {

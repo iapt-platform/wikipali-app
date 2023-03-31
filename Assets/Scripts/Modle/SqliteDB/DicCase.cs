@@ -3414,7 +3414,7 @@ public class DicCase
                     continue;
                 string tempStart = tempWord.Substring(0, tempWord.Length - end.Length);//Substring start
                 string newWord = tempStart + ending[i].Item1;
-                Debug.LogError(newWord);
+                //Debug.LogError(newWord);
 
                 //是否在词典里
                 if (!errorWord.Contains(newWord))
