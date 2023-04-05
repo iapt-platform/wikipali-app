@@ -191,41 +191,41 @@ public /*final*/ class HolidayCalculator
         {
             holiday.Add("出雨安居");
         }
-        //农历  8月15倒退三个月 入雨安居
+        //农历  8月15倒退三个月的最近的月圆日的后一天 入雨安居
         if (isLeapYear)
         {
             //闰月的情况
             if (leapMon == 8)
             {
-                if ((fmonth == 5) && (fday == "十五"))
+                if ((fmonth == 5) && (fday == "十六"))
                 {
                     holiday.Add("入雨安居");
                 }
             }
             else if (leapMon == 7)
             {
-                if ((fmonth == 6) && (fday == "十五"))
+                if ((fmonth == 6) && (fday == "十六"))
                 {
                     holiday.Add("入雨安居");
                 }
             }
             else if (leapMon == 6)
             {
-                if (!isLeapMon && (fmonth == 6) && (fday == "十五"))
+                if (!isLeapMon && (fmonth == 6) && (fday == "十六"))
                 {
                     holiday.Add("入雨安居");
                 }
             }
             else if (leapMon == 5)
             {
-                if (isLeapMon && (fmonth == 5) && (fday == "十五"))
+                if (isLeapMon && (fmonth == 5) && (fday == "十六"))
                 {
                     holiday.Add("入雨安居");
                 }
             }
             else
             {
-                if ((fmonth == 5) && (fday == "十五"))
+                if ((fmonth == 5) && (fday == "十六"))
                 {
                     holiday.Add("入雨安居");
                 }
@@ -233,7 +233,7 @@ public /*final*/ class HolidayCalculator
         }
         else
         {
-            if ((fmonth == 5) && (fday == "十五"))
+            if ((fmonth == 5) && (fday == "十六"))
             {
                 holiday.Add("入雨安居");
             }
@@ -267,8 +267,6 @@ public /*final*/ class HolidayCalculator
                 TimeSpan dayPass = new TimeSpan(i, 0, 0, 0);
                 DateTime dateWP = dateW - dayPass;
                 DateTime dateWN = dateW + dayPass;
-                if (dateWP.Day == 6)
-                    ;
                 if (CalendarController.GetMoonType(dateWP) == CalendarController.MoonType.Moon2)
                 {
                     res.Add(dateWP, "敬佛节");

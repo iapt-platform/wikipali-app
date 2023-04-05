@@ -8,8 +8,13 @@ public class MarkdownText
 {
     public bool link = true;
     public bool emoji = true;
-    public enum StyleMode { None, Preview, Replace }
-    public static StyleMode style = StyleMode.Preview;
+    public enum StyleMode
+    {
+        None,
+        Preview,//保留markdown符号
+        Replace //替换markdown符号
+    }
+    public static StyleMode style = StyleMode.Replace;
 
     //private TMP_Text _text;
     //public TMP_Text text
@@ -39,64 +44,40 @@ public class MarkdownText
     //    Canvas.ForceUpdateCanvases();
     //}
 
-    private static readonly Regex superlinkRegex = new Regex("(\\[.*\\])(\\(\\S+\\))|((http:\\/\\/|https:\\/\\/|www\\.)([A-Z0-9.-:]{1,})\\.[0-9A-Z?;~&#=\\-_\\.\\/]{2,})", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-    private static readonly Regex emojiRegex = new Regex(":[\\w|-]+:");
-    private static readonly Regex boldRegex = new Regex("\\*\\*(.*)\\*\\*");
-    private static readonly Regex itallicRegex = new Regex("\\*(.*)\\*");
-    private static readonly Regex strikeRegex = new Regex("\\~\\~(.*)\\~\\~");
+    private static readonly Regex boldBigRegex = new Regex(@"# (\w+)");
+    private static readonly Regex boldRegex2 = new Regex("\\*\\*(.*)\\*\\*");
+    private static readonly Regex boldRegex = new Regex(@"\*\*(\w+)\*\*");
+    private static readonly Regex itallicRegex = new Regex(@"\*(\w+)\*");
+    //private static readonly Regex itallicRegex = new Regex("\\*(.*)\\*");
+    //private static readonly Regex strikeRegex = new Regex("\\~\\~(.*)\\~\\~");
+    private static readonly Regex strikeRegex = new Regex(@"\\~\\~(\w+)\\~\\~");
     private static readonly Regex underlineRegex = new Regex("__([^_]*)__");
     //todo
-    public static string PreprocessText(string text)
+    public static string PreprocessText(string text, int textSize = 0)
     {
-        // LINK
-        //if (link)
-        //{
-        //    MatchCollection matches = superlinkRegex.Matches(text);
-        //    foreach (Match match in matches)
-        //    {
-        //        // 0th index is full match
-        //        // 1st index hyperlink name
-        //        // 2nd index is url
-        //        string name = match.Groups[1].Value;
-        //        string link = match.Groups[2].Value;
-        //        // If it's a plain link
-        //        if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
-        //        {
-        //            text = text.Replace(match.Value, ShortLink(match.Value));
-        //        }
-        //        // Otherwise it's a hyperlink
-        //        else
-        //        {
-        //            name = name.Trim('[', ']');
-        //            link = link.Trim('(', ')');
-        //            text = text.Replace(match.Value, $"<#{ColorUtility.ToHtmlStringRGB(Color.blue)}><u><link=\"{link}\">{name}</link></u></color>");
-        //        }
-        //    }
-        //}
-
-        //if (emoji)
-        //{
-        //    // EMOJI
-        //    MatchCollection matches = emojiRegex.Matches(text);
-        //    foreach (Match match in matches)
-        //    {
-        //        var emojiName = match.Value;
-        //        // remove ':' from beginning and end
-        //        emojiName = emojiName.Remove(0, 1);
-        //        emojiName = emojiName.Remove(emojiName.Length - 1, 1);
-
-        //        // Make sure sprite actually exists
-        //        //if (EmojiExists(emojiName))
-        //        //{
-        //        //    // replace emoji text with sprite tag
-        //        //    text = text.Replace(match.Value, $"<sprite name=\"{emojiName}\">");
-        //        //}
-        //    }
-        //}
+        text = text.Replace("|", "   ");
+        text = text.Replace("-", "    ");
+        text = text.Replace("<br>", "\r\n           ");
 
         //if (style != StyleMode.None)
         {
             MatchCollection matches = boldRegex.Matches(text);
+            foreach (Match match in matches)
+            {
+                switch (style)
+                {
+                    case StyleMode.Preview:
+                        text = text.Replace(match.Value, $"<b>{match.Value}</b>");
+                        break;
+                    case StyleMode.Replace:
+                        var boldText = match.Value;
+                        boldText = boldText.Remove(0, 2);
+                        boldText = boldText.Remove(boldText.Length - 2, 2);
+                        text = text.Replace(match.Value, $"<b>{boldText}</b>");
+                        break;
+                }
+            }
+            matches = boldRegex2.Matches(text);
             foreach (Match match in matches)
             {
                 switch (style)
@@ -145,6 +126,23 @@ public class MarkdownText
                 }
             }
 
+            matches = boldBigRegex.Matches(text);
+            int textSizeRes = (textSize == 0) ? 65 : (textSize + 15);
+            foreach (Match match in matches)
+            {
+                switch (style)
+                {
+                    case StyleMode.Preview:
+                        text = text.Replace(match.Value, $"<b><size={textSizeRes}>{match.Value}</size></b>");
+                        break;
+                    case StyleMode.Replace:
+                        var boldText = match.Value;
+                        boldText = boldText.Remove(0, 1);
+                        //boldText = boldText.Remove(boldText.Length - 2, 2);
+                        text = text.Replace(match.Value, $"<b><size={textSizeRes}>{boldText}</size></b>");
+                        break;
+                }
+            }
             matches = underlineRegex.Matches(text);
             foreach (Match match in matches)
             {

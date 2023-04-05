@@ -9,10 +9,52 @@ public class TextMoveHelper : MonoBehaviour
     //public Canvas canvas;
 
     //public Text text;
+    public void NewTextBtn(Canvas canvas, Text text, string strFragment, Event btnEvent)
+    {
+ 
+        int startIndex =  GetTextIndex(text, strFragment);
+        int endIndex = startIndex + strFragment.Length;
+        Vector3 startPos = GetPosAtTextIndex(canvas, text, strFragment, startIndex);
+        Vector3 endPos = GetPosAtTextIndex(canvas, text, strFragment, endIndex);
+        //存在目标text会换行的可能性，假设只换1行，需要两个btn
+        if (startPos.y == endPos.y)//同一行
+        {
+            //加载预设体资源  
+            GameObject hp_bar = (GameObject)Resources.Load("Prefabs/TextButton");
+            RectTransform rt = hp_bar.GetComponent<RectTransform>();
+        }
+        else//换行了
+        { 
+        
+        
+        }
 
+
+    }
+    public int GetTextIndex(Text text, string strFragment)
+    {
+        int strFragmentIndex = text.text.IndexOf(strFragment);//-1表示不包含strFragment
+        return strFragmentIndex;
+    }
     public Vector3 GetPosAtText(Canvas canvas, Text text, string strFragment)
     {
         int strFragmentIndex = text.text.IndexOf(strFragment);//-1表示不包含strFragment
+        Vector3 stringPos = Vector3.zero;
+        if (strFragmentIndex > -1)
+        {
+            Vector3 firstPos = GetPosAtText(canvas, text, strFragmentIndex + 1);
+            Vector3 lastPos = GetPosAtText(canvas, text, strFragmentIndex + strFragment.Length);
+            stringPos = (firstPos + lastPos) * 0.5f;
+        }
+        else
+        {
+            stringPos = GetPosAtText(canvas, text, strFragmentIndex);
+        }
+        return stringPos;
+    }
+    public Vector3 GetPosAtTextIndex(Canvas canvas, Text text, string strFragment,int strFragmentIndex)
+    {
+        //int strFragmentIndex = text.text.IndexOf(strFragment);//-1表示不包含strFragment
         Vector3 stringPos = Vector3.zero;
         if (strFragmentIndex > -1)
         {

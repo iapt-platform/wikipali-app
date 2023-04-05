@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Hypertext;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using static DictManager;
@@ -9,8 +11,9 @@ public class DetailDicItemView : MonoBehaviour
     public Button titleBtn;
     public Image dropDownImg;
     public Text titleTxt;
-    public Text detailTxt;
+    public RegexHypertext detailTxt;
     public DicView dicView;
+    public PopTermView popTView;
     MatchedWordDetail word;
     public float itemHeight;
     //是否是折叠状态
@@ -23,8 +26,8 @@ public class DetailDicItemView : MonoBehaviour
         titleTxt.text = word.dicName;
         string detail = word.meaning;
         //部分高亮
-        detail = detail.Replace("【", "<color=blue>【");
-        detail = detail.Replace("】", "】</color>");
+        //detail = detail.Replace("【", "<color=blue>【");
+        //detail = detail.Replace("】", "】</color>");
         //解决文字过长 text报错 的问题，实例化多个text ArgumentException: Mesh can not have more than 65000 vertices
         int textCount = Mathf.CeilToInt((float)detail.Length / (float)TEXT_MAX);
         if (textCount > 1)
@@ -35,7 +38,8 @@ public class DetailDicItemView : MonoBehaviour
             {
                 int min = i * TEXT_MAX;
                 int max = (i + 1) * TEXT_MAX;
-                max = max > (detail.Length - 1) ? (detail.Length - 1) : max;
+                max = max > (detail.Length - 1) ?
+                    (detail.Length - 1) : max;
                 int l = max - min;
                 //todo:英文单词分开换行接续问题
                 string temp = detailTemp.Substring(min, l);
@@ -67,6 +71,7 @@ public class DetailDicItemView : MonoBehaviour
         }
         LayoutRebuilder.ForceRebuildLayoutImmediate(detailTxt.rectTransform);
         LayoutRebuilder.ForceRebuildLayoutImmediate(dicView.detailScrollContent);
+
     }
     public float GetHeight()
     {
@@ -136,14 +141,29 @@ public class DetailDicItemView : MonoBehaviour
         }
 
     }
+    const string RegexHashChineseTag = @"【(\w+)】";
+    //const string RegexHashChineseTag = @"[0-9]";
 
     // Start is called before the first frame update
     void Start()
     {
         titleBtn.onClick.AddListener(OnBtnClick);
-
+        //detailTxt.OnClick(RegexHashChineseTag, Color.blue, hashtag => RegexDicDetailView(hashtag));
+        detailTxt.OnClick(RegexHypertext.GRM_ABBR_TAG, Color.blue, hashtag => RegexDicDetailView(hashtag));
     }
-
+    void RegexDicDetailView(string content)
+    {
+        string value = UserGrammar.grm_abbr[content];
+        //string[] test = UserGrammar.grammar_cn["grammar_nt"];
+        string[] test = UserGrammar.grammar_cn["grammar_" + value];
+        StringBuilder sb = new StringBuilder();
+        int l = test.Length;
+        for (int i = 0; i < l; i++)
+        {
+            sb.AppendLine(test[i]);
+        }
+        popTView.Init(test[0], sb.ToString());
+    }
     // Update is called once per frame
     void Update()
     {
