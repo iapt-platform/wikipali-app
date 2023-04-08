@@ -55,9 +55,9 @@ public class MarkdownText
     //todo
     public static string PreprocessText(string text, int textSize = 0)
     {
-        text = text.Replace("|", "   ");
-        text = text.Replace("-", "    ");
-        text = text.Replace("<br>", "\r\n           ");
+        //text = text.Replace("|", "   ");
+        //text = text.Replace("-", "    ");
+        //text = text.Replace("<br>", "\r\n");
 
         //if (style != StyleMode.None)
         {
