@@ -155,7 +155,11 @@ public class DetailDicItemView : MonoBehaviour
     {
         string value = UserGrammar.grm_abbr[content];
         //string[] test = UserGrammar.grammar_cn["grammar_nt"];
-        string[] test = UserGrammar.grammar_cn["grammar_" + value];
+        string grammar_cn_key = "grammar_" + value;
+        if (!UserGrammar.grammar_cn.ContainsKey(grammar_cn_key))
+            return;
+
+        string[] test = UserGrammar.grammar_cn[grammar_cn_key];
         StringBuilder sb = new StringBuilder();
         int l = test.Length;
         for (int i = 0; i < l; i++)
