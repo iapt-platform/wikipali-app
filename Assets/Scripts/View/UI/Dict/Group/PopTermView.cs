@@ -9,6 +9,7 @@ public class PopTermView : MonoBehaviour
     public RectTransform detailRect;
     public Text detailText;
     public Button closeBackGroupBtn;
+    public RectTransform verticalLayoutGroup;
     public void Init(string title, string detail)
     {
         titleText.text = MarkdownText.PreprocessText(title, titleText.fontSize);
@@ -24,7 +25,11 @@ public class PopTermView : MonoBehaviour
         yield return null;
         float height = detailText.rectTransform.sizeDelta.y;
         detailRect.sizeDelta = new Vector2(detailRect.sizeDelta.x, height);
-
+        //每次点开位置归0
+        verticalLayoutGroup.localPosition = new Vector3(verticalLayoutGroup.localPosition.x, 0, verticalLayoutGroup.localPosition.z);
+        //刷新scollView为text长度
+        verticalLayoutGroup.gameObject.SetActive(false);
+        verticalLayoutGroup.gameObject.SetActive(true);
     }
 
     //void SetHeight()

@@ -12,6 +12,12 @@ public class StarGroupDictView : MonoBehaviour
     void Awake()
     {
         starToggle.onValueChanged.AddListener(OnToggleValueChanged);
+        shareBtn.onClick.AddListener(OnShareBtnClick);
+
+    }
+    public void OnShareBtnClick()
+    {
+     
 
     }
     bool isSet = false;

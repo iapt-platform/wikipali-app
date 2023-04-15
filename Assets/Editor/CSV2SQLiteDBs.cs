@@ -98,6 +98,7 @@ public class CSV2SQLiteDBs
         {
             //string note = dicItems[i].note;
             //note = dicItems[i].note.Replace("'", "\"");
+
             //if (dicItems[i].id == "65525")
             //{
             //    Debug.LogError(dicItems[i].id);

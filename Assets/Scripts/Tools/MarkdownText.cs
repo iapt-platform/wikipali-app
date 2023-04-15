@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -58,6 +60,88 @@ public class MarkdownText
         //text = text.Replace("|", "   ");
         //text = text.Replace("-", "    ");
         //text = text.Replace("<br>", "\r\n");
+        //表格里的换行<br>处理为新的一行表格
+        if (text.Contains("<br>") && text.Contains("|-|-|"))
+        {
+            StringBuilder sb = new StringBuilder();
+            string[] lineTexts = text.Split('\n');
+            int lc = lineTexts.Length;
+            bool startTable = false;
+            //表列数
+            int colCount = 0;
+            for (int i = 0; i < lc; i++)
+            {
+                bool isAppend = true;
+                if (lineTexts[i].Contains("|-|-|"))
+                {
+                    startTable = true;
+                    string[] temp = lineTexts[i].Split('|');
+                    colCount = temp.Length - 2;
+                }
+                if (startTable && lineTexts[i].Contains("<br>"))
+                {
+                    isAppend = false;
+                    lineTexts[i] = lineTexts[i].Replace("<br>", "$");
+                    string[] temp = lineTexts[i].Split('|');
+                    //string[] temp = lineTexts[i].Split('$');
+                    string strFormat = "|";
+                    string strFormatLine0 = "|";
+                    List<string> brStr = new List<string>();
+                    int tempID = 0;
+                    for (int j = 1; j < temp.Length - 1; j++)
+                    {
+
+                        if (temp[j].Contains("$"))
+                        {
+                            strFormatLine0 += "{" + tempID + "}" + "|";
+                            strFormat += "{" + tempID + "}" + " |";
+                            brStr.Add(temp[j]);
+                            ++tempID;
+                        }
+                        else
+                        {
+                            strFormatLine0 += temp[j] + "|";
+                            strFormat += "|";
+                        }
+                    }
+                    //todo 有多列br换行的情况
+                    //for (int j = 0; j < brStr.Count; j++)
+                    //{
+                    //    string[] tempBr = brStr[j].Split('$');
+                    //    if (j == 0)
+                    //    {
+
+                    //    }
+                    //    else
+                    //    { 
+
+                    //    }
+                    //}
+                    //只实现一列换行
+                    string[] tempBr = brStr[0].Split('$');
+                    for (int x = 0; x < tempBr.Length; x++)
+                    {
+                        if (x == 0)
+                        {
+                            string tempBR0 = strFormatLine0.Replace("{" + 0 + "}", tempBr[0]);
+                            sb.AppendLine(tempBR0);
+                        }
+                        else
+                        {
+                            string tempBRn = strFormat.Replace("{" + 0 + "}", tempBr[x]);
+                            sb.AppendLine(tempBRn);
+                        }
+                    }
+                }
+                if (startTable && !lineTexts[i].Contains("|"))
+                {
+                    startTable = false;
+                }
+                if (isAppend)
+                    sb.AppendLine(lineTexts[i]);
+            }
+            text = sb.ToString();
+        }
 
         //if (style != StyleMode.None)
         {

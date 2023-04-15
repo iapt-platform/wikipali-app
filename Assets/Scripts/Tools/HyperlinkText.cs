@@ -132,6 +132,7 @@ public class HyperlinkText : Text, IPointerClickHandler
             {
                 if (i >= toFill.currentVertCount)
                 {
+
                     break;
                 }
 
