@@ -308,11 +308,16 @@ public class DictManager
     }
     //当前查询的单词
     public string currWord = "";
+    //当前所有查询结果
+    public MatchedWordDetail[] currMatchedWordDetail;
     //查询每个词典，准确匹配
     public MatchedWordDetail[] MatchWordDetail(string word)
     {
         if (string.IsNullOrEmpty(word))
-            return new MatchedWordDetail[0];
+        {
+            currMatchedWordDetail = new MatchedWordDetail[0];
+            return currMatchedWordDetail;
+        }
         List<MatchedWordDetail> matchedWordList = new List<MatchedWordDetail>();
 
         dbManager.Getdb(db =>
@@ -337,8 +342,8 @@ public class DictManager
             }
         }, DBManager.DictDBurl);
 
-
-        return matchedWordList.ToArray();
+        currMatchedWordDetail = matchedWordList.ToArray();
+        return currMatchedWordDetail;
     }
     //是否存在该词，只查最全面的巴缅词典
     public bool IsHaveWord(string word)

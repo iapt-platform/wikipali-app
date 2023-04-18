@@ -8,6 +8,7 @@ public class StarGroupDictView : MonoBehaviour
     public Toggle starToggle;
     public Button shareBtn;
     public PopView popView;
+    public ShareView shareView;
     // Start is called before the first frame update
     void Awake()
     {
@@ -17,8 +18,8 @@ public class StarGroupDictView : MonoBehaviour
     }
     public void OnShareBtnClick()
     {
-     
-
+        shareView.gameObject.SetActive(true);
+        shareView.Init();
     }
     bool isSet = false;
     public void SetToggleValue(bool isOn)

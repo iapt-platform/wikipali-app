@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static DictManager;
 
 public class ItemShareDicSelectView : MonoBehaviour
 {
@@ -10,11 +11,10 @@ public class ItemShareDicSelectView : MonoBehaviour
     public string dicTableID;
     public string dicTableName;
 
-    public void Init(string _dicTableName, string _dicTitle)
+    public void Init(MatchedWordDetail word)
     {
-        title.text = _dicTitle;
-        dicTableName = _dicTableName;
-        dicTableID = _dicTitle;
+        title.text = word.dicName;
+        dicTableID = word.dicName;
     }
     // Start is called before the first frame update
     void Start()

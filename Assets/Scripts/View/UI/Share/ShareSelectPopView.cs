@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static DictManager;
 
 public class ShareSelectPopView : MonoBehaviour
 {
@@ -9,12 +10,15 @@ public class ShareSelectPopView : MonoBehaviour
     public Button returnBtn;
     public Button okBtn;
     public ShareView shareView;
-    List<string> dicIDStrList;
-    List<string> dicNameStrList;
-    public void Init(List<string> _dicIDStrList, List<string> _dicNameStrList)
+    MatchedWordDetail[] currMatchedWordDetail;
+    public void Init()
     {
-        dicIDStrList = _dicIDStrList;
-        dicNameStrList = _dicNameStrList;
+        currMatchedWordDetail = DictManager.Instance().currMatchedWordDetail;
+        if (currMatchedWordDetail == null || currMatchedWordDetail.Length == 0)
+        {
+            shareView.gameObject.SetActive(false);
+            return;
+        }
         RefreshItemList();
 
     }
@@ -24,7 +28,7 @@ public class ShareSelectPopView : MonoBehaviour
         int l = itemGoList.Count;
         for (int i = 0; i < l; i++)
         {
-            Destroy(itemGoList[i]);
+            Destroy(itemGoList[i].gameObject);
         }
         itemGoList.Clear();
 
@@ -32,13 +36,13 @@ public class ShareSelectPopView : MonoBehaviour
     void RefreshItemList()
     {
         DestroyItemList();
-        int l = dicIDStrList.Count;
+        int l = currMatchedWordDetail.Length;
         for (int i = 0; i < l; i++)
         {
             GameObject inst = Instantiate(itemView.gameObject, itemView.transform.parent, false);
             inst.transform.position = itemView.transform.position;
             ItemShareDicSelectView view = inst.GetComponent<ItemShareDicSelectView>();
-            view.Init(dicIDStrList[i], dicNameStrList[i]);
+            view.Init(currMatchedWordDetail[i]);
             inst.SetActive(true);
             itemGoList.Add(view);
         }
@@ -62,7 +66,7 @@ public class ShareSelectPopView : MonoBehaviour
             if (itemGoList[i].toggle.isOn)
             {
 
-                shareView.SelectDic(dicIDStrList[i], dicNameStrList[i]);
+                shareView.SelectDic(currMatchedWordDetail[i]);
                 break;
             }
 

@@ -56,8 +56,9 @@ public class CommonTool
     /// <param name="camera">Camera.要被截屏的相机</param>
     /// <param name="rect">Rect.截屏的区域</param>
     /// <returns>The screenshot2.</returns>
-    Texture2D CaptureCamera(Camera camera, Rect rect)
+    Texture2D CaptureCamera(Camera camera, Rect rect, Vector3 cameraPos)
     {
+        camera.transform.position = cameraPos;
         RenderTexture rt = new RenderTexture((int)rect.width, (int)rect.height, 0);//创建一个RenderTexture对象
         camera.targetTexture = rt;//临时设置相关相机的targetTexture为rt, 并手动渲染相关相机
         camera.Render();
@@ -91,7 +92,7 @@ public class CommonTool
     /// </summary>
     /// <param name="texture"></param>
     /// <returns></returns>
-    private void SaveImages(Texture2D texture)
+    public void SaveImages(Texture2D texture)
     {
         string path = Application.streamingAssetsPath;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -115,7 +116,7 @@ public class CommonTool
     /// 刷新相册（不需要单独创建原生aar或jar）
     /// </summary>
     /// <param name="path"></param>
-    private void OnSaveImagesPlartform(string filePath)
+    void OnSaveImagesPlartform(string filePath)
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
             string[] paths = new string[1];
@@ -135,7 +136,7 @@ public class CommonTool
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public Texture2D DeCompress(Texture2D source)
+    Texture2D DeCompress(Texture2D source)
     {
         RenderTexture renderTex = RenderTexture.GetTemporary(
                     source.width,
