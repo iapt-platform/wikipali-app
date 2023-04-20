@@ -32,6 +32,8 @@ public class ShareView : MonoBehaviour
     public RectTransform shareCompRT;
     public RectTransform backImgBackRT;
     public RectTransform backImgRT;
+    public GameObject tempParents;
+    public Camera mainCamera;
     //填充的图片的基本高度
     float fillImgBaseHeight;
     float test;
@@ -51,7 +53,7 @@ public class ShareView : MonoBehaviour
         startShareLayer.SetActive(false);
         shareBtnsLayer.SetActive(false);
         selectModeLayer.SetActive(false);
-        captureImgLayer.SetActive(false);
+        //captureImgLayer.SetActive(false);
         selectDicPopLayer.gameObject.SetActive(true);
         selectDicPopLayer.Init();
     }
@@ -84,6 +86,7 @@ public class ShareView : MonoBehaviour
     public void OnShareBtn()
     {
         shareBtnsLayer.SetActive(true);
+        ImgShot();
     }
     public void OnModeBtnClick(int id)
     {
@@ -92,9 +95,41 @@ public class ShareView : MonoBehaviour
         SetBackImgMatParam(backImgRT.sizeDelta.x, backImgRT.sizeDelta.y);
 
     }
-    // Update is called once per frame
-    void Update()
+    //public Vector2 testRect = new Vector2();
+    //public Vector2 testRead = new Vector2();
+    //截图
+    void ImgShot()
     {
+        GameObject tempShotGo = GameObject.Instantiate(captureImgLayer, tempParents.transform);
+        RectTransform rt = tempShotGo.GetComponent<RectTransform>();
+        Vector2 size = rt.sizeDelta;
+        rt.anchorMin = new Vector2(rt.anchorMin.x, 1);
+        rt.anchorMax = new Vector2(rt.anchorMax.x, 1);
+        rt.position = Vector3.zero;// new Vector3(size.x * 0.5f, 0, 0);
+        //rt.localPosition = new Vector3(rt.localPosition.x, rt.localPosition.y, 0);
+        rt.localPosition = new Vector3(rt.localPosition.x, 0, 0);
+        float yDivisionx = size.y / size.x;
+        float screenYDx = Screen.height / Screen.width;
+
+        if (screenYDx < yDivisionx)//长度超过屏幕长度
+        {
+            float ratio = Screen.height / size.y;
+            rt.localScale *= ratio;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 2, size.y - 20), mainCamera.transform.position);
+
+        }
+        else//长度不超过屏幕长度
+        {
+            float ratio = (Screen.height / size.y)*1.01f;
+            rt.localScale *= ratio;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 12, size.y - 18), mainCamera.transform.position);
+
+        }
+        //Debug.LogError(size.y * 0.5f);
+        //Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, backImgRT.sizeDelta.x, backImgRT.sizeDelta.y), mainCamera.transform.position);
+        GameObject.Destroy(tempShotGo);
 
     }
 
@@ -137,5 +172,12 @@ public class ShareView : MonoBehaviour
         backImg.material.SetVector("_SizeXY", new Vector4(x, y, 1, 1));
         backImg.gameObject.SetActive(false);
         backImg.gameObject.SetActive(true);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ImgShot();
+        }
     }
 }
