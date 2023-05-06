@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿//using cn.sharesdk.unity3d;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +23,7 @@ public class ShareView : MonoBehaviour
     //整体返回
     public Button returnBtn;
     public Button shareBtn;
+    public ShareTool shareTool;
     //组成图片的部分
     [Header("组成图片的部分")]
     public Text wordNameText;
@@ -46,6 +49,7 @@ public class ShareView : MonoBehaviour
     public Button shareQQ;
     public Button shareQQKJ;
     public Button shareSina;
+    public Button saveImg;
     public Button backBtn;
 
     public void Init()
@@ -64,6 +68,13 @@ public class ShareView : MonoBehaviour
         test = backImgBackRT.localPosition.y;
         test2 = backImgRT.localPosition.y;
 
+        shareWeiXin.onClick.AddListener(OnShareWeChat);
+        shareWeiXinPYQ.onClick.AddListener(OnShareWeChatMoments);
+        shareQQ.onClick.AddListener(OnShareQQ);
+        shareQQKJ.onClick.AddListener(OnShareQZone);
+        shareSina.onClick.AddListener(OnShareSina);
+
+        saveImg.onClick.AddListener(OnSaveImgBtn);
         backBtn.onClick.AddListener(OnBackBtn);
         returnBtn.onClick.AddListener(OnReturnBtn);
         shareBtn.onClick.AddListener(OnShareBtn);
@@ -86,6 +97,9 @@ public class ShareView : MonoBehaviour
     public void OnShareBtn()
     {
         shareBtnsLayer.SetActive(true);
+    }
+    public void OnSaveImgBtn()
+    {
         ImgShot();
     }
     public void OnModeBtnClick(int id)
@@ -98,6 +112,7 @@ public class ShareView : MonoBehaviour
     //public Vector2 testRect = new Vector2();
     //public Vector2 testRead = new Vector2();
     //截图
+    string imgPath;
     void ImgShot()
     {
         GameObject tempShotGo = GameObject.Instantiate(captureImgLayer, tempParents.transform);
@@ -109,28 +124,35 @@ public class ShareView : MonoBehaviour
         //rt.localPosition = new Vector3(rt.localPosition.x, rt.localPosition.y, 0);
         rt.localPosition = new Vector3(rt.localPosition.x, 0, 0);
         float yDivisionx = size.y / size.x;
-        float screenYDx = Screen.height / Screen.width;
-
+        float screenYDx = (float)Screen.height / (float)Screen.width;
+        Texture2D shot;
         if (screenYDx < yDivisionx)//长度超过屏幕长度
         {
-            float ratio = Screen.height / size.y;
-            rt.localScale *= ratio;
-            rt.localPosition += Vector3.down * size.y * 0.5f * ratio;// + Vector3.up * 100;// *0.75f;// * 0.5f;
-            Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 2, size.y - 20), mainCamera.transform.position);
+            float ratio = ((float)Screen.height / size.y) * 1.001f;
+            //?????????????????????
+            float ratio2 = 1170.0f / (float)Screen.width;
+            rt.localScale *= ratio * ratio2;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 20, size.y - 10/* - 20 * ratio2*/), mainCamera.transform.position);
 
         }
         else//长度不超过屏幕长度
         {
-            float ratio = (Screen.height / size.y)*1.01f;
-            rt.localScale *= ratio;
-            rt.localPosition += Vector3.down * size.y * 0.5f * ratio;// + Vector3.up * 100;// *0.75f;// * 0.5f;
-            Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 12, size.y - 18), mainCamera.transform.position);
+            float ratio = ((float)Screen.height / size.y) * 1.01f;
+            //?????????????????????
+            float ratio2 = 1170.0f / (float)Screen.width;
+            rt.localScale *= ratio * ratio2;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 12, size.y - 18), mainCamera.transform.position);
 
         }
         //Debug.LogError(size.y * 0.5f);
         //Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, backImgRT.sizeDelta.x, backImgRT.sizeDelta.y), mainCamera.transform.position);
-        GameObject.Destroy(tempShotGo);
 
+        GameObject.Destroy(tempShotGo);
+        DateTime NowTime = DateTime.Now.ToLocalTime();
+        shot.name = "wpa_" + NowTime.Year + NowTime.Month + NowTime.Day + NowTime.Hour + NowTime.Minute + NowTime.Second;
+        imgPath = CommonTool.SaveImages(shot);
     }
 
     public void SelectDic(MatchedWordDetail word)
@@ -180,4 +202,27 @@ public class ShareView : MonoBehaviour
             ImgShot();
         }
     }
+
+    #region 分享到平台
+    void OnShareWeChat()
+    {
+        //  shareTool.CommonShare(PlatformType.WeChat, imgPath);
+    }
+    void OnShareWeChatMoments()
+    {
+        //  shareTool.CommonShare(PlatformType.WeChatMoments, imgPath);
+    }
+    void OnShareQQ()
+    {
+        // shareTool.CommonShare(PlatformType.QQ, imgPath);
+    }
+    void OnShareQZone()
+    {
+        // shareTool.CommonShare(PlatformType.QZone, imgPath);
+    }
+    void OnShareSina()
+    {
+        // shareTool.CommonShare(PlatformType.SinaWeibo, imgPath);
+    }
+    #endregion
 }

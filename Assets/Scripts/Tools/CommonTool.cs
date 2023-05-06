@@ -75,86 +75,25 @@ public class CommonTool
         //重置相关参数，以使用camera继续在屏幕上显示
         camera.targetTexture = null;
         //ps: camera2.targetTexture = null;
+
         RenderTexture.active = null; //JC: added to avoid errors
         GameObject.Destroy(rt);
 
-        byte[] bytes = screenShot.EncodeToPNG();//最后将这些纹理数据，成一个png图片文件
-        string filename = Application.dataPath + "/Screenshot.png";
-        System.IO.File.WriteAllBytes(filename, bytes);
-        Debug.Log(string.Format("截屏了一张照片: {0}", filename));
+        //byte[] bytes = screenShot.EncodeToPNG();//最后将这些纹理数据，成一个png图片文件
+        //string filename = Application.dataPath + "/Screenshot.png";
+        //System.IO.File.WriteAllBytes(filename, bytes);
+        //Debug.Log(string.Format("截屏了一张照片: {0}", filename));
 
         return screenShot;
     }
-    /// <summary>  
-    /// 对相机截图。   
-    /// </summary>  
-    //Texture2D CaptureCamera(Camera camera, Rect rect, string indexName)
-    public static Texture2D CaptureCamera2(Camera camera, Rect rect, Vector3 cameraPos, Vector2 testRect, Vector2 testRead)
-    {
-        // 创建一个RenderTexture对象  
-        RenderTexture rt = new RenderTexture((int)rect.width, (int)rect.height, 0);
-        // 临时设置相关相机的targetTexture为rt, 并手动渲染相关相机  
-        camera.targetTexture = rt;
-        camera.Render();
-        //ps: --- 如果这样加上第二个相机，可以实现只截图某几个指定的相机一起看到的图像。  
-        //ps: camera2.targetTexture = rt;  
-        //ps: camera2.Render();  
-        //ps: -------------------------------------------------------------------  
 
-        // 激活这个rt, 并从中中读取像素。  
-        RenderTexture.active = rt;
-        Texture2D screenShot = new Texture2D((int)rect.width, (int)rect.height, TextureFormat.RGB24, false);
-        screenShot.ReadPixels(rect, (int)testRead.x, (int)testRead.y,false);// 注：这个时候，它是从RenderTexture.active中读取像素  
-        screenShot.Apply();
-
-        //重置相关参数，以使用camera继续在屏幕上显示
-        camera.targetTexture = null;
-        //ps: camera2.targetTexture = null;
-        //RenderTexture.active = null; // JC: added to avoid errors  
-        //GameObject.Destroy(rt);
-        // 最后将这些纹理数据，成一个png图片文件  
-        byte[] bytes = screenShot.EncodeToPNG();
-        string filename = Application.dataPath + "/Screenshot.png";
-        //string filename = Application.streamingAssetsPath + "/Screenshots/" + indexName + ".png";
-        System.IO.File.WriteAllBytes(filename, bytes);
-        Debug.Log(string.Format("截屏了一张照片: {0}", filename));
-        //#if UNITY_EDITOR
-        // AssetDatabase.Refresh();
-        //#endif
-        return screenShot;
-    }
-    static WaitForEndOfFrame frameEnd = new WaitForEndOfFrame();
-    public static IEnumerator TakeSnapshot(Rect rect)
-    {
-        yield return frameEnd;
-
-        Texture2D texture = new Texture2D((int)rect.width, (int)rect.height, TextureFormat.RGB24, true);
-        texture.ReadPixels(rect, -100, -100);
-        texture.LoadRawTextureData(texture.GetRawTextureData());
-        texture.Apply();
-
-        //Texture2D t = new Texture2D(730, 521, TextureFormat.RGB24, true);
-        //旋转
-        //t = TextureKit.Instance.GetRotateTexure2D(texture);
-
-        //放大
-        //TextureScale.Bilinear(t, 1021, 730);
-        // TextureKit.Instance.SaveTexture2DToPNG(texture, DataManager.Instance.m_sUIFinalMergeImagesFoldFullPath + "1.png");
-        byte[] bytes = texture.EncodeToPNG();//最后将这些纹理数据，成一个png图片文件
-        string filename = Application.dataPath + "/Screenshot.png";
-        System.IO.File.WriteAllBytes(filename, bytes);
-        //yield return new WaitForSeconds(1f);
-        //this.CloseSelf();
-        //UIKit.OpenPanel<UIUploadPanel>();
-        //Log.I("图片保存完成");
-    }
     //todo ios代码
     /// <summary>
     /// 保存图片
     /// </summary>
     /// <param name="texture"></param>
     /// <returns></returns>
-    public static void SaveImages(Texture2D texture)
+    public static string SaveImages(Texture2D texture)
     {
         string path = Application.streamingAssetsPath;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -166,13 +105,15 @@ public class CommonTool
         try
         {
             Application.HasUserAuthorization(UserAuthorization.Microphone);
-            byte[] data = DeCompress(texture).EncodeToPNG();
+            //byte[] data = DeCompress(texture).EncodeToPNG();
+            byte[] data = texture.EncodeToPNG();
             File.WriteAllBytes(savePath, data);
             OnSaveImagesPlartform(savePath);
         }
         catch
         {
         }
+        return savePath;
     }
     /// <summary>
     /// 刷新相册（不需要单独创建原生aar或jar）

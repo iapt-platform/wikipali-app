@@ -23,6 +23,7 @@ public class CalendarView : MonoBehaviour
     public Toggle mmCalToggle;
     public Toggle realCalToggle;
     public Toggle farmerCalToggle;
+    public Button todayBtn;
 
     // Start is called before the first frame update
     void Awake()
@@ -70,7 +71,12 @@ public class CalendarView : MonoBehaviour
         mmCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
         realCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
         farmerCalToggle.onValueChanged.AddListener(OnToggleValueChanged);
+        todayBtn.onClick.AddListener(OnClickToday);
         SetEra(DateTime.Today);
+    }
+    void OnClickToday()
+    {
+        controllerView.ClickToday();
     }
     int toggleFlag = 0;
     void OnToggleValueChanged(bool value)

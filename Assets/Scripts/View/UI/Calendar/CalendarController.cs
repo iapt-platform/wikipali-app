@@ -219,7 +219,7 @@ public class CalendarController : MonoBehaviour
         _dateTime = DateTime.Now;
 
         CreateCalendar();
-
+        InitToday();
         //_calendarPanel.SetActive(false);
     }
     Dictionary<DateTime, string> trueCalenderYearHolidays;
@@ -344,5 +344,24 @@ public class CalendarController : MonoBehaviour
         if (CalendarManager.Instance().isLocationed())
             cView.GetSunTime(time);//,0,0,0, DateTimeKind.Utc));
 
+    }
+    public void ClickToday()
+    {
+        _dateTime = DateTime.Today;
+        CreateCalendar();
+        int day = DateTime.Today.Day;
+        OnDateItemClick(day.ToString());
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(_dateItems[day].gameObject);
+        //_dateItems[day].GetComponent<Button>().onClick();
+
+    }
+    void InitToday()
+    {
+        int day = DateTime.Today.Day;
+        //ColorBlock cb = _dateItems[day].GetComponent<Button>().colors;
+        //cb.normalColor = new Color(0.04411763f, 0.6044625f, 1);
+        //Debug.LogError("!!!!!!!!!!!!");
+        //_dateItems[day].GetComponent<Button>().colors = cb;//.normalColor = Color.blue;
+        ClickToday();
     }
 }
