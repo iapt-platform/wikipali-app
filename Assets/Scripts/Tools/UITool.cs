@@ -14,7 +14,10 @@ public class UITool
     
     }
 
-
+    public static void ShowToastMessage(MonoBehaviour caller,string message)
+    {
+        Toast.Show(caller, message, 2, Toast.Type.MESSAGE);
+    }
 
 
 }

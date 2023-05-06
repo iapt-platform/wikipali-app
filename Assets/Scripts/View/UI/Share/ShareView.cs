@@ -153,6 +153,7 @@ public class ShareView : MonoBehaviour
         DateTime NowTime = DateTime.Now.ToLocalTime();
         shot.name = "wpa_" + NowTime.Year + NowTime.Month + NowTime.Day + NowTime.Hour + NowTime.Minute + NowTime.Second;
         imgPath = CommonTool.SaveImages(shot);
+        UITool.ShowToastMessage(this, "图片已保存：" + imgPath);
     }
 
     public void SelectDic(MatchedWordDetail word)

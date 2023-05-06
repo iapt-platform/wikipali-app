@@ -96,6 +96,9 @@ public class CommonTool
     public static string SaveImages(Texture2D texture)
     {
         string path = Application.streamingAssetsPath;
+#if UNITY_EDITOR
+            path = Application.dataPath;
+#endif
 #if UNITY_ANDROID && !UNITY_EDITOR
             path = "/sdcard/DCIM/Camera"; //设置图片保存到设备的目录.
 #endif
