@@ -14,9 +14,9 @@ public class UITool
     
     }
 
-    public static void ShowToastMessage(MonoBehaviour caller,string message)
+    public static void ShowToastMessage(MonoBehaviour caller,string message, int fontsize)
     {
-        Toast.Show(caller, message, 2, Toast.Type.MESSAGE);
+        Toast.Show(caller, message, 2, Toast.Type.MESSAGE,fontsize);
     }
 
 
