@@ -285,6 +285,9 @@ public class ArticleView : MonoBehaviour
     //    //PaliContentText.lin
     //}    
     List<GameObject> contentList = new List<GameObject>();
+    public List<string> articleContent;
+    public ChapterDBData currentChapterData;
+    public Book currentBook;
 
     public void ShowPaliContentTrans(Book book, ChapterDBData cNode, bool isTrans)
     {
@@ -307,7 +310,12 @@ public class ArticleView : MonoBehaviour
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
         //每50行新建一个text
-        List<string> text = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
+        List<string> text;
+        List<string> sentence;
+        currentChapterData = cNode;
+        currentBook = book;
+        (text, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
+        articleContent = sentence;
         if (text == null)
         {
             Debug.LogError("【预警】book id:" + book.id + "  没有文章内容 text = null");

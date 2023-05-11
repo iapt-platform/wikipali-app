@@ -155,7 +155,18 @@ public class ShareView : MonoBehaviour
         imgPath = CommonTool.SaveImages(shot);
         UITool.ShowToastMessage(this, "图片已保存\r\n" + imgPath, 35);
     }
+    //初始化文章内容
+    public void SelectArticle(string title, string user, string content)
+    {
+        startShareLayer.SetActive(true);
+        selectModeLayer.SetActive(true);
+        wordNameText.text = title;
+        dicNameText.text = user;
+        dicText.text = content;
 
+        StartCoroutine(SetHeight());
+    }
+    //初始化词典内容
     public void SelectDic(MatchedWordDetail word)
     {
         startShareLayer.SetActive(true);

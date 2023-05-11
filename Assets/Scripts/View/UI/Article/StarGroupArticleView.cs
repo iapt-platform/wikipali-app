@@ -18,7 +18,7 @@ public class StarGroupArticleView : MonoBehaviour
     }
     public void OnShareBtnClick()
     {
-        popView.RefreshGroupList();
+        popView.Init();
         popView.gameObject.SetActive(true);
 
         //shareView.gameObject.SetActive(true);

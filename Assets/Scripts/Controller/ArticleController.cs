@@ -370,10 +370,12 @@ public class ArticleController
     //获取整个巴利原文以及所有翻译
     //由于文字过长无法显示的问题，每50行，返回一个数组
     //todo 用行数衡量是否不准，是否需要改为字节数量
-    public List<string> GetPaliContentTransText(Book book, ChannelChapterDBData channel, bool isTrans)
+    //return 显示用的文章List，分享用的句子List
+    public (List<string>, List<string>) GetPaliContentTransText(Book book, ChannelChapterDBData channel, bool isTrans)
     {
         if (book == null)
-            return null;
+            return (null, null);
+
         //译文显示pali原文选项
         bool transContent = SettingManager.Instance().GetTransContent() == 1;
         List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
@@ -381,8 +383,9 @@ public class ArticleController
         if (isTrans)
             sentenceTrans = GetPaliSentenceTranslateByBookChannel(book, channel);
         if (sentence == null || sentence.Count == 0)
-            return null;
+            return (null, null);
         List<string> res = new List<string>();
+        List<string> sentenceRes = new List<string>();
         StringBuilder sb = new StringBuilder("");
         int l = sentence.Count;
         int tl = 0;
@@ -393,8 +396,10 @@ public class ArticleController
         {
             if (!isTrans || transContent)
             {
-                sb.AppendLine(sentence[i].content);
+                string sentenceNormalize = MarkdownText.RemoveHTMLStyle(sentence[i].content);
+                sb.AppendLine(sentenceNormalize);
                 sb.AppendLine("");
+                sentenceRes.Add(sentenceNormalize);
             }
             lineCount += 2;
             //todo 优化
@@ -404,23 +409,27 @@ public class ArticleController
                     if (sentenceTrans[j].paragraph == sentence[i].paragraph && sentenceTrans[j].word_start == sentence[i].word_start)
                     {
                         //sb.AppendLine();
-                        sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTrans[j].content);
+                        string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
+                        sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTransNormalize);
                         sb.AppendLine("");
                         sb.AppendLine("");
                         lineCount += 3;
+                        sentenceRes.Add(sentenceTransNormalize);
                         // break;
                     }
                 }
             if (lineCount >= LINE_COUNT_LIMIT)
             {
                 lineCount = 0;
+                //res.Add(MarkdownText.RemoveHTMLStyle(sb.ToString()));
                 res.Add(sb.ToString());
                 sb.Clear();
             }
         }
+        //res.Add(MarkdownText.RemoveHTMLStyle(sb.ToString()));
         res.Add(sb.ToString());
         sb.Clear();
-        return res;
+        return (res, sentenceRes);
     }
     #endregion
 }

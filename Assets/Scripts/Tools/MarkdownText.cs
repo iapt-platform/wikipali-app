@@ -247,7 +247,10 @@ public class MarkdownText
 
         return text;
     }
-
+    public static string RemoveHTMLStyle(string text)
+    {
+        return text.Replace("<br />", "");
+    }
     //public void OnPointerClick(PointerEventData eventData)
     //{
     //    if (PointerIsOverURL(eventData, out int linkIndex))
