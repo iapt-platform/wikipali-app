@@ -5,21 +5,37 @@ using UnityEngine.UI;
 
 public class ItemDicGroupWordView : MonoBehaviour
 {
+    public PopViewType currViewType;
     public Text titleText;
     public Button delBtn;
     public Button textBtn;
+    string articleTitle;
     string word;
     int groupID;
     CommonGroupView commonView;
     public DicGroupView dicGroupView;
     public PopView popView;
-    public void Init(string _word, int _groupID, CommonGroupView _commonView)
+    public void Init(string _word, int _groupID, CommonGroupView _commonView, PopViewType currViewType)
     {
-        word = _word;
+        if (currViewType == PopViewType.SaveDic)
+        {
+            word = _word;
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            articleTitle = _word;
+        }
         commonView = _commonView;
         groupID = _groupID;
         titleText.text = word;
     }
+    //public void Init(string _articleTitle, int _groupID, CommonGroupView _commonView)
+    //{
+    //    articleTitle = _articleTitle;
+    //    commonView = _commonView;
+    //    groupID = _groupID;
+    //    titleText.text = word;
+    //}
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +45,16 @@ public class ItemDicGroupWordView : MonoBehaviour
     }
     public void OnDelBtnClick()
     {
-        DictManager.Instance().DelWord(groupID, word);
+        if (currViewType == PopViewType.SaveDic)
+        {
+            DictManager.Instance().DelWord(groupID, word);
+
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            ArticleManager.Instance().DelArticle(groupID, articleTitle);
+
+        }
         commonView.RefreshGroupList();
     }
     //跳转到查词

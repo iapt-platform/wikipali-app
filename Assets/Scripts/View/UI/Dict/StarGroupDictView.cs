@@ -39,6 +39,7 @@ public class StarGroupDictView : MonoBehaviour
             isSet = false;
             return;
         }
+        popView.Init(PopViewType.SaveDic);
         popView.RefreshGroupList();
         popView.gameObject.SetActive(true);
     }

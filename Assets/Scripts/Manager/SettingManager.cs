@@ -58,6 +58,8 @@ public class SettingManager
         CalendarManager.Instance().StartLocation();
         //加载单词本
         DictManager.Instance().LoadAllDicGroup();
+        //加载文章收藏
+        ArticleManager.Instance().LoadAllArticleGroup();
         //??????没执行到这里，有报错？？？
         //CalendarManager.Instance().StartLocation();
 

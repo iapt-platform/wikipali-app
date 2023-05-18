@@ -535,4 +535,162 @@ public class ArticleManager
         return res;
     }
     #endregion
+
+    #region 文章收藏
+    public class ArticleGroupInfo
+    {
+        public int groupID;
+        public string groupName;
+        public List<string> bookTitleList;
+        public List<int> bookIDList;
+        public List<string> channelIDList;//channel ID为空是pali原文
+    }
+
+    //所有单词本
+    public List<ArticleGroupInfo> allArticleGroup = new List<ArticleGroupInfo>();
+    public int articleGroupCount;
+    /// <summary>
+    /// 加载所有收藏
+    /// </summary>
+    public void LoadAllArticleGroup()
+    {
+        int groupCount = PlayerPrefs.GetInt("articleGroupCount");
+        string[] dicGroupNameArr = PlayerPrefsX.GetStringArray("articleGroupName");
+        allArticleGroup.Clear();
+        for (int i = 0; i < groupCount; i++)
+        {
+            ArticleGroupInfo dg = new ArticleGroupInfo();
+            dg.groupID = i;
+            dg.groupName = dicGroupNameArr[i];
+            string[] articleTitleArr = PlayerPrefsX.GetStringArray("articleTitle" + i);
+            int[] bookIDArr = PlayerPrefsX.GetIntArray("bookID" + i);
+            string[] channelIDArr = PlayerPrefsX.GetStringArray("channelID" + i);
+            int wl = articleTitleArr.Length;
+            for (int j = 0; j < wl; j++)
+            {
+                dg.bookTitleList.Add(articleTitleArr[j]);
+                dg.bookIDList.Add(bookIDArr[j]);
+                dg.channelIDList.Add(channelIDArr[j]);
+            }
+            allArticleGroup.Add(dg);
+        }
+        articleGroupCount = groupCount;
+    }
+    void ClearArticleGroupData()
+    {
+        PlayerPrefs.DeleteKey("articleGroupName");
+        for (int i = 0; i < articleGroupCount; i++)
+        {
+            PlayerPrefs.DeleteKey("articleTitle" + i);
+            PlayerPrefs.DeleteKey("bookID" + i);
+            PlayerPrefs.DeleteKey("channelID" + i);
+        }
+        //dicGroupCount = 0;
+    }
+    public void ModifyArticleGroup()
+    {
+        PlayerPrefs.SetInt("articleGroupCount", allArticleGroup.Count);
+        articleGroupCount = allArticleGroup.Count;
+        ClearArticleGroupData();
+        List<string> dicNameList = new List<string>();
+        for (int i = 0; i < articleGroupCount; i++)
+        {
+            dicNameList.Add(allArticleGroup[i].groupName);
+            PlayerPrefsX.SetStringArray("articleTitle" + i, allArticleGroup[i].bookTitleList.ToArray());
+            PlayerPrefsX.SetIntArray("bookID" + i, allArticleGroup[i].bookIDList.ToArray());
+            PlayerPrefsX.SetStringArray("channelID" + i, allArticleGroup[i].channelIDList.ToArray());
+
+        }
+        PlayerPrefsX.SetStringArray("articleGroupName", dicNameList.ToArray());
+    }
+    public void DelGroup(int id)
+    {
+        allArticleGroup.RemoveAt(id);
+        int groupCount = allArticleGroup.Count;
+        articleGroupCount = groupCount;
+        for (int i = 0; i < groupCount; i++)
+        {
+            allArticleGroup[i].groupID = i;
+        }
+        ModifyArticleGroup();
+    }
+    public void AddGroup(string gName)
+    {
+        ArticleGroupInfo group = new ArticleGroupInfo();
+        group.groupName = gName;
+        group.groupID = articleGroupCount;
+        allArticleGroup.Add(group);
+        int groupCount = allArticleGroup.Count;
+        articleGroupCount = groupCount;
+        ModifyArticleGroup();
+    }
+    public void DelArticle(int groupID, string articleTitle)//,int bookID,string channelID)
+    {
+        //todo 以文章标题查找是否唯一？？？？？？可能会出现误删bug
+        int index = allArticleGroup[groupID].bookTitleList.IndexOf(articleTitle);
+        allArticleGroup[groupID].bookTitleList.RemoveAt(index);
+        allArticleGroup[groupID].bookIDList.RemoveAt(index);
+        allArticleGroup[groupID].channelIDList.RemoveAt(index);
+        PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
+        PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
+        PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
+    }
+    public void AddArticle(int groupID, string articleTitle, int bookID, string channelID)
+    {
+        allArticleGroup[groupID].bookTitleList.Add(articleTitle);
+        allArticleGroup[groupID].bookIDList.Add(bookID);
+        allArticleGroup[groupID].channelIDList.Add(channelID);
+        PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
+        PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
+        PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
+    }
+    //改组名
+    public void ChangeGroupName(int groupID, string name)
+    {
+        string[] nameArr = PlayerPrefsX.GetStringArray("articleGroupName");
+        nameArr[groupID] = name;
+        PlayerPrefsX.SetStringArray("articleGroupName", nameArr);
+    }
+    public StarGroupArticleView articleStarGroup;
+    /// <summary>
+    /// 当前单词是否被收藏
+    /// </summary>
+    /// <param name="word"></param>
+    public void SetArticleStar(string articleTitle, int bookID, string channelID)
+    {
+        bool isStar = false;
+        int l = allArticleGroup.Count;
+        for (int i = 0; i < l; i++)
+        {
+            if (allArticleGroup[i].bookTitleList.Contains(articleTitle))
+            {
+                for (int j = 0; j < allArticleGroup[i].bookTitleList.Count; j++)
+                {
+                    if (allArticleGroup[i].bookTitleList[j] == articleTitle &&
+                       allArticleGroup[i].bookIDList[j] == bookID &&
+                       allArticleGroup[i].channelIDList[j] == channelID)
+                    {
+                        isStar = true;
+                        break;
+                    }
+                }
+            }
+        }
+        articleStarGroup.SetToggleValue(isStar);
+    }
+
+    public bool IsContainsWord(int groupId, string articleTitle, int bookID, string channelID)
+    {
+        for (int j = 0; j < allArticleGroup[groupId].bookTitleList.Count; j++)
+        {
+            if (allArticleGroup[groupId].bookTitleList[j] == articleTitle &&
+               allArticleGroup[groupId].bookIDList[j] == bookID &&
+               allArticleGroup[groupId].channelIDList[j] == channelID)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }

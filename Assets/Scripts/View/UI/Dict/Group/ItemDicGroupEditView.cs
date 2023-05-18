@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static ArticleManager;
 using static DictManager;
 
 public class ItemDicGroupEditView : MonoBehaviour
 {
+    public PopViewType currViewType;
     public DicGroupPopView dicGroupPopView;
     public Text titleText;
     public Button wordBtn;
     public Button editBtn;
     public Button delBtn;
     public DicGroupInfo dicGroupInfo;
+    public ArticleGroupInfo articleGroupInfo;
     public DicGroupView dView;
     public CommonGroupView commonGroupView;
     public void Init(DicGroupInfo _dicGroupInfo)
     {
         dicGroupInfo = _dicGroupInfo;
         titleText.text = dicGroupInfo.groupName;
+    }
+    public void Init(ArticleGroupInfo _articleGroupInfo)
+    {
+        articleGroupInfo = _articleGroupInfo;
+        titleText.text = articleGroupInfo.groupName;
     }
     // Start is called before the first frame update
     void Start()
@@ -31,7 +39,15 @@ public class ItemDicGroupEditView : MonoBehaviour
     public void OnEditBtnClick()
     {
         //todo：回调函数
-        dicGroupPopView.Init(dicGroupInfo);
+        if (currViewType == PopViewType.SaveDic)
+        {
+            dicGroupPopView.Init(dicGroupInfo);
+
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            dicGroupPopView.Init(articleGroupInfo);
+        }
         dicGroupPopView.SetEdit();
         dicGroupPopView.gameObject.SetActive(true);
 
@@ -40,7 +56,15 @@ public class ItemDicGroupEditView : MonoBehaviour
     {
         if (boolean)
         {
-            DictManager.Instance().DelGroup(dicGroupInfo.groupID);
+            if (currViewType == PopViewType.SaveDic)
+            {
+                DictManager.Instance().DelGroup(dicGroupInfo.groupID);
+
+            }
+            else if (currViewType == PopViewType.SaveArticle)
+            {
+                DictManager.Instance().DelGroup(articleGroupInfo.groupID);
+            }
             dView.RefreshGroupList();
         }
     }
@@ -48,11 +72,20 @@ public class ItemDicGroupEditView : MonoBehaviour
     {
         //todo:
         UITool.PopOutView(DelFunc);
-
     }
     public void OnWordBtnClick()
     {
-        commonGroupView.InitDicGroupWordView(dicGroupInfo);
+        if (currViewType == PopViewType.SaveDic)
+        {
+            commonGroupView.InitDicGroupWordView(dicGroupInfo);
+
+
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            commonGroupView.InitArticleGroupWordView(articleGroupInfo);
+
+        }
         commonGroupView.gameObject.SetActive(true);
     }
     // Update is called once per frame

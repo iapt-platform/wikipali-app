@@ -128,22 +128,23 @@ public class ShareView : MonoBehaviour
         Texture2D shot;
         if (screenYDx < yDivisionx)//长度超过屏幕长度
         {
-            float ratio = ((float)Screen.height / size.y) * 1.001f;
+            float ratio = ((float)Screen.width / size.x) * 1.01f;
             //?????????????????????
             float ratio2 = 1170.0f / (float)Screen.width;
             rt.localScale *= ratio * ratio2;
             rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
-            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 20, size.y - 10/* - 20 * ratio2*/), mainCamera.transform.position);
+            //??????????????????????????????
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 20, size.y - 20 * ratio2 - 10 * yDivisionx), mainCamera.transform.position);
 
         }
         else//长度不超过屏幕长度
         {
-            float ratio = ((float)Screen.height / size.y) * 1.01f;
+            float ratio = ((float)Screen.width / size.x) * 1.01f;
             //?????????????????????
             float ratio2 = 1170.0f / (float)Screen.width;
             rt.localScale *= ratio * ratio2;
             rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
-            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 12, size.y - 18), mainCamera.transform.position);
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x * 2, size.y * 2), mainCamera.transform.position);
 
         }
         //Debug.LogError(size.y * 0.5f);
@@ -155,6 +156,50 @@ public class ShareView : MonoBehaviour
         imgPath = CommonTool.SaveImages(shot);
         UITool.ShowToastMessage(this, "图片已保存\r\n" + imgPath, 35);
     }
+    /* unity 2018 verson
+    void ImgShot()
+    {
+        GameObject tempShotGo = GameObject.Instantiate(captureImgLayer, tempParents.transform);
+        RectTransform rt = tempShotGo.GetComponent<RectTransform>();
+        Vector2 size = rt.sizeDelta;
+        rt.anchorMin = new Vector2(rt.anchorMin.x, 1);
+        rt.anchorMax = new Vector2(rt.anchorMax.x, 1);
+        rt.position = Vector3.zero;// new Vector3(size.x * 0.5f, 0, 0);
+        //rt.localPosition = new Vector3(rt.localPosition.x, rt.localPosition.y, 0);
+        rt.localPosition = new Vector3(rt.localPosition.x, 0, 0);
+        float yDivisionx = size.y / size.x;
+        float screenYDx = (float)Screen.height / (float)Screen.width;
+        Texture2D shot;
+        if (screenYDx < yDivisionx)//长度超过屏幕长度
+        {
+            float ratio = ((float)Screen.height / size.y) * 1.001f;
+            //?????????????????????
+            float ratio2 = 1170.0f / (float)Screen.width;
+            rt.localScale *= ratio * ratio2;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x - 20, size.y - 10), mainCamera.transform.position);
+
+        }
+        else//长度不超过屏幕长度
+        {
+            float ratio = ((float)Screen.height / size.y) * 1.01f;
+            //?????????????????????
+            float ratio2 = 1170.0f / (float)Screen.width;
+            rt.localScale *= ratio * ratio2;
+            rt.localPosition += Vector3.down * size.y * 0.5f * ratio * ratio2;// + Vector3.up * 100;// *0.75f;// * 0.5f;
+            shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, size.x * 2, size.y * 2), mainCamera.transform.position);
+
+        }
+        //Debug.LogError(size.y * 0.5f);
+        //Texture2D shot = CommonTool.CaptureCamera(mainCamera, new Rect(0, 0, backImgRT.sizeDelta.x, backImgRT.sizeDelta.y), mainCamera.transform.position);
+
+        //GameObject.Destroy(tempShotGo);
+        DateTime NowTime = DateTime.Now.ToLocalTime();
+        shot.name = "wpa_" + NowTime.Year + NowTime.Month + NowTime.Day + NowTime.Hour + NowTime.Minute + NowTime.Second;
+        imgPath = CommonTool.SaveImages(shot);
+        UITool.ShowToastMessage(this, "图片已保存\r\n" + imgPath, 35);
+    }
+    */
     //初始化文章内容
     public void SelectArticle(string title, string user, string content)
     {

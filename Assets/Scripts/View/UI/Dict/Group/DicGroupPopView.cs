@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static ArticleManager;
 using static DictManager;
 
 public class DicGroupPopView : MonoBehaviour
 {
+    public PopViewType currViewType;
     public Text titleText;
     public Button popViewReturnBtn;
     public Button popViewCancelBtn;
     public Button okBtn;
     public InputField inputField;
+    public ArticleGroupInfo articleGroupInfo;
     public DicGroupInfo dicGroupInfo;
     public DicGroupView dView;
     public bool isEdit = true;
@@ -18,6 +21,11 @@ public class DicGroupPopView : MonoBehaviour
     {
         dicGroupInfo = _dicGroupInfo;
         inputField.text = dicGroupInfo.groupName;
+    }
+    public void Init(ArticleGroupInfo _articleGroupInfo)
+    {
+        articleGroupInfo = _articleGroupInfo;
+        inputField.text = articleGroupInfo.groupName;
     }
     // Start is called before the first frame update
     void Start()
@@ -31,8 +39,7 @@ public class DicGroupPopView : MonoBehaviour
     {
         this.gameObject.SetActive(false);
     }
-    //改名
-    public void OnOkBtnClick()
+    void ChangeNameDic()
     {
         if (isEdit)
         {
@@ -60,6 +67,50 @@ public class DicGroupPopView : MonoBehaviour
             }
         }
         this.gameObject.SetActive(false);
+
+    }
+    void ChangeNameArticle()
+    {
+        if (isEdit)
+        {
+            if (string.IsNullOrEmpty(inputField.text))
+            {
+                //todo 弹出提示
+            }
+            else if (inputField.text != articleGroupInfo.groupName)
+            {
+                articleGroupInfo.groupName = inputField.text;
+                ArticleManager.Instance().ChangeGroupName(articleGroupInfo.groupID, articleGroupInfo.groupName);
+                dView.RefreshGroupList();
+            }
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(inputField.text))
+            {
+                //todo 弹出提示
+            }
+            else
+            {
+                ArticleManager.Instance().AddGroup(inputField.text);
+                dView.RefreshGroupList();
+            }
+        }
+        this.gameObject.SetActive(false);
+
+    }
+    //改名
+    public void OnOkBtnClick()
+    {
+        if (currViewType == PopViewType.SaveDic)
+        {
+            ChangeNameDic();
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            ChangeNameArticle();
+        }
+
     }
     //编辑模式
     public void SetEdit()

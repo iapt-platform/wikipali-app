@@ -7,7 +7,8 @@ public class StarGroupArticleView : MonoBehaviour
 {
     public Toggle starToggle;
     public Button shareBtn;
-    public PopArticleSentenceSelectView popView;
+    public PopArticleSentenceSelectView popSentenceSelectView;
+    public PopView popView;
     //public ShareView shareView;
     // Start is called before the first frame update
     void Awake()
@@ -18,8 +19,8 @@ public class StarGroupArticleView : MonoBehaviour
     }
     public void OnShareBtnClick()
     {
-        popView.Init();
-        popView.gameObject.SetActive(true);
+        popSentenceSelectView.Init();
+        popSentenceSelectView.gameObject.SetActive(true);
 
         //shareView.gameObject.SetActive(true);
         //shareView.Init();
@@ -37,13 +38,14 @@ public class StarGroupArticleView : MonoBehaviour
     }
     void OnToggleValueChanged(bool value)
     {
-        //if (isSet)
-        //{
-        //    isSet = false;
-        //    return;
-        //}
-        //popView.RefreshGroupList();
-        //popView.gameObject.SetActive(true);
+        if (isSet)
+        {
+            isSet = false;
+            return;
+        }
+        popView.Init(PopViewType.SaveArticle);
+        popView.RefreshGroupList();
+        popView.gameObject.SetActive(true);
     }
     // Update is called once per frame
     void Update()

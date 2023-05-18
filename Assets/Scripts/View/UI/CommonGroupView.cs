@@ -2,21 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static ArticleManager;
 using static DictManager;
 //todo:这个面板做成prefab加载，可以显示多个
 public class CommonGroupView : MonoBehaviour
 {
+    public PopViewType currViewType;
     public Button returnBtn;
     public Button addBtn;
     public Text titleText;
     //DicGroupPopView
     public ItemDicGroupWordView wordItem;
     DicGroupInfo dicGroupInfo;
+    ArticleGroupInfo articleGroupInfo;
     public void InitDicGroupWordView(DicGroupInfo _dicGroupInfo)
     {
         dicGroupInfo = _dicGroupInfo;
         addBtn.gameObject.SetActive(false);
         titleText.text = dicGroupInfo.groupName;
+        RefreshGroupList();
+    }
+    public void InitArticleGroupWordView(ArticleGroupInfo _articleGroupInfo)
+    {
+        articleGroupInfo = _articleGroupInfo;
+        addBtn.gameObject.SetActive(false);
+        titleText.text = articleGroupInfo.groupName;
         RefreshGroupList();
     }
     void Start()
@@ -43,13 +53,8 @@ public class CommonGroupView : MonoBehaviour
         itemList.Clear();
 
     }
-    List<ItemDicGroupWordView> itemList = new List<ItemDicGroupWordView>();
-    /// <summary> 
-    /// 刷新分组信息
-    /// </summary>
-    public void RefreshGroupList()
+    void RefreshDicGList()
     {
-        DelAllListGO();
         int l = itemList.Count;
         for (int i = 0; i < l; i++)
         {
@@ -64,9 +69,46 @@ public class CommonGroupView : MonoBehaviour
             inst.transform.position = wordItem.transform.position;
             //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
-            iv.Init(dicGroupInfo.wordList[i], dicGroupInfo.groupID, this);
+            iv.Init(dicGroupInfo.wordList[i], dicGroupInfo.groupID, this, currViewType);
             inst.SetActive(true);
             itemList.Add(iv);
+        }
+    }
+    void RefreshArticleGList()
+    {
+        int l = itemList.Count;
+        for (int i = 0; i < l; i++)
+        {
+            Destroy(itemList[i].gameObject);
+        }
+        itemList.Clear();
+
+        int gl = articleGroupInfo.bookTitleList.Count;
+        for (int i = 0; i < gl; i++)
+        {
+            GameObject inst = Instantiate(wordItem.gameObject, wordItem.transform.parent, false);
+            inst.transform.position = wordItem.transform.position;
+            //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
+            ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
+            iv.Init(articleGroupInfo.bookTitleList[i], dicGroupInfo.groupID, this, currViewType);
+            inst.SetActive(true);
+            itemList.Add(iv);
+        }
+    }
+    List<ItemDicGroupWordView> itemList = new List<ItemDicGroupWordView>();
+    /// <summary> 
+    /// 刷新分组信息
+    /// </summary>
+    public void RefreshGroupList()
+    {
+        DelAllListGO();
+        if (currViewType == PopViewType.SaveDic)
+        {
+            RefreshDicGList();
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            RefreshArticleGList();
         }
 
     }

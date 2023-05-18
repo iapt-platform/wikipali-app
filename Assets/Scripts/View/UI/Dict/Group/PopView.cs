@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static DictManager;
-
+public enum PopViewType
+{
+    SaveDic = 1,
+    SaveArticle = 2,
+}
 public class PopView : MonoBehaviour
 {
+
+    public PopViewType currViewType;
     public Button editGroupBtn;
     public Button closeBackGroupBtn;
     public Button okBtn;
@@ -18,6 +24,10 @@ public class PopView : MonoBehaviour
         closeBackGroupBtn.onClick.AddListener(OnCloseBackBtnClick);
         okBtn.onClick.AddListener(OnOkBtnClick);
 
+    }
+    public void Init(PopViewType pvt)
+    {
+        currViewType = pvt;
     }
     public void OnEditBtnClick()
     {
