@@ -21,7 +21,11 @@ public class DicGroupView : MonoBehaviour
         addBtn.onClick.AddListener(OnAddBtnClick);
 
     }
+    public void Init(PopViewType _currViewType)
+    {
+        currViewType = _currViewType;
 
+    }
     void RefreshDicGList()
     {
         int l = itemList.Count;
@@ -88,6 +92,7 @@ public class DicGroupView : MonoBehaviour
     public void OnAddBtnClick()
     {
         //RefreshGroupList();
+        dicGroupPopView.currViewType = currViewType;
         dicGroupPopView.gameObject.SetActive(true);
         dicGroupPopView.SetAdd();
     }

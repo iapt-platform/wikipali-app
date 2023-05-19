@@ -29,6 +29,10 @@ public class MainView : MonoBehaviour
     {
         dicToggle.isOn = true;
     }
+    public void SetArticleOn()
+    {
+        articleToggle.isOn = true;
+    }
     void OnDicToggleValueChanged(bool value)
     {
         dicView.gameObject.SetActive(value);

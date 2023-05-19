@@ -16,11 +16,13 @@ public class GameManager : MonoBehaviour
     }
     public InitView initView;
     public StarGroupDictView dicStarGroup;
+    public StarGroupArticleView articleStarGroup;
     public MainView mainView;
     void Awake()
     {
         SettingManager.Instance().InitGame();
         DictManager.Instance().dicStarGroup = dicStarGroup;
+        ArticleManager.Instance().articleStarGroup = articleStarGroup;
     }
     bool isStartUnZipDB = false;
     public void StartUnZipDB()

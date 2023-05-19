@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static ArticleController;
+using static ArticleManager;
 using static DictManager;
 public enum PopViewType
 {
@@ -17,6 +19,7 @@ public class PopView : MonoBehaviour
     public Button okBtn;
     public DicGroupView dicGroupView;
     public ItemDicGroupPopView groupItem;
+    public ArticleView articleView;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +34,7 @@ public class PopView : MonoBehaviour
     }
     public void OnEditBtnClick()
     {
+        dicGroupView.Init(currViewType);
         dicGroupView.RefreshGroupList();
         dicGroupView.gameObject.SetActive(true);
     }
@@ -44,7 +48,7 @@ public class PopView : MonoBehaviour
         DictManager.Instance().SetWordStar(DictManager.Instance().currWord);
         this.gameObject.SetActive(false);
     }
-    public void OnOkBtnClick()
+    void SaveDicGroup()
     {
         int l = itemList.Count;
         bool isDirty = false;
@@ -71,6 +75,101 @@ public class PopView : MonoBehaviour
         if (isDirty)
             DictManager.Instance().ModifyDicGroup();
         DictManager.Instance().SetWordStar(DictManager.Instance().currWord);
+
+    }
+    void SaveArticleGroup()
+    {
+        int l = itemList.Count;
+        bool isDirty = false;
+
+        Book currentBook = articleView.currentBook;
+        ChapterDBData currentChapterData = articleView.currentChapterData;
+        string channelID = currentChapterData == null ? "" : currentChapterData.id;
+        for (int i = 0; i < l; i++)
+        {
+
+            if (itemList[i].GetSelectState())
+            {
+                bool isMatch = false;
+                for (int j = 0; j < itemList[i].articleGroupInfo.bookTitleList.Count; j++)
+                {
+                    if (itemList[i].articleGroupInfo.bookTitleList[j] == currentBook.translateName &&
+                        itemList[i].articleGroupInfo.bookIDList[j] == currentBook.id &&
+                        itemList[i].articleGroupInfo.channelIDList[j] == channelID)
+                    {
+                        isMatch = true;
+                    }
+                }
+                isDirty = !isMatch;
+                if (isDirty)
+                {
+                    itemList[i].articleGroupInfo.bookTitleList.Add(currentBook.translateName);
+                    itemList[i].articleGroupInfo.bookIDList.Add(currentBook.id);
+                    itemList[i].articleGroupInfo.channelIDList.Add(channelID);
+                }
+            }
+            else
+            {
+                for (int j = 0; j < itemList[i].articleGroupInfo.bookTitleList.Count; j++)
+                {
+                    if (itemList[i].articleGroupInfo.bookTitleList[j] == currentBook.translateName &&
+                        itemList[i].articleGroupInfo.bookIDList[j] == currentBook.id &&
+                        itemList[i].articleGroupInfo.channelIDList[j] == channelID)
+                    {
+                        itemList[i].articleGroupInfo.bookTitleList.RemoveAt(j);
+                        itemList[i].articleGroupInfo.bookIDList.RemoveAt(j);
+                        itemList[i].articleGroupInfo.channelIDList.RemoveAt(j);
+                        isDirty = true;
+                        break;
+                    }
+                }
+            }
+        }
+        this.gameObject.SetActive(false);
+        if (isDirty)
+            ArticleManager.Instance().ModifyArticleGroup();
+        ArticleManager.Instance().SetArticleStar(currentBook.translateName, currentBook.id, channelID);
+    }
+    public void OnOkBtnClick()
+    {
+        if (currViewType == PopViewType.SaveDic)
+        {
+            SaveDicGroup();
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            SaveArticleGroup();
+        }
+    }
+    void RefreshDicGList()
+    {
+        List<DicGroupInfo> allDicGroup = DictManager.Instance().allDicGroup;
+        int gl = allDicGroup.Count;
+        for (int i = 0; i < gl; i++)
+        {
+            GameObject inst = Instantiate(groupItem.gameObject, groupItem.transform.parent, false);
+            inst.transform.position = groupItem.transform.position;
+            //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
+            ItemDicGroupPopView iv = inst.GetComponent<ItemDicGroupPopView>();
+            iv.Init(allDicGroup[i]);
+            inst.SetActive(true);
+            itemList.Add(iv);
+        }
+    }
+    void RefreshArticleGList()
+    {
+        List<ArticleGroupInfo> allArticleGroup = ArticleManager.Instance().allArticleGroup;
+        int gl = allArticleGroup.Count;
+        for (int i = 0; i < gl; i++)
+        {
+            GameObject inst = Instantiate(groupItem.gameObject, groupItem.transform.parent, false);
+            inst.transform.position = groupItem.transform.position;
+            //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
+            ItemDicGroupPopView iv = inst.GetComponent<ItemDicGroupPopView>();
+            iv.Init(allArticleGroup[i]);
+            inst.SetActive(true);
+            itemList.Add(iv);
+        }
     }
     List<ItemDicGroupPopView> itemList = new List<ItemDicGroupPopView>();
     /// <summary> 
@@ -85,18 +184,16 @@ public class PopView : MonoBehaviour
         }
         itemList.Clear();
 
-        List<DicGroupInfo> allDicGroup = DictManager.Instance().allDicGroup;
-        int gl = allDicGroup.Count;
-        for (int i = 0; i < gl; i++)
+        if (currViewType == PopViewType.SaveDic)
         {
-            GameObject inst = Instantiate(groupItem.gameObject, groupItem.transform.parent, false);
-            inst.transform.position = groupItem.transform.position;
-            //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
-            ItemDicGroupPopView iv = inst.GetComponent<ItemDicGroupPopView>();
-            iv.Init(allDicGroup[i]);
-            inst.SetActive(true);
-            itemList.Add(iv);
+            RefreshDicGList();
         }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            RefreshArticleGList();
+        }
+
+
 
     }
     // Update is called once per frame

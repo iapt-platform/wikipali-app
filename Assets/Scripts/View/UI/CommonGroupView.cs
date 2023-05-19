@@ -17,6 +17,7 @@ public class CommonGroupView : MonoBehaviour
     ArticleGroupInfo articleGroupInfo;
     public void InitDicGroupWordView(DicGroupInfo _dicGroupInfo)
     {
+        currViewType = PopViewType.SaveDic;
         dicGroupInfo = _dicGroupInfo;
         addBtn.gameObject.SetActive(false);
         titleText.text = dicGroupInfo.groupName;
@@ -24,6 +25,7 @@ public class CommonGroupView : MonoBehaviour
     }
     public void InitArticleGroupWordView(ArticleGroupInfo _articleGroupInfo)
     {
+        currViewType = PopViewType.SaveArticle;
         articleGroupInfo = _articleGroupInfo;
         addBtn.gameObject.SetActive(false);
         titleText.text = articleGroupInfo.groupName;
@@ -90,7 +92,7 @@ public class CommonGroupView : MonoBehaviour
             inst.transform.position = wordItem.transform.position;
             //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
-            iv.Init(articleGroupInfo.bookTitleList[i], dicGroupInfo.groupID, this, currViewType);
+            iv.Init(articleGroupInfo.bookTitleList[i], articleGroupInfo.groupID, this, currViewType);
             inst.SetActive(true);
             itemList.Add(iv);
         }

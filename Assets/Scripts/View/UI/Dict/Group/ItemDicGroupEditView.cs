@@ -21,13 +21,16 @@ public class ItemDicGroupEditView : MonoBehaviour
     {
         dicGroupInfo = _dicGroupInfo;
         titleText.text = dicGroupInfo.groupName;
+        currViewType = PopViewType.SaveDic;
     }
     public void Init(ArticleGroupInfo _articleGroupInfo)
     {
         articleGroupInfo = _articleGroupInfo;
         titleText.text = articleGroupInfo.groupName;
+        currViewType = PopViewType.SaveArticle;
     }
     // Start is called before the first frame update
+
     void Start()
     {
         editBtn.onClick.AddListener(OnEditBtnClick);
@@ -59,11 +62,12 @@ public class ItemDicGroupEditView : MonoBehaviour
             if (currViewType == PopViewType.SaveDic)
             {
                 DictManager.Instance().DelGroup(dicGroupInfo.groupID);
-
+                dView.Init(PopViewType.SaveDic);
             }
             else if (currViewType == PopViewType.SaveArticle)
             {
                 DictManager.Instance().DelGroup(articleGroupInfo.groupID);
+                dView.Init(PopViewType.SaveArticle);
             }
             dView.RefreshGroupList();
         }

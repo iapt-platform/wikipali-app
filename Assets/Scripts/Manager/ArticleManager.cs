@@ -562,6 +562,9 @@ public class ArticleManager
             ArticleGroupInfo dg = new ArticleGroupInfo();
             dg.groupID = i;
             dg.groupName = dicGroupNameArr[i];
+            dg.bookTitleList = new List<string>();
+            dg.bookIDList = new List<int>();
+            dg.channelIDList = new List<string>();
             string[] articleTitleArr = PlayerPrefsX.GetStringArray("articleTitle" + i);
             int[] bookIDArr = PlayerPrefsX.GetIntArray("bookID" + i);
             string[] channelIDArr = PlayerPrefsX.GetStringArray("channelID" + i);
@@ -619,6 +622,9 @@ public class ArticleManager
         ArticleGroupInfo group = new ArticleGroupInfo();
         group.groupName = gName;
         group.groupID = articleGroupCount;
+        group.bookTitleList = new List<string>();
+        group.bookIDList = new List<int>();
+        group.channelIDList = new List<string>();
         allArticleGroup.Add(group);
         int groupCount = allArticleGroup.Count;
         articleGroupCount = groupCount;
@@ -679,7 +685,7 @@ public class ArticleManager
         articleStarGroup.SetToggleValue(isStar);
     }
 
-    public bool IsContainsWord(int groupId, string articleTitle, int bookID, string channelID)
+    public bool IsContainsArticle(int groupId, string articleTitle, int bookID, string channelID)
     {
         for (int j = 0; j < allArticleGroup[groupId].bookTitleList.Count; j++)
         {

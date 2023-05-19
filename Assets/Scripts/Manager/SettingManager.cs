@@ -34,9 +34,19 @@ public class SettingManager
         //初始化单词本
         if (!PlayerPrefs.HasKey("dicGroupCount"))
         {
+            //?????默认是1？应该是0
             PlayerPrefs.SetInt("dicGroupCount", 1);
             PlayerPrefs.SetString("dicGroupName", "默认单词本");
             PlayerPrefs.SetString("dic0", "");
+        }
+        //PlayerPrefs.DeleteKey("articleGroupCount");
+        if (!PlayerPrefs.HasKey("articleGroupCount"))
+        {
+            PlayerPrefs.SetInt("articleGroupCount", 1);
+            PlayerPrefs.SetString("articleGroupName", "默认收藏");
+            PlayerPrefs.SetString("articleTitle0", "");
+            PlayerPrefs.SetString("bookID0", "0");
+            PlayerPrefs.SetString("channelID0", "");
         }
         if (!PlayerPrefs.HasKey("CalType"))
         {

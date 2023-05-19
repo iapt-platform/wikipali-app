@@ -19,11 +19,13 @@ public class DicGroupPopView : MonoBehaviour
     public bool isEdit = true;
     public void Init(DicGroupInfo _dicGroupInfo)
     {
+        currViewType = PopViewType.SaveDic;
         dicGroupInfo = _dicGroupInfo;
         inputField.text = dicGroupInfo.groupName;
     }
     public void Init(ArticleGroupInfo _articleGroupInfo)
     {
+        currViewType = PopViewType.SaveArticle;
         articleGroupInfo = _articleGroupInfo;
         inputField.text = articleGroupInfo.groupName;
     }
@@ -41,6 +43,7 @@ public class DicGroupPopView : MonoBehaviour
     }
     void ChangeNameDic()
     {
+        dView.Init(PopViewType.SaveDic);
         if (isEdit)
         {
             if (string.IsNullOrEmpty(inputField.text))
@@ -71,6 +74,7 @@ public class DicGroupPopView : MonoBehaviour
     }
     void ChangeNameArticle()
     {
+        dView.Init(PopViewType.SaveArticle);
         if (isEdit)
         {
             if (string.IsNullOrEmpty(inputField.text))

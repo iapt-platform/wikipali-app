@@ -15,19 +15,21 @@ public class ItemDicGroupWordView : MonoBehaviour
     CommonGroupView commonView;
     public DicGroupView dicGroupView;
     public PopView popView;
-    public void Init(string _word, int _groupID, CommonGroupView _commonView, PopViewType currViewType)
+    public void Init(string _word, int _groupID, CommonGroupView _commonView, PopViewType _currViewType)
     {
+        currViewType = _currViewType;
         if (currViewType == PopViewType.SaveDic)
         {
             word = _word;
+            titleText.text = word;
         }
         else if (currViewType == PopViewType.SaveArticle)
         {
             articleTitle = _word;
+            titleText.text = articleTitle;
         }
         commonView = _commonView;
         groupID = _groupID;
-        titleText.text = word;
     }
     //public void Init(string _articleTitle, int _groupID, CommonGroupView _commonView)
     //{
@@ -57,14 +59,33 @@ public class ItemDicGroupWordView : MonoBehaviour
         }
         commonView.RefreshGroupList();
     }
-    //跳转到查词
-    public void OnTextBtnClick()
+    void Jump2Dic()
     {
         GameManager.Instance().mainView.SetDicOn();
         GameManager.Instance().mainView.dicView.OnItemDicClick(word);
         popView.OnCloseBackBtnClick();
         dicGroupView.OnCloseBtnClick();
         commonView.OnCloseBtnClick();
+    }
+    void Jump2Article()
+    {
+        GameManager.Instance().mainView.SetArticleOn();
+        GameManager.Instance().mainView.articleView.OnItemDicClick(word);
+        popView.OnCloseBackBtnClick();
+        dicGroupView.OnCloseBtnClick();
+        commonView.OnCloseBtnClick();
+    }
+    //跳转到查词
+    public void OnTextBtnClick()
+    {
+        if (currViewType == PopViewType.SaveDic)
+        {
+            Jump2Dic();
+        }
+        else if (currViewType == PopViewType.SaveArticle)
+        {
+            Jump2Article();
+        }
     }
     // Update is called once per frame
     void Update()
