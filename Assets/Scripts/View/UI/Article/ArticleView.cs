@@ -341,6 +341,50 @@ public class ArticleView : MonoBehaviour
         nextAndPrevGroup.SetAsLastSibling();
         //PaliContentText.lin
     }
+    public void ShowPaliContentFromStar(int bookID, int bookParagraph, int bookChapterLen, string channelId)
+    {
+        bool isTrans = string.IsNullOrEmpty(channelId);
+        InitPaliScroll();
+        string channel = channelId;
+        Book book = new Book();
+        book.id = bookID;
+        book.paragraph = bookParagraph;
+        book.chapter_len = bookChapterLen;
+        nextAndPrevGroupView.SetChapter(book, (isTrans ? channel : ""), isTrans);
+        contentViewGO.SetActive(true);
+        listViewGO.SetActive(false);
+        //每50行新建一个text
+        List<string> text;
+        List<string> sentence;
+        ChannelChapterDBData cdata = new ChannelChapterDBData();
+        cdata.channel_id = channel;
+        (text, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cdata : null), isTrans);
+        articleContent = sentence;
+        if (text == null)
+        {
+            Debug.LogError("【预警】book id:" + book.id + "  没有文章内容 text = null");
+            return;
+        }
+        textRuler.gameObject.SetActive(true);
+        int l = text.Count;
+        for (int i = 0; i < l; i++)
+        {
+            textRuler.text = text[i];
+            LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
+            GameObject inst = Instantiate(contentText.gameObject, contentText.transform.parent);
+            inst.name = i.ToString();
+            inst.transform.position = contentText.transform.position;
+            Text contentTextInst = inst.GetComponent<Text>();
+            contentTextInst.text = MarkdownText.PreprocessText(text[i]);
+            inst.SetActive(true);
+            contentTextInst.rectTransform.sizeDelta = new Vector2(contentTextInst.rectTransform.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
+            contentList.Add(inst);
+        }
+
+        textRuler.gameObject.SetActive(false);
+        nextAndPrevGroup.SetAsLastSibling();
+        //PaliContentText.lin
+    }
     //销毁Text列表GO
     private void DestroyTextList()
     {

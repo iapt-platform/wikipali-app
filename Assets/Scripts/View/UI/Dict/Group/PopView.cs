@@ -95,6 +95,8 @@ public class PopView : MonoBehaviour
                 {
                     if (itemList[i].articleGroupInfo.bookTitleList[j] == currentBook.translateName &&
                         itemList[i].articleGroupInfo.bookIDList[j] == currentBook.id &&
+                        itemList[i].articleGroupInfo.bookParagraphList[j] == currentBook.paragraph &&
+                        itemList[i].articleGroupInfo.bookChapterLenList[j] == currentBook.chapter_len &&
                         itemList[i].articleGroupInfo.channelIDList[j] == channelID)
                     {
                         isMatch = true;
@@ -105,6 +107,8 @@ public class PopView : MonoBehaviour
                 {
                     itemList[i].articleGroupInfo.bookTitleList.Add(currentBook.translateName);
                     itemList[i].articleGroupInfo.bookIDList.Add(currentBook.id);
+                    itemList[i].articleGroupInfo.bookParagraphList.Add(currentBook.paragraph);
+                    itemList[i].articleGroupInfo.bookChapterLenList.Add(currentBook.chapter_len);
                     itemList[i].articleGroupInfo.channelIDList.Add(channelID);
                 }
             }
@@ -114,10 +118,14 @@ public class PopView : MonoBehaviour
                 {
                     if (itemList[i].articleGroupInfo.bookTitleList[j] == currentBook.translateName &&
                         itemList[i].articleGroupInfo.bookIDList[j] == currentBook.id &&
+                        itemList[i].articleGroupInfo.bookParagraphList[j] == currentBook.paragraph &&
+                        itemList[i].articleGroupInfo.bookChapterLenList[j] == currentBook.chapter_len &&
                         itemList[i].articleGroupInfo.channelIDList[j] == channelID)
                     {
                         itemList[i].articleGroupInfo.bookTitleList.RemoveAt(j);
                         itemList[i].articleGroupInfo.bookIDList.RemoveAt(j);
+                        itemList[i].articleGroupInfo.bookParagraphList.RemoveAt(j);
+                        itemList[i].articleGroupInfo.bookChapterLenList.RemoveAt(j);
                         itemList[i].articleGroupInfo.channelIDList.RemoveAt(j);
                         isDirty = true;
                         break;
@@ -128,7 +136,7 @@ public class PopView : MonoBehaviour
         this.gameObject.SetActive(false);
         if (isDirty)
             ArticleManager.Instance().ModifyArticleGroup();
-        ArticleManager.Instance().SetArticleStar(currentBook.translateName, currentBook.id, channelID);
+        ArticleManager.Instance().SetArticleStar(currentBook.translateName, currentBook.id, currentBook.paragraph, currentBook.chapter_len, channelID);
     }
     public void OnOkBtnClick()
     {

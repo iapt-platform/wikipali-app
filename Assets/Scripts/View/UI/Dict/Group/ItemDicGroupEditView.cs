@@ -66,7 +66,7 @@ public class ItemDicGroupEditView : MonoBehaviour
             }
             else if (currViewType == PopViewType.SaveArticle)
             {
-                DictManager.Instance().DelGroup(articleGroupInfo.groupID);
+                ArticleManager.Instance().DelGroup(articleGroupInfo.groupID);
                 dView.Init(PopViewType.SaveArticle);
             }
             dView.RefreshGroupList();

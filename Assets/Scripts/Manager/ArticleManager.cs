@@ -543,6 +543,8 @@ public class ArticleManager
         public string groupName;
         public List<string> bookTitleList;
         public List<int> bookIDList;
+        public List<int> bookParagraphList;
+        public List<int> bookChapterLenList;
         public List<string> channelIDList;//channel ID为空是pali原文
     }
 
@@ -564,15 +566,21 @@ public class ArticleManager
             dg.groupName = dicGroupNameArr[i];
             dg.bookTitleList = new List<string>();
             dg.bookIDList = new List<int>();
+            dg.bookParagraphList = new List<int>();
+            dg.bookChapterLenList = new List<int>();
             dg.channelIDList = new List<string>();
             string[] articleTitleArr = PlayerPrefsX.GetStringArray("articleTitle" + i);
             int[] bookIDArr = PlayerPrefsX.GetIntArray("bookID" + i);
+            int[] bookParagraphArr = PlayerPrefsX.GetIntArray("bookParagraph" + i);
+            int[] bookChapterLenArr = PlayerPrefsX.GetIntArray("bookChapterLen" + i);
             string[] channelIDArr = PlayerPrefsX.GetStringArray("channelID" + i);
             int wl = articleTitleArr.Length;
             for (int j = 0; j < wl; j++)
             {
                 dg.bookTitleList.Add(articleTitleArr[j]);
                 dg.bookIDList.Add(bookIDArr[j]);
+                dg.bookParagraphList.Add(bookParagraphArr[j]);
+                dg.bookChapterLenList.Add(bookChapterLenArr[j]);
                 dg.channelIDList.Add(channelIDArr[j]);
             }
             allArticleGroup.Add(dg);
@@ -586,6 +594,8 @@ public class ArticleManager
         {
             PlayerPrefs.DeleteKey("articleTitle" + i);
             PlayerPrefs.DeleteKey("bookID" + i);
+            PlayerPrefs.DeleteKey("bookParagraph" + i);
+            PlayerPrefs.DeleteKey("bookChapterLen" + i);
             PlayerPrefs.DeleteKey("channelID" + i);
         }
         //dicGroupCount = 0;
@@ -601,6 +611,8 @@ public class ArticleManager
             dicNameList.Add(allArticleGroup[i].groupName);
             PlayerPrefsX.SetStringArray("articleTitle" + i, allArticleGroup[i].bookTitleList.ToArray());
             PlayerPrefsX.SetIntArray("bookID" + i, allArticleGroup[i].bookIDList.ToArray());
+            PlayerPrefsX.SetIntArray("bookParagraph" + i, allArticleGroup[i].bookParagraphList.ToArray());
+            PlayerPrefsX.SetIntArray("bookChapterLen" + i, allArticleGroup[i].bookChapterLenList.ToArray());
             PlayerPrefsX.SetStringArray("channelID" + i, allArticleGroup[i].channelIDList.ToArray());
 
         }
@@ -624,6 +636,8 @@ public class ArticleManager
         group.groupID = articleGroupCount;
         group.bookTitleList = new List<string>();
         group.bookIDList = new List<int>();
+        group.bookParagraphList = new List<int>();
+        group.bookChapterLenList = new List<int>();
         group.channelIDList = new List<string>();
         allArticleGroup.Add(group);
         int groupCount = allArticleGroup.Count;
@@ -636,18 +650,26 @@ public class ArticleManager
         int index = allArticleGroup[groupID].bookTitleList.IndexOf(articleTitle);
         allArticleGroup[groupID].bookTitleList.RemoveAt(index);
         allArticleGroup[groupID].bookIDList.RemoveAt(index);
+        allArticleGroup[groupID].bookParagraphList.RemoveAt(index);
+        allArticleGroup[groupID].bookChapterLenList.RemoveAt(index);
         allArticleGroup[groupID].channelIDList.RemoveAt(index);
         PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
         PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
+        PlayerPrefsX.SetIntArray("bookParagraph" + groupID, allArticleGroup[groupID].bookParagraphList.ToArray());
+        PlayerPrefsX.SetIntArray("bookChapterLen" + groupID, allArticleGroup[groupID].bookChapterLenList.ToArray());
         PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
     }
-    public void AddArticle(int groupID, string articleTitle, int bookID, string channelID)
+    public void AddArticle(int groupID, string articleTitle, int bookID, int bookParagraph, int bookChapterLen, string channelID)
     {
         allArticleGroup[groupID].bookTitleList.Add(articleTitle);
         allArticleGroup[groupID].bookIDList.Add(bookID);
+        allArticleGroup[groupID].bookParagraphList.Add(bookParagraph);
+        allArticleGroup[groupID].bookChapterLenList.Add(bookChapterLen);
         allArticleGroup[groupID].channelIDList.Add(channelID);
         PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
         PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
+        PlayerPrefsX.SetIntArray("bookParagraph" + groupID, allArticleGroup[groupID].bookParagraphList.ToArray());
+        PlayerPrefsX.SetIntArray("bookChapterLen" + groupID, allArticleGroup[groupID].bookChapterLenList.ToArray());
         PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
     }
     //改组名
@@ -662,7 +684,7 @@ public class ArticleManager
     /// 当前单词是否被收藏
     /// </summary>
     /// <param name="word"></param>
-    public void SetArticleStar(string articleTitle, int bookID, string channelID)
+    public void SetArticleStar(string articleTitle, int bookID, int bookParagraph, int bookChapterLen, string channelID)
     {
         bool isStar = false;
         int l = allArticleGroup.Count;
@@ -674,6 +696,8 @@ public class ArticleManager
                 {
                     if (allArticleGroup[i].bookTitleList[j] == articleTitle &&
                        allArticleGroup[i].bookIDList[j] == bookID &&
+                       allArticleGroup[i].bookParagraphList[j] == bookParagraph &&
+                       allArticleGroup[i].bookChapterLenList[j] == bookChapterLen &&
                        allArticleGroup[i].channelIDList[j] == channelID)
                     {
                         isStar = true;
@@ -685,13 +709,15 @@ public class ArticleManager
         articleStarGroup.SetToggleValue(isStar);
     }
 
-    public bool IsContainsArticle(int groupId, string articleTitle, int bookID, string channelID)
+    public bool IsContainsArticle(int groupId, string articleTitle, int bookID, int bookParagraph, int bookChapterLen, string channelID)
     {
         for (int j = 0; j < allArticleGroup[groupId].bookTitleList.Count; j++)
         {
             if (allArticleGroup[groupId].bookTitleList[j] == articleTitle &&
-               allArticleGroup[groupId].bookIDList[j] == bookID &&
-               allArticleGroup[groupId].channelIDList[j] == channelID)
+                allArticleGroup[groupId].bookIDList[j] == bookID &&
+                allArticleGroup[groupId].bookParagraphList[j] == bookParagraph &&
+                allArticleGroup[groupId].bookChapterLenList[j] == bookChapterLen &&
+                allArticleGroup[groupId].channelIDList[j] == channelID)
             {
                 return true;
             }

@@ -46,6 +46,8 @@ public class SettingManager
             PlayerPrefs.SetString("articleGroupName", "默认收藏");
             PlayerPrefs.SetString("articleTitle0", "");
             PlayerPrefs.SetString("bookID0", "0");
+            PlayerPrefs.SetString("bookParagraph0", "0");
+            PlayerPrefs.SetString("bookChapterLen0", "0");
             PlayerPrefs.SetString("channelID0", "");
         }
         if (!PlayerPrefs.HasKey("CalType"))

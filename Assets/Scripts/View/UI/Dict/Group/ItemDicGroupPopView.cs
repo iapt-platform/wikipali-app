@@ -38,7 +38,7 @@ public class ItemDicGroupPopView : MonoBehaviour
         Book currentBook = articleView.currentBook;
         ChapterDBData currentChapterData = articleView.currentChapterData;
         string channelID = currentChapterData == null ? "" : currentChapterData.id;
-        bool isOn = ArticleManager.Instance().IsContainsArticle(articleGroupInfo.groupID, currentBook.translateName,currentBook.id, channelID);
+        bool isOn = ArticleManager.Instance().IsContainsArticle(articleGroupInfo.groupID, currentBook.translateName,currentBook.id, currentBook.paragraph, currentBook.chapter_len, channelID);
         SetToggleValue(isOn);
     }
     public bool GetSelectState()

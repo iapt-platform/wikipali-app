@@ -10,24 +10,34 @@ public class ItemDicGroupWordView : MonoBehaviour
     public Button delBtn;
     public Button textBtn;
     string articleTitle;
+    int bookId;
+    int bookParagraph;
+    int bookChapterLen;
     string word;
+    string channelID;
     int groupID;
     CommonGroupView commonView;
     public DicGroupView dicGroupView;
     public PopView popView;
-    public void Init(string _word, int _groupID, CommonGroupView _commonView, PopViewType _currViewType)
+    public void Init(string _word, int _groupID, CommonGroupView _commonView)
     {
-        currViewType = _currViewType;
-        if (currViewType == PopViewType.SaveDic)
-        {
-            word = _word;
-            titleText.text = word;
-        }
-        else if (currViewType == PopViewType.SaveArticle)
-        {
-            articleTitle = _word;
-            titleText.text = articleTitle;
-        }
+        currViewType = PopViewType.SaveDic;
+        word = _word;
+        titleText.text = word;
+
+        commonView = _commonView;
+        groupID = _groupID;
+    }
+    public void Init(string _articleTitle, int _bookId, int _bookParagraph, int _bookChapterLen, string _channelID, int _groupID, CommonGroupView _commonView)
+    {
+        currViewType = PopViewType.SaveArticle;
+
+        articleTitle = _articleTitle;
+        titleText.text = articleTitle;
+        bookId = _bookId;
+        bookParagraph = _bookParagraph;
+        bookChapterLen = _bookChapterLen;
+        channelID = _channelID;
         commonView = _commonView;
         groupID = _groupID;
     }
@@ -70,7 +80,7 @@ public class ItemDicGroupWordView : MonoBehaviour
     void Jump2Article()
     {
         GameManager.Instance().mainView.SetArticleOn();
-        GameManager.Instance().mainView.articleView.OnItemDicClick(word);
+        GameManager.Instance().mainView.articleView.ShowPaliContentFromStar(bookId, bookParagraph, bookChapterLen, channelID);
         popView.OnCloseBackBtnClick();
         dicGroupView.OnCloseBtnClick();
         commonView.OnCloseBtnClick();

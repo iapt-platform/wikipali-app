@@ -71,7 +71,7 @@ public class CommonGroupView : MonoBehaviour
             inst.transform.position = wordItem.transform.position;
             //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
-            iv.Init(dicGroupInfo.wordList[i], dicGroupInfo.groupID, this, currViewType);
+            iv.Init(dicGroupInfo.wordList[i], dicGroupInfo.groupID, this);
             inst.SetActive(true);
             itemList.Add(iv);
         }
@@ -92,7 +92,8 @@ public class CommonGroupView : MonoBehaviour
             inst.transform.position = wordItem.transform.position;
             //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
-            iv.Init(articleGroupInfo.bookTitleList[i], articleGroupInfo.groupID, this, currViewType);
+            iv.Init(articleGroupInfo.bookTitleList[i], articleGroupInfo.bookIDList[i], articleGroupInfo.bookParagraphList[i], articleGroupInfo.bookChapterLenList[i],
+                articleGroupInfo.channelIDList[i], articleGroupInfo.groupID, this);
             inst.SetActive(true);
             itemList.Add(iv);
         }
