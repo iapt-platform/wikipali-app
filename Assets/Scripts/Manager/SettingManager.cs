@@ -49,6 +49,7 @@ public class SettingManager
             PlayerPrefs.SetString("bookParagraph0", "0");
             PlayerPrefs.SetString("bookChapterLen0", "0");
             PlayerPrefs.SetString("channelID0", "");
+            PlayerPrefs.SetString("channelName0", "");
         }
         if (!PlayerPrefs.HasKey("CalType"))
         {

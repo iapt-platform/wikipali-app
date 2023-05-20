@@ -7,6 +7,7 @@ public class ItemDicGroupWordView : MonoBehaviour
 {
     public PopViewType currViewType;
     public Text titleText;
+    public Text styleText;
     public Button delBtn;
     public Button textBtn;
     string articleTitle;
@@ -28,12 +29,13 @@ public class ItemDicGroupWordView : MonoBehaviour
         commonView = _commonView;
         groupID = _groupID;
     }
-    public void Init(string _articleTitle, int _bookId, int _bookParagraph, int _bookChapterLen, string _channelID, int _groupID, CommonGroupView _commonView)
+    public void Init(string _articleTitle, int _bookId, int _bookParagraph, int _bookChapterLen, string _channelID, string _channelName, int _groupID, CommonGroupView _commonView)
     {
         currViewType = PopViewType.SaveArticle;
 
         articleTitle = _articleTitle;
         titleText.text = articleTitle;
+        styleText.text = _channelName;
         bookId = _bookId;
         bookParagraph = _bookParagraph;
         bookChapterLen = _bookChapterLen;

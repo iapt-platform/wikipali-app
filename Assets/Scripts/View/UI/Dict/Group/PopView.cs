@@ -83,8 +83,8 @@ public class PopView : MonoBehaviour
         bool isDirty = false;
 
         Book currentBook = articleView.currentBook;
-        ChapterDBData currentChapterData = articleView.currentChapterData;
-        string channelID = currentChapterData == null ? "" : currentChapterData.id;
+        string channelID = articleView.currentChannelId;
+        string channelName = articleView.currentChannelName;
         for (int i = 0; i < l; i++)
         {
 
@@ -110,6 +110,7 @@ public class PopView : MonoBehaviour
                     itemList[i].articleGroupInfo.bookParagraphList.Add(currentBook.paragraph);
                     itemList[i].articleGroupInfo.bookChapterLenList.Add(currentBook.chapter_len);
                     itemList[i].articleGroupInfo.channelIDList.Add(channelID);
+                    itemList[i].articleGroupInfo.channelNameList.Add(channelName);
                 }
             }
             else
@@ -127,6 +128,7 @@ public class PopView : MonoBehaviour
                         itemList[i].articleGroupInfo.bookParagraphList.RemoveAt(j);
                         itemList[i].articleGroupInfo.bookChapterLenList.RemoveAt(j);
                         itemList[i].articleGroupInfo.channelIDList.RemoveAt(j);
+                        itemList[i].articleGroupInfo.channelNameList.RemoveAt(j);
                         isDirty = true;
                         break;
                     }

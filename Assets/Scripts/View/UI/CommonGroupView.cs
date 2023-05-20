@@ -93,7 +93,7 @@ public class CommonGroupView : MonoBehaviour
             //inst.GetComponent<RectTransform>().position -= Vector3.up * height;
             ItemDicGroupWordView iv = inst.GetComponent<ItemDicGroupWordView>();
             iv.Init(articleGroupInfo.bookTitleList[i], articleGroupInfo.bookIDList[i], articleGroupInfo.bookParagraphList[i], articleGroupInfo.bookChapterLenList[i],
-                articleGroupInfo.channelIDList[i], articleGroupInfo.groupID, this);
+                articleGroupInfo.channelIDList[i], articleGroupInfo.channelNameList[i], articleGroupInfo.groupID, this);
             inst.SetActive(true);
             itemList.Add(iv);
         }

@@ -287,6 +287,8 @@ public class ArticleView : MonoBehaviour
     List<GameObject> contentList = new List<GameObject>();
     public List<string> articleContent;
     public ChapterDBData currentChapterData;
+    public string currentChannelId;
+    public string currentChannelName;
     public Book currentBook;
 
     public void ShowPaliContentTrans(Book book, ChapterDBData cNode, bool isTrans)
@@ -299,13 +301,21 @@ public class ArticleView : MonoBehaviour
         if (isTrans && cNode.channelData != null && cNode.channelData.channel_id == null)
             Debug.LogError("!!!!");
         string channel = "";
+        currentChannelName = "pāli原文";
         if (isTrans)
         {
             if (cNode.channelData == null)
+            {
                 channel = cNode.channel_id;
+                currentChannelName = cNode.title;
+            }
             else
+            {
                 channel = cNode.channelData.channel_id;
+                currentChannelName = cNode.channelData.name;
+            }
         }
+        currentChannelId = channel;
         nextAndPrevGroupView.SetChapter(book, (isTrans ? channel : ""), isTrans);
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
@@ -339,11 +349,13 @@ public class ArticleView : MonoBehaviour
 
         textRuler.gameObject.SetActive(false);
         nextAndPrevGroup.SetAsLastSibling();
+
+        ArticleManager.Instance().SetArticleStar(book.translateName,book.id,book.paragraph,book.chapter_len, channel);
         //PaliContentText.lin
     }
     public void ShowPaliContentFromStar(int bookID, int bookParagraph, int bookChapterLen, string channelId)
     {
-        bool isTrans = string.IsNullOrEmpty(channelId);
+        bool isTrans = !string.IsNullOrEmpty(channelId);
         InitPaliScroll();
         string channel = channelId;
         Book book = new Book();

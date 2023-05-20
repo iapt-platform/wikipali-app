@@ -546,6 +546,7 @@ public class ArticleManager
         public List<int> bookParagraphList;
         public List<int> bookChapterLenList;
         public List<string> channelIDList;//channel ID为空是pali原文
+        public List<string> channelNameList;//channel ID为空是pali原文
     }
 
     //所有单词本
@@ -569,11 +570,13 @@ public class ArticleManager
             dg.bookParagraphList = new List<int>();
             dg.bookChapterLenList = new List<int>();
             dg.channelIDList = new List<string>();
+            dg.channelNameList = new List<string>();
             string[] articleTitleArr = PlayerPrefsX.GetStringArray("articleTitle" + i);
             int[] bookIDArr = PlayerPrefsX.GetIntArray("bookID" + i);
             int[] bookParagraphArr = PlayerPrefsX.GetIntArray("bookParagraph" + i);
             int[] bookChapterLenArr = PlayerPrefsX.GetIntArray("bookChapterLen" + i);
             string[] channelIDArr = PlayerPrefsX.GetStringArray("channelID" + i);
+            string[] channelNameArr = PlayerPrefsX.GetStringArray("channelName" + i);
             int wl = articleTitleArr.Length;
             for (int j = 0; j < wl; j++)
             {
@@ -582,6 +585,7 @@ public class ArticleManager
                 dg.bookParagraphList.Add(bookParagraphArr[j]);
                 dg.bookChapterLenList.Add(bookChapterLenArr[j]);
                 dg.channelIDList.Add(channelIDArr[j]);
+                dg.channelNameList.Add(channelNameArr[j]);
             }
             allArticleGroup.Add(dg);
         }
@@ -597,6 +601,7 @@ public class ArticleManager
             PlayerPrefs.DeleteKey("bookParagraph" + i);
             PlayerPrefs.DeleteKey("bookChapterLen" + i);
             PlayerPrefs.DeleteKey("channelID" + i);
+            PlayerPrefs.DeleteKey("channelName" + i);
         }
         //dicGroupCount = 0;
     }
@@ -614,6 +619,7 @@ public class ArticleManager
             PlayerPrefsX.SetIntArray("bookParagraph" + i, allArticleGroup[i].bookParagraphList.ToArray());
             PlayerPrefsX.SetIntArray("bookChapterLen" + i, allArticleGroup[i].bookChapterLenList.ToArray());
             PlayerPrefsX.SetStringArray("channelID" + i, allArticleGroup[i].channelIDList.ToArray());
+            PlayerPrefsX.SetStringArray("channelName" + i, allArticleGroup[i].channelNameList.ToArray());
 
         }
         PlayerPrefsX.SetStringArray("articleGroupName", dicNameList.ToArray());
@@ -639,6 +645,7 @@ public class ArticleManager
         group.bookParagraphList = new List<int>();
         group.bookChapterLenList = new List<int>();
         group.channelIDList = new List<string>();
+        group.channelNameList = new List<string>();
         allArticleGroup.Add(group);
         int groupCount = allArticleGroup.Count;
         articleGroupCount = groupCount;
@@ -653,24 +660,28 @@ public class ArticleManager
         allArticleGroup[groupID].bookParagraphList.RemoveAt(index);
         allArticleGroup[groupID].bookChapterLenList.RemoveAt(index);
         allArticleGroup[groupID].channelIDList.RemoveAt(index);
+        allArticleGroup[groupID].channelNameList.RemoveAt(index);
         PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
         PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
         PlayerPrefsX.SetIntArray("bookParagraph" + groupID, allArticleGroup[groupID].bookParagraphList.ToArray());
         PlayerPrefsX.SetIntArray("bookChapterLen" + groupID, allArticleGroup[groupID].bookChapterLenList.ToArray());
         PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
+        PlayerPrefsX.SetStringArray("channelName" + groupID, allArticleGroup[groupID].channelNameList.ToArray());
     }
-    public void AddArticle(int groupID, string articleTitle, int bookID, int bookParagraph, int bookChapterLen, string channelID)
+    public void AddArticle(int groupID, string articleTitle, int bookID, int bookParagraph, int bookChapterLen, string channelID,string channelName)
     {
         allArticleGroup[groupID].bookTitleList.Add(articleTitle);
         allArticleGroup[groupID].bookIDList.Add(bookID);
         allArticleGroup[groupID].bookParagraphList.Add(bookParagraph);
         allArticleGroup[groupID].bookChapterLenList.Add(bookChapterLen);
         allArticleGroup[groupID].channelIDList.Add(channelID);
+        allArticleGroup[groupID].channelNameList.Add(channelName);
         PlayerPrefsX.SetStringArray("articleTitle" + groupID, allArticleGroup[groupID].bookTitleList.ToArray());
         PlayerPrefsX.SetIntArray("bookID" + groupID, allArticleGroup[groupID].bookIDList.ToArray());
         PlayerPrefsX.SetIntArray("bookParagraph" + groupID, allArticleGroup[groupID].bookParagraphList.ToArray());
         PlayerPrefsX.SetIntArray("bookChapterLen" + groupID, allArticleGroup[groupID].bookChapterLenList.ToArray());
         PlayerPrefsX.SetStringArray("channelID" + groupID, allArticleGroup[groupID].channelIDList.ToArray());
+        PlayerPrefsX.SetStringArray("channelName" + groupID, allArticleGroup[groupID].channelNameList.ToArray());
     }
     //改组名
     public void ChangeGroupName(int groupID, string name)
