@@ -5,15 +5,17 @@ using UnityEngine.UI;
 
 public class SettingView : MonoBehaviour
 {
+    public Button aboutBtn;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
+    public CommonGroupView commonGroupView;
     // Start is called before the first frame update
     void Start()
     {
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
-
+        aboutBtn.onClick.AddListener(OnAboutBtnClick);
     }
     void OnTransContentToggleValueChanged(float value)
     {
@@ -30,6 +32,11 @@ public class SettingView : MonoBehaviour
         {
             transContentSliderToggle.value = 1;
         }
+    }
+    void OnAboutBtnClick()
+    {
+        commonGroupView.InitAboutView();
+        commonGroupView.gameObject.SetActive(true);
     }
     // Update is called once per frame
     void Update()

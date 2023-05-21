@@ -9,6 +9,7 @@ public enum PopViewType
 {
     SaveDic = 1,
     SaveArticle = 2,
+    About = 3,
 }
 public class PopView : MonoBehaviour
 {

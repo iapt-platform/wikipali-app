@@ -15,6 +15,7 @@ public class CommonGroupView : MonoBehaviour
     public ItemDicGroupWordView wordItem;
     DicGroupInfo dicGroupInfo;
     ArticleGroupInfo articleGroupInfo;
+    public GameObject aboutPage;
     public void InitDicGroupWordView(DicGroupInfo _dicGroupInfo)
     {
         currViewType = PopViewType.SaveDic;
@@ -31,6 +32,13 @@ public class CommonGroupView : MonoBehaviour
         titleText.text = articleGroupInfo.groupName;
         RefreshGroupList();
     }
+    public void InitAboutView()
+    {
+        currViewType = PopViewType.About;
+        addBtn.gameObject.SetActive(false);
+        titleText.text = "关于wikipali";
+        aboutPage.SetActive(true);
+    }
     void Start()
     {
         returnBtn.onClick.AddListener(OnCloseBtnClick);
@@ -39,6 +47,7 @@ public class CommonGroupView : MonoBehaviour
     public void OnCloseBtnClick()
     {
         DelAllListGO();
+        aboutPage.SetActive(false);
         this.gameObject.SetActive(false);
     }
     public void OnAddBtnClick()
