@@ -25,4 +25,5 @@ Wikipāli App提供离线圣典阅读和巴利词典查询功能。
 # wikipāli 开发团队
 
 Visuddhinanda尊者、Kosalla尊者
+
 无语贤友、谭博文贤友、 同一贤友、豆沙猫、 圣道行贤友
