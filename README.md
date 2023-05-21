@@ -9,7 +9,7 @@ URL:https://www-hk.wikipali.org/
 
 wikipāli是一个在线巴利圣典学习，翻译，研究平台。也是一个巴利知识分享社区。 不断完善的学习工具让巴利圣典的学习变得更容易。并为专业的翻译和研究者提供便利的创作和成功发布功能。 我们希望，人人都能从巴利圣典中受益。
 
-# wikipali App
+# wikipāli App
 
 掌上巴利学习软件
 
@@ -24,5 +24,5 @@ Wikipāli App提供离线圣典阅读和巴利词典查询功能。
 
 # wikipāli 开发团队
 
-visuddhinanda尊者、kosalla尊者
-无语贤友、谭博文贤友、 同一贤友、 圣道行贤友
+Visuddhinanda尊者、Kosalla尊者
+无语贤友、谭博文贤友、 同一贤友、豆沙猫、 圣道行贤友
