@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SettingView : MonoBehaviour
 {
     public Button aboutBtn;
+    public Button updateBtn;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
     public CommonGroupView commonGroupView;
@@ -16,6 +17,7 @@ public class SettingView : MonoBehaviour
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
+        updateBtn.onClick.AddListener(OnUpdateBtnClick);
     }
     void OnTransContentToggleValueChanged(float value)
     {
@@ -37,6 +39,10 @@ public class SettingView : MonoBehaviour
     {
         commonGroupView.InitAboutView();
         commonGroupView.gameObject.SetActive(true);
+    }
+    void OnUpdateBtnClick()
+    {
+        StartCoroutine(UpdateManager.Instance().Test());
     }
     // Update is called once per frame
     void Update()
