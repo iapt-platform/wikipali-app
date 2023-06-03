@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public void StartUnZipDB()
     {
         initView.gameObject.SetActive(true);
+        initView.Init("初始化进度");
         isStartUnZipDB = true;
     }
     public void SetUnZipProgress(float progress)
@@ -64,5 +65,13 @@ public class GameManager : MonoBehaviour
                 EndUnZipDB();
             }
         }
+    }
+    //检测更新
+    void CheckUpdate()
+    {
+        //UpdateManager.Instance()
+
+
+
     }
 }

@@ -9,7 +9,12 @@ public class InitView : MonoBehaviour
     public Text progressText;
     public Text titleText;
 
-
+    public void Init(string title)
+    {
+        titleText.text = title;
+        progressSlider.value = 0;
+        progressText.text =  "0%";
+    }
     public void SetProgess(float progress)
     {
         progressSlider.value = progress;

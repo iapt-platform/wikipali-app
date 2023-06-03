@@ -5,7 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 //版本更新
-public class UpdateManager : MonoBehaviour
+public class UpdateManager
 {
     private UpdateManager() { }
     private static UpdateManager manager = null;
@@ -39,7 +39,82 @@ public class UpdateManager : MonoBehaviour
         }
         else
         {
-            print("已经存在，");
+            //print("已经存在，");
         }
+    }
+    public UpdateInfo currentUInfo;
+    public bool CheckUpdate(MonoBehaviour ui)
+    {
+        if (!NetworkMangaer.Instance().PingNetAddress())
+        {
+            UITool.ShowToastMessage(ui, "无网络连接", 35);
+            return false;
+        }
+        UpdateInfo uInfo = GetUpdateInfo();
+        if (uInfo.version == Application.version)
+        {
+            UITool.ShowToastMessage(ui, "当前已是最新版本", 35);
+            return false;
+        }
+        else
+        {
+            currentUInfo = uInfo;
+            return true;
+        }
+    }
+    public class UpdateInfo
+    {
+        public string version;
+        public string downLoadUrl1;//国内
+        public string downLoadUrl2;//国外
+        public string updateContent;//更新内容
+    }
+    const string UPDATE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/blob/main/version.txt";//国内
+    const string UPDATE_ONFO_URl_2 = "https://github.com/ariyamaggika/wikipali-app/blob/main/version.txt";//国外
+
+    /// <summary>
+    /// 获取更新信息
+    /// 从网站上获取版本号&国内国外下载地址
+    /// </summary>
+    public UpdateInfo GetUpdateInfo()
+    {
+        UpdateInfo uInfo = new UpdateInfo();
+        DownloadManager.Instance().DownLoad("", UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
+        //下载版本信息
+        return uInfo;
+    }
+    object OnDownLoadVersionOver(object _realSavePath)
+    {
+        string realSavePath = _realSavePath.ToString();
+
+        if (File.Exists(realSavePath))
+        {
+            string[] lines = null;
+            lines = File.ReadAllLines(realSavePath);
+            if (lines.Length >= 3)
+            {
+                UpdateInfo uInfo = new UpdateInfo();
+                uInfo.version = lines[0];
+                uInfo.downLoadUrl1 = lines[1];
+                uInfo.downLoadUrl2 = lines[2];
+                for (int i = 3; i < lines.Length; i++)
+                {
+                    uInfo.updateContent += lines[i] + "\r\n";
+                }
+                currentUInfo = uInfo;
+            }
+        }
+
+        return null;
+    }
+    public void UpdateAPK()
+    {
+        DownloadManager.Instance().DownLoad("", "", OnDownLoadApkOver, "");
+    }
+    object OnDownLoadApkOver(object obj)
+    {
+
+
+        return null;
     }
 }

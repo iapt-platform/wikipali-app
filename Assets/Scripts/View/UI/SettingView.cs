@@ -7,6 +7,7 @@ public class SettingView : MonoBehaviour
 {
     public Button aboutBtn;
     public Button updateBtn;
+    public Text versionText;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
     public CommonGroupView commonGroupView;
@@ -18,6 +19,7 @@ public class SettingView : MonoBehaviour
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
         updateBtn.onClick.AddListener(OnUpdateBtnClick);
+        versionText.text = "        v" + Application.version;
     }
     void OnTransContentToggleValueChanged(float value)
     {

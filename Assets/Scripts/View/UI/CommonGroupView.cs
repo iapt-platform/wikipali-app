@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static ArticleManager;
 using static DictManager;
+using static UpdateManager;
 //todo:这个面板做成prefab加载，可以显示多个
 public class CommonGroupView : MonoBehaviour
 {
@@ -12,10 +13,17 @@ public class CommonGroupView : MonoBehaviour
     public Button addBtn;
     public Text titleText;
     //DicGroupPopView
+    //收藏
     public ItemDicGroupWordView wordItem;
     DicGroupInfo dicGroupInfo;
     ArticleGroupInfo articleGroupInfo;
+    //关于
     public GameObject aboutPage;
+    //更新部分
+    public Text updateText;
+    public Button updateBtn;
+    public GameObject updatePage;
+    //单词本
     public void InitDicGroupWordView(DicGroupInfo _dicGroupInfo)
     {
         currViewType = PopViewType.SaveDic;
@@ -24,6 +32,7 @@ public class CommonGroupView : MonoBehaviour
         titleText.text = dicGroupInfo.groupName;
         RefreshGroupList();
     }
+    //文章收藏
     public void InitArticleGroupWordView(ArticleGroupInfo _articleGroupInfo)
     {
         currViewType = PopViewType.SaveArticle;
@@ -32,17 +41,32 @@ public class CommonGroupView : MonoBehaviour
         titleText.text = articleGroupInfo.groupName;
         RefreshGroupList();
     }
+    //更新说明
+    public void InitUpdateView(UpdateInfo currentUInfo)
+    {
+        currViewType = PopViewType.SaveArticle;
+        string uStr = "";
+        uStr += "当前版本：" + Application.version + "\r\n";
+        uStr += "最新版本：" + currentUInfo.version + "\r\n";
+        uStr += currentUInfo.updateContent;
+        updateText.text = uStr;
+        addBtn.gameObject.SetActive(false);
+        titleText.text = "版本更新";
+        RefreshGroupList();
+    }
+    //关于界面
     public void InitAboutView()
     {
         currViewType = PopViewType.About;
         addBtn.gameObject.SetActive(false);
-        titleText.text = "关于wikipali";
+        titleText.text = "关于wikipāli";
         aboutPage.SetActive(true);
     }
     void Start()
     {
         returnBtn.onClick.AddListener(OnCloseBtnClick);
         addBtn.onClick.AddListener(OnAddBtnClick);
+        updateBtn.onClick.AddListener(OnUpdateBtnClick);
     }
     public void OnCloseBtnClick()
     {
@@ -53,6 +77,10 @@ public class CommonGroupView : MonoBehaviour
     public void OnAddBtnClick()
     {
 
+    }
+    public void OnUpdateBtnClick()
+    {
+        UpdateManager.Instance().UpdateAPK();
     }
     public void DelAllListGO()
     {
