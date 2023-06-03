@@ -1,3 +1,6 @@
 1.0.1
 https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_T_1.0.1.apk
 https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_T_1.0.1.apk
+1.功能更新
+2.修改bug
+3.性能优化
