@@ -31,6 +31,22 @@ public class SettingManager
     {
         //在此处无法解压缩？？？？？？？
         //??????CalendarManager.Instance().StartLocation();
+        //覆盖更新判断版本号重新解压压缩包
+        if (PlayerPrefs.HasKey("saveVersion"))
+        {
+            //版本号不相等默认覆盖更新过
+            //覆盖更新过就重新解压安装包
+            if (PlayerPrefs.GetString("saveVersion") != Application.version)
+            {
+                PlayerPrefs.SetString("saveVersion", Application.version);
+                PlayerPrefs.SetInt("isUnZiped", 0);
+            }
+        }
+        else
+        {
+            PlayerPrefs.SetString("saveVersion", Application.version);
+
+        }
         //初始化单词本
         if (!PlayerPrefs.HasKey("dicGroupCount"))
         {
@@ -66,7 +82,6 @@ public class SettingManager
         if (isUnZipedDB == 0)
         {
             ZipManager.Instance().UnZipDB();
-
         }
         CalendarManager.Instance().StartLocation();
         //加载单词本

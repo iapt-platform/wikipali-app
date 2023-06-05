@@ -81,7 +81,8 @@ public class CommonGroupView : MonoBehaviour
     }
     public void OnUpdateBtnClick()
     {
-        UpdateManager.Instance().UpdateAPK();
+        //下载
+        DownloadManager.Instance().DownloadAPK(this);
     }
     public void DelAllListGO()
     {

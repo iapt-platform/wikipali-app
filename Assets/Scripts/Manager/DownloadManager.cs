@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using System.IO;
 using System;
 
-public class DownloadManager 
+public class DownloadManager
 {
     private DownloadManager() { }
     private static DownloadManager manager = null;
@@ -25,10 +25,46 @@ public class DownloadManager
         return manager;
     }
     #region 公开方法
+    public void DownloadAPK(MonoBehaviour ui)
+    {
+        //判断是否有网
+        if (!NetworkMangaer.Instance().PingNetAddress())
+        {
+            UITool.ShowToastMessage(ui, "无网络连接", 35);
+            return;
+            // return false;
+        }
+        //判断网络环境是内网外网
+        bool isOutNet = NetworkMangaer.Instance().PingOuterNet();
+        string url = isOutNet ? UpdateManager.Instance().currentUInfo.downLoadUrl2
+            : UpdateManager.Instance().currentUInfo.downLoadUrl1;
+
+        DownLoadWithAPKUI(Application.persistentDataPath, url, DownLoadApkOver, "wpa.apk");
+
+    }
+
+    object DownLoadApkOver(object obj)
+    {
+        GameManager.Instance().DownLoadAPKOver();
+        //安装APK
+        UpdateManager.Instance().InstallApk(realSavePath);
+        return null;
+    }
+
+
     //同时只能下载一个文件
     Func<object, object> downLoadFinFunc;
-    public void DownLoad(string _savePath,string _downLoadUrl, Func<object,object> _downLoadFinFunc,string fileName = "")
+    public void DownLoad(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
     {
+        downLoadFinFunc = _downLoadFinFunc;
+        Init(_savePath, _downLoadUrl, fileName);
+        DownloadFile();
+    }
+    public void DownLoadWithAPKUI(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
+    {
+        //打开下载UI
+        GameManager.Instance().StartDownLoadAPK();
+
         downLoadFinFunc = _downLoadFinFunc;
         Init(_savePath, _downLoadUrl, fileName);
         DownloadFile();
@@ -53,7 +89,7 @@ public class DownloadManager
 
     //[Header("Finish")]
     // Activate this button when download has finished
-   // public GameObject finishedButton;
+    // public GameObject finishedButton;
     // De Activate this button when download has finished
     //public GameObject downloadButton;
 
@@ -64,11 +100,11 @@ public class DownloadManager
 
     // internal usage
     string uri;
-    float progress;
+    public float progress;
     string bytes;
     bool downloading;
     bool finished;
-    public void Init(string _savePath, string _downloadUrl,string _fileName)
+    public void Init(string _savePath, string _downloadUrl, string _fileName)
     {
         // Set progress bar (UI Slider) max value to 100 (%) 
         //if (progressBar.maxValue != 100f)
@@ -76,6 +112,7 @@ public class DownloadManager
 
         //// Starting value is 0
         //progressBar.value = 0;
+        progress = 0;
         downloadUrl = _downloadUrl;
         uri = downloadUrl;
 
@@ -86,7 +123,7 @@ public class DownloadManager
         else
             newFileName = _fileName;
 
-      // Check directory exists
+        // Check directory exists
         savePath = _savePath;
         DirectoryInfo df = new DirectoryInfo(savePath);
         if (!df.Exists)
@@ -127,7 +164,7 @@ public class DownloadManager
     WebClient client;
     string realSavePath;
     // Main download function (public for ui button)     
-     void DownloadFile()
+    void DownloadFile()
     {
         //downloadButton.SetActive(false);
 
@@ -149,8 +186,6 @@ public class DownloadManager
         downloading = true;
         client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
         client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCompleted);
-
-
     }
 
     // Manage download state on unity main thread
