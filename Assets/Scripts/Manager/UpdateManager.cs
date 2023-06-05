@@ -18,6 +18,7 @@ public class UpdateManager
         }
         return manager;
     }
+    //安装APK
     public bool InstallApk(string apkPath)
     {
         AndroidJavaClass javaClass = new AndroidJavaClass("com.wikipali.apkupdatelibrary.Install");
@@ -43,24 +44,28 @@ public class UpdateManager
         }
     }
     public UpdateInfo currentUInfo;
-    public bool CheckUpdate(MonoBehaviour ui)
+    //点击检测更新
+    public void CheckUpdateOpenPage(MonoBehaviour ui)
     {
         if (!NetworkMangaer.Instance().PingNetAddress())
         {
             UITool.ShowToastMessage(ui, "无网络连接", 35);
-            return false;
+            return;
+            // return false;
         }
-        UpdateInfo uInfo = GetUpdateInfo();
-        if (uInfo.version == Application.version)
+        GetUpdateInfo();
+
+    }
+    //打开App自动检测更新显示红点
+    public void CheckUpdateRedPoint()
+    {
+        if (!NetworkMangaer.Instance().PingNetAddress())
         {
-            UITool.ShowToastMessage(ui, "当前已是最新版本", 35);
-            return false;
+            return;
+            // return false;
         }
-        else
-        {
-            currentUInfo = uInfo;
-            return true;
-        }
+        GetUpdateInfoRedPoint();
+
     }
     public class UpdateInfo
     {
@@ -69,17 +74,62 @@ public class UpdateManager
         public string downLoadUrl2;//国外
         public string updateContent;//更新内容
     }
-    const string UPDATE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/blob/main/version.txt";//国内
-    const string UPDATE_ONFO_URl_2 = "https://github.com/ariyamaggika/wikipali-app/blob/main/version.txt";//国外
+    //const string UPDATE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/releases/download/version/version.txt";//国内
+    //const string UPDATE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_T_1.0.1.apk";//国内
+    const string UPDATE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/raw/main/version.txt";//国内
+    //const string UPDATE_ONFO_URl_2 = "https://github.com/ariyamaggika/wikipali-app/releases/download/apk/version.txt";//国外
+    const string UPDATE_ONFO_URl_2 = "https://raw.githubusercontent.com/ariyamaggika/wikipali-app/master/version.txt";//国外
 
     /// <summary>
-    /// 获取更新信息
-    /// 从网站上获取版本号&国内国外下载地址
+    /// 获取更新信息显示红点
+    /// 从网站上获取版本号&国内国外下载地址W
+    /// </summary>
+    public void GetUpdateInfoRedPoint()
+    {
+        DownloadManager.Instance().DownLoad(Application.streamingAssetsPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
+    }
+    object OnDownLoadVersionOverRedPoint(object _realSavePath)
+    {
+        string realSavePath = _realSavePath.ToString();
+
+        if (File.Exists(realSavePath))
+        {
+            string[] lines = null;
+            lines = File.ReadAllLines(realSavePath);
+            if (lines.Length >= 3)
+            {
+                UpdateInfo uInfo = new UpdateInfo();
+                uInfo.version = lines[0];
+
+                if (uInfo.version == Application.version)
+                {
+                    // UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
+                    return false;
+                }
+                else
+                {
+                    //显示红点
+                    GameManager.Instance().ShowSettingViewRedPoint();
+                    return true;
+                }
+            }
+            else
+            {
+                return null;
+                // UITool.ShowToastMessage(GameManager.Instance(), "无网络连接", 35);
+            }
+        }
+
+        return null;
+    }
+    /// <summary>
+    /// 获取更新信息详情界面
+    /// 从网站上获取版本号&国内国外下载地址W
     /// </summary>
     public UpdateInfo GetUpdateInfo()
     {
         UpdateInfo uInfo = new UpdateInfo();
-        DownloadManager.Instance().DownLoad("", UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
+        DownloadManager.Instance().DownLoad(Application.streamingAssetsPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
         //下载版本信息
         return uInfo;
     }
@@ -97,11 +147,28 @@ public class UpdateManager
                 uInfo.version = lines[0];
                 uInfo.downLoadUrl1 = lines[1];
                 uInfo.downLoadUrl2 = lines[2];
+                uInfo.updateContent += "更新内容：\r\n";
                 for (int i = 3; i < lines.Length; i++)
                 {
                     uInfo.updateContent += lines[i] + "\r\n";
                 }
                 currentUInfo = uInfo;
+                if (uInfo.version == Application.version)
+                {
+                    UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
+                    return false;
+                }
+                else
+                {
+                    currentUInfo = uInfo;
+                    //点开更新内容页面
+                    GameManager.Instance().ShowSettingViewUpdatePage(currentUInfo);
+                    return true;
+                }
+            }
+            else
+            {
+                UITool.ShowToastMessage(GameManager.Instance(), "无网络连接", 35);
             }
         }
 

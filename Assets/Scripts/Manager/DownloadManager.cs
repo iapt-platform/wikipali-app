@@ -53,9 +53,9 @@ public class DownloadManager
 
     //[Header("Finish")]
     // Activate this button when download has finished
-    public GameObject finishedButton;
+   // public GameObject finishedButton;
     // De Activate this button when download has finished
-    public GameObject downloadButton;
+    //public GameObject downloadButton;
 
     //public bool UseOrginalName = true;
     // File name to save file in location + extension (.exe ,.zip and ...)
@@ -129,7 +129,7 @@ public class DownloadManager
     // Main download function (public for ui button)     
      void DownloadFile()
     {
-        downloadButton.SetActive(false);
+        //downloadButton.SetActive(false);
 
         cancelled = false;
 
@@ -239,7 +239,7 @@ public class DownloadManager
 			*/
         }
 
-        downloadButton.SetActive(true);
+        //downloadButton.SetActive(true);
 
     }
 

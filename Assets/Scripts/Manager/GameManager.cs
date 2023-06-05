@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UpdateManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
         return manager;
     }
     public InitView initView;
+    public SettingView settingView;
     public StarGroupDictView dicStarGroup;
     public StarGroupArticleView articleStarGroup;
     public MainView mainView;
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        CheckUpdateRedPoint();
     }
 
     // Update is called once per frame
@@ -67,11 +69,18 @@ public class GameManager : MonoBehaviour
         }
     }
     //检测更新
-    void CheckUpdate()
+    void CheckUpdateRedPoint()
     {
-        //UpdateManager.Instance()
 
+        UpdateManager.Instance().CheckUpdateRedPoint();
 
-
+    }
+    public void ShowSettingViewUpdatePage(UpdateInfo currentUInfo)
+    {
+        settingView.SetUpdatePage(currentUInfo);
+    }
+    public void ShowSettingViewRedPoint()
+    {
+        settingView.SetUpdateRedPoint();
     }
 }

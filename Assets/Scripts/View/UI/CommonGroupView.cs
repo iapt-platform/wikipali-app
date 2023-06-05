@@ -52,7 +52,7 @@ public class CommonGroupView : MonoBehaviour
         updateText.text = uStr;
         addBtn.gameObject.SetActive(false);
         titleText.text = "版本更新";
-        RefreshGroupList();
+        updatePage.SetActive(true);
     }
     //关于界面
     public void InitAboutView()
@@ -72,6 +72,7 @@ public class CommonGroupView : MonoBehaviour
     {
         DelAllListGO();
         aboutPage.SetActive(false);
+        updatePage.SetActive(false);
         this.gameObject.SetActive(false);
     }
     public void OnAddBtnClick()

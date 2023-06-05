@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UpdateManager;
 
 public class SettingView : MonoBehaviour
 {
     public Button aboutBtn;
     public Button updateBtn;
     public Text versionText;
+    public GameObject updateRedPoint;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
     public CommonGroupView commonGroupView;
@@ -44,7 +46,18 @@ public class SettingView : MonoBehaviour
     }
     void OnUpdateBtnClick()
     {
-        StartCoroutine(UpdateManager.Instance().Test());
+        UpdateManager.Instance().CheckUpdateOpenPage(this);
+
+        //StartCoroutine(UpdateManager.Instance().Test());
+    }
+    public void SetUpdatePage(UpdateInfo currentUInfo)
+    {
+        commonGroupView.InitUpdateView(currentUInfo);
+        commonGroupView.gameObject.SetActive(true);
+    }
+    public void SetUpdateRedPoint()
+    {
+        updateRedPoint.SetActive(true);
     }
     // Update is called once per frame
     void Update()
