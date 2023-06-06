@@ -20,8 +20,12 @@ public class GameManager : MonoBehaviour
     public StarGroupDictView dicStarGroup;
     public StarGroupArticleView articleStarGroup;
     public MainView mainView;
+
+    public string appVersion;//= Application.version;
+    public bool canUpdate = false;
     void Awake()
     {
+        appVersion = Application.version;
         SettingManager.Instance().InitGame();
         DictManager.Instance().dicStarGroup = dicStarGroup;
         ArticleManager.Instance().articleStarGroup = articleStarGroup;
@@ -86,7 +90,8 @@ public class GameManager : MonoBehaviour
     }
     public void ShowSettingViewRedPoint()
     {
-        settingView.SetUpdateRedPoint();
+        canUpdate = true;
+        //settingView.SetUpdateRedPoint();
     }
     public void StartDownLoadAPK()
     {

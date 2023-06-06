@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.Networking;
 //版本更新
@@ -47,6 +48,30 @@ public class UpdateManager
     //点击检测更新
     public void CheckUpdateOpenPage(MonoBehaviour ui)
     {
+        ////测试代码
+        //UITool.ShowToastMessage(ui, Application.internetReachability.ToString(), 35);
+     
+        //try
+        //{
+        //    System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+        //    PingReply pr = ping.Send("www.baidu.com", 3000);
+        //    if (pr.Status == IPStatus.Success)
+        //    {
+        //        UITool.ShowToastMessage(ui, "ping成功", 35);
+        //        return ;
+        //    }
+        //    else
+        //    {
+        //        UITool.ShowToastMessage(ui, "ping失败", 35);
+        //        return;
+        //    }
+        //}
+        //catch (Exception e)
+        //{
+        //    return;
+        //}
+
+
         if (!NetworkMangaer.Instance().PingNetAddress())
         {
             UITool.ShowToastMessage(ui, "无网络连接", 35);
@@ -86,7 +111,7 @@ public class UpdateManager
     /// </summary>
     public void GetUpdateInfoRedPoint()
     {
-        DownloadManager.Instance().DownLoad(Application.streamingAssetsPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
+        DownloadManager.Instance().DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
     }
     object OnDownLoadVersionOverRedPoint(object _realSavePath)
     {
@@ -101,7 +126,7 @@ public class UpdateManager
                 UpdateInfo uInfo = new UpdateInfo();
                 uInfo.version = lines[0];
 
-                if (uInfo.version == Application.version)
+                if (uInfo.version == GameManager.Instance().appVersion)
                 {
                     // UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
                     return false;
@@ -129,7 +154,7 @@ public class UpdateManager
     public UpdateInfo GetUpdateInfo()
     {
         UpdateInfo uInfo = new UpdateInfo();
-        DownloadManager.Instance().DownLoad(Application.streamingAssetsPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
+        DownloadManager.Instance().DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
         //下载版本信息
         return uInfo;
     }
@@ -153,7 +178,7 @@ public class UpdateManager
                     uInfo.updateContent += lines[i] + "\r\n";
                 }
                 currentUInfo = uInfo;
-                if (uInfo.version == Application.version)
+                if (uInfo.version == GameManager.Instance().appVersion)
                 {
                     UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
                     return false;

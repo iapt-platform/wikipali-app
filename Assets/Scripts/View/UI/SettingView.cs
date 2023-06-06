@@ -16,6 +16,9 @@ public class SettingView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (GameManager.Instance().canUpdate)
+            SetUpdateRedPoint();
+
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);

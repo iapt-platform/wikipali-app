@@ -34,25 +34,30 @@ public class NetworkMangaer
     {
         if (Application.internetReachability == UnityEngine.NetworkReachability.NotReachable)
         {
+       //     UITool.ShowToastMessage(GameManager.Instance(), "无网络连接", 35);
+
             return false;
         }
-        try
-        {
-            System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
-            PingReply pr = ping.Send("www.baidu.com", 3000);
-            if (pr.Status == IPStatus.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
+       // UITool.ShowToastMessage(GameManager.Instance(), "有网络连接", 35);
+
+        return true;
+        //try
+        //{
+        //    System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+        //    PingReply pr = ping.Send("www.baidu.com", 3000);
+        //    if (pr.Status == IPStatus.Success)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+        //catch (Exception e)
+        //{
+        //    return false;
+        //}
     }
     //判断是否是外网
     public bool PingOuterNet()

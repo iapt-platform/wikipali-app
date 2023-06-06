@@ -10,6 +10,7 @@ using System.ComponentModel;
 using UnityEngine.UI;
 using System.IO;
 using System;
+using System.Threading;
 
 public class DownloadManager
 {
@@ -57,7 +58,7 @@ public class DownloadManager
     public void DownLoad(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
     {
         downLoadFinFunc = _downLoadFinFunc;
-        Init(_savePath, _downLoadUrl, fileName);
+        Init(_savePath, _downLoadUrl, fileName, false);
         DownloadFile();
     }
     public void DownLoadWithAPKUI(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
@@ -66,7 +67,7 @@ public class DownloadManager
         GameManager.Instance().StartDownLoadAPK();
 
         downLoadFinFunc = _downLoadFinFunc;
-        Init(_savePath, _downLoadUrl, fileName);
+        Init(_savePath, _downLoadUrl, fileName, false);
         DownloadFile();
     }
     #endregion
@@ -104,7 +105,7 @@ public class DownloadManager
     string bytes;
     bool downloading;
     bool finished;
-    public void Init(string _savePath, string _downloadUrl, string _fileName)
+    public void Init(string _savePath, string _downloadUrl, string _fileName, bool isReadOnly)
     {
         // Set progress bar (UI Slider) max value to 100 (%) 
         //if (progressBar.maxValue != 100f)
@@ -126,8 +127,10 @@ public class DownloadManager
         // Check directory exists
         savePath = _savePath;
         DirectoryInfo df = new DirectoryInfo(savePath);
-        if (!df.Exists)
-            Directory.CreateDirectory(savePath);
+        //streamasset是只读
+        if (!isReadOnly)
+            if (!df.Exists)
+                Directory.CreateDirectory(savePath);
 
 
         if (onStart)
@@ -163,7 +166,9 @@ public class DownloadManager
     //}
     WebClient client;
     string realSavePath;
-    // Main download function (public for ui button)     
+    // Main download function (public for ui button)   
+    //https://blog.csdn.net/qq_36450306/article/details/108982145
+    //Unity中使用C#的WebClient的DownloadFileAsync异步回调不执行
     void DownloadFile()
     {
         //downloadButton.SetActive(false);
@@ -187,7 +192,39 @@ public class DownloadManager
         client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
         client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCompleted);
     }
+    public void DownloadFileAsync()
+    {
+        //cancelled = false;
+        //client = new WebClient();
+        //this.progressHandler = progressHandler;
+        //this.completedHandler = completedHandler;
+        //if (!Directory.Exists(savePath))
+        //{
+        //    Directory.CreateDirectory(savePath);
+        //}
+        //Debug.Log("fileName:" + fileName);
+        cancelled = false;
+        client = new WebClient();
+        //开启子线程执行下载和回调方法
+        Thread t = new Thread(() =>
+        {
+            if (!persistentDataPath)
+            {
+                realSavePath = savePath + "/" + newFileName;
+                client.DownloadFileAsync(new System.Uri(downloadUrl), realSavePath);
+            }
+            else
+            {
+                realSavePath = Application.persistentDataPath + "/" + newFileName;
+                client.DownloadFileAsync(new System.Uri(uri), realSavePath);
+            }
 
+            downloading = true;
+            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+            client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCompleted);
+        });
+        t.Start();
+    }
     // Manage download state on unity main thread
     //void Update()
     //{
