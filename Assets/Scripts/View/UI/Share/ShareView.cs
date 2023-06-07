@@ -37,6 +37,7 @@ public class ShareView : MonoBehaviour
     public RectTransform backImgRT;
     public GameObject tempParents;
     public Camera mainCamera;
+    public Image QRCodeImg;
     //填充的图片的基本高度
     float fillImgBaseHeight;
     float test;
@@ -58,6 +59,7 @@ public class ShareView : MonoBehaviour
         shareBtnsLayer.SetActive(false);
         selectModeLayer.SetActive(false);
         //captureImgLayer.SetActive(false);
+
         selectDicPopLayer.gameObject.SetActive(true);
         selectDicPopLayer.Init();
     }
@@ -85,6 +87,9 @@ public class ShareView : MonoBehaviour
             int test = i;
             modeBtnArr[i].onClick.AddListener(() => { /*Debug.LogError(test); */OnModeBtnClick(test); });
         }
+        Debug.LogError("!!!!!!!!!");
+        Sprite qrSprite = Sprite.Create(CreatQR.encoded, new Rect(0, 0, 256, 256), Vector2.zero);
+        QRCodeImg.sprite = qrSprite;
     }
     public void OnReturnBtn()
     {

@@ -52,6 +52,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CheckUpdateRedPoint();
+        if (CreatQR.LoadQR())
+            CreatQR.CreatQr();
     }
 
     // Update is called once per frame

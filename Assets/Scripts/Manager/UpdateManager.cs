@@ -121,11 +121,12 @@ public class UpdateManager
         {
             string[] lines = null;
             lines = File.ReadAllLines(realSavePath);
-            if (lines.Length >= 3)
+            if (lines.Length >= 4)
             {
                 UpdateInfo uInfo = new UpdateInfo();
                 uInfo.version = lines[0];
-
+                CreatQR.QrCodeStr = lines[1];
+                CreatQR.CreatQr();
                 if (uInfo.version == GameManager.Instance().appVersion)
                 {
                     // UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
@@ -166,12 +167,12 @@ public class UpdateManager
         {
             string[] lines = null;
             lines = File.ReadAllLines(realSavePath);
-            if (lines.Length >= 3)
+            if (lines.Length >= 4)
             {
                 UpdateInfo uInfo = new UpdateInfo();
                 uInfo.version = lines[0];
-                uInfo.downLoadUrl1 = lines[1];
-                uInfo.downLoadUrl2 = lines[2];
+                uInfo.downLoadUrl1 = lines[2];
+                uInfo.downLoadUrl2 = lines[3];
                 uInfo.updateContent += "更新内容：\r\n";
                 for (int i = 3; i < lines.Length; i++)
                 {
