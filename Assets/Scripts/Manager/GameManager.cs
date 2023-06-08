@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     public MainView mainView;
 
     public string appVersion;//= Application.version;
-    public bool canUpdate = false;
+    //public bool canUpdate = false;
     void Awake()
     {
         appVersion = Application.version;
@@ -92,8 +92,8 @@ public class GameManager : MonoBehaviour
     }
     public void ShowSettingViewRedPoint()
     {
-        canUpdate = true;
-        //settingView.SetUpdateRedPoint();
+        //canUpdate = true;
+        settingView.SetUpdateRedPoint();
     }
     public void StartDownLoadAPK()
     {

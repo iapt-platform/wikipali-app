@@ -7,23 +7,26 @@ using static UpdateManager;
 public class SettingView : MonoBehaviour
 {
     public Button aboutBtn;
+    public Button reportBtn;
     public Button updateBtn;
     public Text versionText;
     public GameObject updateRedPoint;
+    public GameObject reportGO;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
     public CommonGroupView commonGroupView;
     // Start is called before the first frame update
     void Start()
     {
-        if (GameManager.Instance().canUpdate)
-            SetUpdateRedPoint();
+        //if (GameManager.Instance().canUpdate)
+        //    SetUpdateRedPoint();
 
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
         updateBtn.onClick.AddListener(OnUpdateBtnClick);
+        reportBtn.onClick.AddListener(OnReportBtnClick);
         versionText.text = "        v" + Application.version;
     }
     void OnTransContentToggleValueChanged(float value)
@@ -41,6 +44,10 @@ public class SettingView : MonoBehaviour
         {
             transContentSliderToggle.value = 1;
         }
+    }
+    void OnReportBtnClick()
+    {
+        reportGO.SetActive(true);
     }
     void OnAboutBtnClick()
     {
