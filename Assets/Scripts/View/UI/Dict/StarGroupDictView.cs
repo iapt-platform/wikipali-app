@@ -7,6 +7,8 @@ public class StarGroupDictView : MonoBehaviour
 {
     public Toggle starToggle;
     public Button shareBtn;
+    public Button voiceBtn;
+    public AudioSource voiceSource;
     public PopView popView;
     public ShareView shareView;
     // Start is called before the first frame update
@@ -14,8 +16,42 @@ public class StarGroupDictView : MonoBehaviour
     {
         starToggle.onValueChanged.AddListener(OnToggleValueChanged);
         shareBtn.onClick.AddListener(OnShareBtnClick);
+        voiceBtn.onClick.AddListener(OnVoiceBtnClick);
 
     }
+    string currVoiceWord;
+    public void OnVoiceBtnClick()
+    {
+        string readWord = SpeechGeneration.Instance().ReplaceWordTGL(DictManager.Instance().currWord);
+        if (voiceSource.clip != null&& currVoiceWord == readWord)
+        {
+            voiceSource.Play();
+            return;
+        }
+        AudioClip ac =  SpeechGeneration.Instance().SpeekSI(readWord,-10);
+        if (ac != null)
+        {
+            currVoiceWord = readWord;
+            voiceSource.clip = ac;
+            voiceSource.Play();
+        }
+    }
+    //public void OnVoiceBtnClick()
+    //{
+    //    string readWord = SpeechGeneration.Instance().ReplaceWord(DictManager.Instance().currWord);
+    //    if (voiceSource.clip != null && currVoiceWord == readWord)
+    //    {
+    //        voiceSource.Play();
+    //        return;
+    //    }
+    //    AudioClip ac = SpeechGeneration.Instance().Speek(readWord);
+    //    if (ac != null)
+    //    {
+    //        currVoiceWord = readWord;
+    //        voiceSource.clip = ac;
+    //        voiceSource.Play();
+    //    }
+    //}
     public void OnShareBtnClick()
     {
         shareView.gameObject.SetActive(true);

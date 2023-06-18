@@ -366,6 +366,8 @@ public class ArticleController
     //    return sb.ToString();
     //}
 
+    public string testPl;
+    public string testCN;
     const int LINE_COUNT_LIMIT = 50;
     //获取整个巴利原文以及所有翻译
     //由于文字过长无法显示的问题，每50行，返回一个数组
@@ -400,6 +402,10 @@ public class ArticleController
                 sb.AppendLine(sentenceNormalize);
                 sb.AppendLine("");
                 sentenceRes.Add(sentenceNormalize);
+                if (i == 0)
+                {
+                    testPl = sentenceNormalize;
+                }
             }
             lineCount += 2;
             //todo 优化
@@ -410,6 +416,10 @@ public class ArticleController
                     {
                         //sb.AppendLine();
                         string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
+                        if (i == 0 && j == 0)
+                        {
+                            testCN = sentenceTransNormalize;
+                        }
                         sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTransNormalize);
                         sb.AppendLine("");
                         sb.AppendLine("");

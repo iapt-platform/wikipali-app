@@ -95,6 +95,7 @@ public class UpdateManager
     public class UpdateInfo
     {
         public string version;
+        public string apkSize;//包体大小
         public string downLoadUrl1;//国内
         public string downLoadUrl2;//国外
         public string updateContent;//更新内容
@@ -125,7 +126,7 @@ public class UpdateManager
             {
                 UpdateInfo uInfo = new UpdateInfo();
                 uInfo.version = lines[0];
-                CreatQR.QrCodeStr = lines[1];
+                CreatQR.QrCodeStr = lines[2];
                 CreatQR.CreatQr();
                 if (uInfo.version == GameManager.Instance().appVersion)
                 {
@@ -171,10 +172,11 @@ public class UpdateManager
             {
                 UpdateInfo uInfo = new UpdateInfo();
                 uInfo.version = lines[0];
-                uInfo.downLoadUrl1 = lines[2];
-                uInfo.downLoadUrl2 = lines[3];
+                uInfo.apkSize = lines[1];
+                uInfo.downLoadUrl1 = lines[3];
+                uInfo.downLoadUrl2 = lines[4];
                 uInfo.updateContent += "更新内容：\r\n";
-                for (int i = 3; i < lines.Length; i++)
+                for (int i = 5; i < lines.Length; i++)
                 {
                     uInfo.updateContent += lines[i] + "\r\n";
                 }

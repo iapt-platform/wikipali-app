@@ -119,4 +119,18 @@ public class SettingManager
     {
         return PlayerPrefs.GetInt("TransContent");
     }
+
+    public enum PaliSpeakVoiceGender
+    {
+        Male = 0,
+        Female = 1,
+    }
+    public PaliSpeakVoiceGender GetPaliVoiceGender()
+    {
+        return (PaliSpeakVoiceGender)PlayerPrefs.GetInt("PaliSpeakVoiceGender");
+    }
+    public void SetPaliVoiceGender(PaliSpeakVoiceGender gender)
+    {
+        PlayerPrefs.SetInt("PaliSpeakVoiceGender", (int)gender);
+    }
 }

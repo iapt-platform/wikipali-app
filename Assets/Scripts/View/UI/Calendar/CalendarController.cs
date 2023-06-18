@@ -351,7 +351,9 @@ public class CalendarController : MonoBehaviour
         CreateCalendar();
         int day = DateTime.Today.Day;
         OnDateItemClick(day.ToString());
-        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(_dateItems[day].gameObject);
+        DateTime firstDay = _dateTime.AddDays(-(_dateTime.Day - 1));
+        int index = GetDays(firstDay.DayOfWeek);
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(_dateItems[day + index - 1].gameObject);
         //_dateItems[day].GetComponent<Button>().onClick();
 
     }

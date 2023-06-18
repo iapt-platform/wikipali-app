@@ -20,6 +20,7 @@ public class CommonGroupView : MonoBehaviour
     //关于
     public GameObject aboutPage;
     //更新部分
+    public Text updateBtnText;
     public Text updateText;
     public Button updateBtn;
     public GameObject updatePage;
@@ -53,6 +54,7 @@ public class CommonGroupView : MonoBehaviour
         addBtn.gameObject.SetActive(false);
         titleText.text = "版本更新";
         updatePage.SetActive(true);
+        updateBtnText.text = "点击更新(" + currentUInfo.apkSize + ")";
     }
     //关于界面
     public void InitAboutView()
