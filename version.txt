@@ -1,7 +1,8 @@
-1.0.1
-http://visuddhinanda.spring.wikipali.org:60080/my/download/download
-https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_T_1.0.1.apk
-https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_T_1.0.1.apk
+1.0.0
+94M
+https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
+https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
+https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
 1.功能更新
 2.修改bug
 3.性能优化
