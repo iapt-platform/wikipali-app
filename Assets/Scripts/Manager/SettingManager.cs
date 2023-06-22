@@ -125,6 +125,11 @@ public class SettingManager
         Male = 0,
         Female = 1,
     }
+    public enum PaliSpeakVoiceType
+    {
+        Telugu = 0,//泰卢固语
+        Myanmar = 1,//缅甸语
+    }
     public PaliSpeakVoiceGender GetPaliVoiceGender()
     {
         return (PaliSpeakVoiceGender)PlayerPrefs.GetInt("PaliSpeakVoiceGender");
@@ -132,5 +137,40 @@ public class SettingManager
     public void SetPaliVoiceGender(PaliSpeakVoiceGender gender)
     {
         PlayerPrefs.SetInt("PaliSpeakVoiceGender", (int)gender);
+    }
+    public string GetPaliVoiceGenderName()
+    {
+        PaliSpeakVoiceGender gender =(PaliSpeakVoiceGender)PlayerPrefs.GetInt("PaliSpeakVoiceGender");
+        if (gender == PaliSpeakVoiceGender.Male)
+        {
+            return "        男声";
+        }
+        else
+        {
+            return "        女声";
+        }
+    }
+    public PaliSpeakVoiceType GetPaliVoiceType()
+    {
+        return (PaliSpeakVoiceType)PlayerPrefs.GetInt("PaliSpeakVoiceType");
+    }
+    public void SetPaliVoiceType(PaliSpeakVoiceType vt)
+    {
+        PlayerPrefs.SetInt("PaliSpeakVoiceType", (int)vt);
+    }
+
+
+    public string GetPaliVoiceTypeName()
+    {
+        PaliSpeakVoiceType t = (PaliSpeakVoiceType)PlayerPrefs.GetInt("PaliSpeakVoiceType");
+        if (t == PaliSpeakVoiceType.Telugu)
+        {
+            return "        印度风格";
+        }
+        else if(t == PaliSpeakVoiceType.Myanmar)
+        {
+            return "        缅甸风格";
+        }
+        return "";
     }
 }

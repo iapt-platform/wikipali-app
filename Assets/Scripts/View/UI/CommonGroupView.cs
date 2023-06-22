@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +25,9 @@ public class CommonGroupView : MonoBehaviour
     public Text updateText;
     public Button updateBtn;
     public GameObject updatePage;
+    //选项
+    public ItemSettingOptionView settingOption;
+
     //单词本
     public void InitDicGroupWordView(DicGroupInfo _dicGroupInfo)
     {
@@ -45,7 +49,7 @@ public class CommonGroupView : MonoBehaviour
     //更新说明
     public void InitUpdateView(UpdateInfo currentUInfo)
     {
-        currViewType = PopViewType.SaveArticle;
+        currViewType = PopViewType.Update;
         string uStr = "";
         uStr += "当前版本：" + Application.version + "\r\n";
         uStr += "最新版本：" + currentUInfo.version + "\r\n";
@@ -64,6 +68,11 @@ public class CommonGroupView : MonoBehaviour
         titleText.text = "关于wikipāli";
         aboutPage.SetActive(true);
     }
+    //设置选项
+    public void InitSettingOptions(List<string> nameList,int selection,Func<object,object> fin)
+    {
+        settingOption.Init(nameList,selection,fin);
+    }
     void Start()
     {
         returnBtn.onClick.AddListener(OnCloseBtnClick);
@@ -75,6 +84,7 @@ public class CommonGroupView : MonoBehaviour
         DelAllListGO();
         aboutPage.SetActive(false);
         updatePage.SetActive(false);
+        settingOption.gameObject.SetActive(false);
         this.gameObject.SetActive(false);
     }
     public void OnAddBtnClick()

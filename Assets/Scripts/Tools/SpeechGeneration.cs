@@ -14,6 +14,7 @@ using System.Threading;
 using System.Linq;
 using UnityEngine.UIElements;
 using Microsoft.CognitiveServices.Speech;
+using static SettingManager;
 
 public class Tts
 {
@@ -272,15 +273,47 @@ public class SpeechGeneration
     private string m_SpeechSynthesisVoiceName = "te-IN-MohanNeural";//泰卢固语（印度）男
     private string m_SpeechTLGVoiceFemale = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     private string m_SpeechTLGVoiceMale = "te-IN-MohanNeural";//泰卢固语（印度）男
+    private string m_SpeechMMVoiceFemale = "my-MM-NilarNeural";//缅甸语女
+    private string m_SpeechMMVoiceMale = "my-MM-ThihaNeural";//缅甸语男
     //private string m_SpeechSynthesisVoiceName = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     //private string m_SpeechSynthesisVoiceName = "si-LK-SameeraNeural";
+    string GetVoice()
+    {
+        PaliSpeakVoiceGender gender = SettingManager.Instance().GetPaliVoiceGender();
+        PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
+        if (gender == PaliSpeakVoiceGender.Male)
+        {
+            if (vt == PaliSpeakVoiceType.Myanmar)
+            {
+                return m_SpeechTLGVoiceMale;
+            }
+            else if (vt == PaliSpeakVoiceType.Telugu)
+            {
+                return m_SpeechMMVoiceMale;
+            }
+        }
+        else
+        {
+            if (vt == PaliSpeakVoiceType.Myanmar)
+            {
+                return m_SpeechTLGVoiceFemale;
+            }
+            else if (vt == PaliSpeakVoiceType.Telugu)
+            {
+                return m_SpeechMMVoiceFemale;
+            }
+        }
+        return "";
+    }
+    //数字不读
     public AudioClip SpeekSI(string word, int speed)
     {
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
         var config = SpeechConfig.FromSubscription("82563fdf180f434aaf8c8f14171bae6c", "eastus");
+        string voice = GetVoice();
         //config.SpeechSynthesisLanguage = m_SpeechSynthesisLanguage;
-        config.SpeechSynthesisVoiceName = m_SpeechSynthesisVoiceName;
+        config.SpeechSynthesisVoiceName = voice;
         // Creates a speech synthesizer.
         // Make sure to dispose the synthesizer after use!
         using (var synthsizer = new SpeechSynthesizer(config, null))
@@ -301,7 +334,7 @@ public class SpeechGeneration
             //string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='si-LK'><voice name='si-LK-ThiliniNeural'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
             //word = "ภิกฺขุ จ สีลสมฺบนฺโน ติ คาถาย กิญฺจาบิ เอเกกสฺเสว เอเกโก คุโฌ กถิโต ,สพฺเพสํ บน สพฺเพบิ วฏฺฏนฺตีติ .";
             speed = -20;
-            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='si-LK'><voice name='te-IN-MohanNeural'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='si-LK'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
 
             var result = synthsizer.SpeakSsmlAsync(text).Result;
             //var result = synthsizer.SpeakTextAsync(word).Result;
@@ -701,7 +734,7 @@ public class SpeechGeneration
   { "e",  "එ" },
   { "o",  "ඔ" },
 };
-   Dictionary<string, string> char_unicode_to_tgl = new Dictionary<string, string> {
+    Dictionary<string, string> char_unicode_to_tgl = new Dictionary<string, string> {
 { "ththru", "ధ్ధృ" },
 { "dhdhru" , "ధ్ధృ" },
 { "phphru" , "ఫ్ఫృ" },
@@ -2964,4 +2997,18 @@ public class SpeechGeneration
 { "o" , "ఒ" },
 { "ō" , "ఓ" }
 };
+
+    Dictionary<string, string> char_unicode_to_pali_int = new Dictionary<string, string>()
+    {
+    { "1",  "eka" },
+    { "2",  "dve" },
+    { "3",  "taya" },
+    { "4",  "catu" },
+    { "5",  "pañca" },
+    { "6",  "cha" },
+    { "7",  "satta" },
+    { "8",  "aṭṭha" },
+    { "9",  "nava" },
+    { "10",  "dasa" },
+    };
 }
