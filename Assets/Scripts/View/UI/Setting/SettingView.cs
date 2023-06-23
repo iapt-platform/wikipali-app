@@ -14,6 +14,8 @@ public class SettingView : MonoBehaviour
     public Text paliVoiceTypeText;
     public Button paliVoiceGenderBtn;
     public Text paliVoiceGenderText;
+    public Button paliVoiceSpeedBtn;
+    public Text paliVoiceSpeedText;
     public Button articleClassifyBtn;
     public Text versionText;
     public GameObject updateRedPoint;
@@ -26,6 +28,7 @@ public class SettingView : MonoBehaviour
     {
         //if (GameManager.Instance().canUpdate)
         //    SetUpdateRedPoint();
+        paliVoiceSpeedText.text = SettingManager.Instance().GetPaliVoiceSpeedName();
         paliVoiceTypeText.text = SettingManager.Instance().GetPaliVoiceTypeName();
         paliVoiceGenderText.text = SettingManager.Instance().GetPaliVoiceGenderName();
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
@@ -34,6 +37,7 @@ public class SettingView : MonoBehaviour
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
         updateBtn.onClick.AddListener(OnUpdateBtnClick);
         reportBtn.onClick.AddListener(OnReportBtnClick);
+        paliVoiceSpeedBtn.onClick.AddListener(OnPaliVoiceSpeedBtnClick);
         paliVoiceTypeBtn.onClick.AddListener(OnPaliVoiceTypeBtnClick);
         paliVoiceGenderBtn.onClick.AddListener(OnPaliVoiceGenderBtnClick);
         articleClassifyBtn.onClick.AddListener(OnArticleClassifyBtnClick);
@@ -67,19 +71,34 @@ public class SettingView : MonoBehaviour
     void OnPaliVoiceGenderBtnClick()
     {
         int sID = (int)SettingManager.Instance().GetPaliVoiceGender();
-        commonGroupView.InitSettingOptions(new List<string> { "男声", "女声" }, sID, (id) => {
-            SettingManager.Instance().SetPaliVoiceGender((PaliSpeakVoiceGender)id); 
-            paliVoiceGenderText.text = SettingManager.Instance().GetPaliVoiceGenderName(); 
-            return null; });
+        commonGroupView.InitSettingOptions("巴利朗读声音", new List<string> { "男声", "女声" }, sID, (id) =>
+        {
+            SettingManager.Instance().SetPaliVoiceGender((PaliSpeakVoiceGender)id);
+            paliVoiceGenderText.text = SettingManager.Instance().GetPaliVoiceGenderName();
+            return null;
+        });
         commonGroupView.gameObject.SetActive(true);
     }
     void OnPaliVoiceTypeBtnClick()
     {
         int sID = (int)SettingManager.Instance().GetPaliVoiceType();
-        commonGroupView.InitSettingOptions(new List<string> { "印度风格", "缅甸风格" }, sID, (id) => { 
+        commonGroupView.InitSettingOptions("巴利朗读风格", new List<string> { "印度风格", "缅甸风格" }, sID, (id) =>
+        {
             SettingManager.Instance().SetPaliVoiceType((PaliSpeakVoiceType)id);
             paliVoiceTypeText.text = SettingManager.Instance().GetPaliVoiceTypeName();
-            return null; });
+            return null;
+        });
+        commonGroupView.gameObject.SetActive(true);
+    }
+    void OnPaliVoiceSpeedBtnClick()
+    {
+        int sID = SettingManager.PaliSpeakVoiceSpeedList.IndexOf((int)SettingManager.Instance().GetPaliVoiceSpeed());
+        commonGroupView.InitSettingOptions("巴利朗读语速", new List<string> { "0", "-10%", "-20%", "-30%", "-40%" }, sID, (id) =>
+        {
+            SettingManager.Instance().SetPaliVoiceSpeed((PaliSpeakVoiceSpeed)SettingManager.PaliSpeakVoiceSpeedList[(int)id]);
+            paliVoiceSpeedText.text = SettingManager.Instance().GetPaliVoiceSpeedName();
+            return null;
+        });
         commonGroupView.gameObject.SetActive(true);
     }
     void OnAboutBtnClick()

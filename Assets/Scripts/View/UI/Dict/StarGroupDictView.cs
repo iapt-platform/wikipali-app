@@ -22,7 +22,7 @@ public class StarGroupDictView : MonoBehaviour
     string currVoiceWord;
     public void OnVoiceBtnClick()
     {
-        string readWord = SpeechGeneration.Instance().ReplaceWordTGL(DictManager.Instance().currWord);
+        string readWord = SpeechGeneration.Instance().ReplaceWord(DictManager.Instance().currWord);
         if (voiceSource.clip != null&& currVoiceWord == readWord)
         {
             voiceSource.Play();

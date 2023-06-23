@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -275,6 +275,13 @@ public class SpeechGeneration
     private string m_SpeechTLGVoiceMale = "te-IN-MohanNeural";//泰卢固语（印度）男
     private string m_SpeechMMVoiceFemale = "my-MM-NilarNeural";//缅甸语女
     private string m_SpeechMMVoiceMale = "my-MM-ThihaNeural";//缅甸语男
+    private string m_SpeechSLKVoiceFemale = "si-LK-ThiliniNeural";//缅甸语女
+    private string m_SpeechSLKVoiceMale = "si-LK-SameeraNeural";//缅甸语男
+
+
+    string language_TLG = "te-IN";
+    string language_MM = "my-MM";
+    string language_SLK = "si-LK";
     //private string m_SpeechSynthesisVoiceName = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     //private string m_SpeechSynthesisVoiceName = "si-LK-SameeraNeural";
     string GetVoice()
@@ -283,26 +290,51 @@ public class SpeechGeneration
         PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
         if (gender == PaliSpeakVoiceGender.Male)
         {
-            if (vt == PaliSpeakVoiceType.Myanmar)
+            if (vt == PaliSpeakVoiceType.Telugu)
             {
                 return m_SpeechTLGVoiceMale;
             }
-            else if (vt == PaliSpeakVoiceType.Telugu)
+            else if (vt == PaliSpeakVoiceType.Myanmar)
             {
                 return m_SpeechMMVoiceMale;
             }
+            //else if (vt == PaliSpeakVoiceType.Sinhala)
+            //{
+            //    return m_SpeechSLKVoiceMale;
+            //}
         }
         else
         {
-            if (vt == PaliSpeakVoiceType.Myanmar)
+            if (vt == PaliSpeakVoiceType.Telugu)
             {
                 return m_SpeechTLGVoiceFemale;
             }
-            else if (vt == PaliSpeakVoiceType.Telugu)
+            else if (vt == PaliSpeakVoiceType.Myanmar)
             {
                 return m_SpeechMMVoiceFemale;
             }
+            //else if (vt == PaliSpeakVoiceType.Sinhala)
+            //{
+            //    return m_SpeechSLKVoiceFemale;
+            //}
         }
+        return "";
+    }
+    string GetLanguage()
+    {
+        PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
+        if (vt == PaliSpeakVoiceType.Telugu)
+        {
+            return language_TLG;
+        }
+        else if (vt == PaliSpeakVoiceType.Myanmar)
+        {
+            return language_MM;
+        }
+        //else if (vt == PaliSpeakVoiceType.Sinhala)
+        //{
+        //    return language_SLK;
+        //}
         return "";
     }
     //数字不读
@@ -323,21 +355,13 @@ public class SpeechGeneration
             //    waitingForSpeak = true;
             //}
             // string temp = "සම්පන්නපාතිමොක්ඛා ති ප‍රිපුණ්ණපාතිමොක්ඛා .";
-            // Starts speech synthesis, and returns after a single utterance is synthesized.
-            //var result = synthsizer.SpeakTextAsync(temp).Result;
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\">");
-            //sb.AppendLine("    <voice name=\"en - US - JennyNeura\" effect=\"eq_car\">");
-            //sb.AppendLine("        This is the text that is spoken.");
-            //sb.AppendLine("    </voice>");
-            //sb.AppendLine("</speak>");
-            //string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='si-LK'><voice name='si-LK-ThiliniNeural'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
-            //word = "ภิกฺขุ จ สีลสมฺบนฺโน ติ คาถาย กิญฺจาบิ เอเกกสฺเสว เอเกโก คุโฌ กถิโต ,สพฺเพสํ บน สพฺเพบิ วฏฺฏนฺตีติ .";
-            speed = -20;
-            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='si-LK'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
-
+            speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
+            //speed = -20;
+            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+            // string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+            //UnityEngine.Debug.LogError(text);
             var result = synthsizer.SpeakSsmlAsync(text).Result;
-            //var result = synthsizer.SpeakTextAsync(word).Result;
+            // var result = synthsizer.SpeakTextAsync(word).Result;
             //print("after   " + DateTime.Now);
 
             // Checks result.
@@ -382,6 +406,31 @@ public class SpeechGeneration
     }
     public string ReplaceWord(string word)
     {
+        //不读数字
+        word = RemoveNumber(word);
+        PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
+        if (vt == PaliSpeakVoiceType.Telugu)
+        {
+            word = ReplaceWordTLG(word);
+        }
+        else if (vt == PaliSpeakVoiceType.Myanmar)
+        {
+            word = ReplaceWordMy(word);
+
+        }
+        //else if (vt == PaliSpeakVoiceType.Sinhala)
+        //{
+        //    word = ReplaceWordSI(word);
+        //}
+
+        return word;
+    }
+    public string RemoveNumber(string key)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(key, @"\d", "");
+    }
+    public string ReplaceWordEN(string word)
+    {
         word = word.Replace("r", "l");
         word = word.Replace("ṭṭh", "t");
         word = word.Replace("ṭh", "t");
@@ -405,12 +454,25 @@ public class SpeechGeneration
         }
         return word;
     }
-    public string ReplaceWordTGL(string word)
+    public string ReplaceWordTLG(string word)
     {
-        foreach (KeyValuePair<string, string> kvp in char_unicode_to_tgl)
+        foreach (KeyValuePair<string, string> kvp in char_unicode_to_tlg)
         {
             word = word.Replace(kvp.Key, kvp.Value);
         }
+        return word;
+    }
+
+    public string ReplaceWordMy(string word)
+    {
+        foreach (KeyValuePair<string, string> kvp in char_unicode_to_my_reverse)
+        {
+            word = word.Replace(kvp.Value, kvp.Key);
+        }
+        //foreach (KeyValuePair<string, string> kvp in char_unicode_my_correct)
+        //{
+        //    word = word.Replace(kvp.Key, kvp.Value);
+        //}
         return word;
     }
 
@@ -734,7 +796,7 @@ public class SpeechGeneration
   { "e",  "එ" },
   { "o",  "ඔ" },
 };
-    Dictionary<string, string> char_unicode_to_tgl = new Dictionary<string, string> {
+    Dictionary<string, string> char_unicode_to_tlg = new Dictionary<string, string> {
 { "ththru", "ధ్ధృ" },
 { "dhdhru" , "ధ్ధృ" },
 { "phphru" , "ఫ్ఫృ" },
@@ -2997,6 +3059,361 @@ public class SpeechGeneration
 { "o" , "ఒ" },
 { "ō" , "ఓ" }
 };
+
+    Dictionary<string, string> char_unicode_to_my = new Dictionary<string, string> {
+  {   "ggho",  "ဂ္ဃေါ" },
+  {   "gghā",  "ဂ္ဃါ" },
+
+  {   "ddho",  "ဒ္ဓေါ" },
+  {   "ddhā",  "ဒ္ဓါ" },
+
+  {   "ndho",  "န္ဓော" }, //
+  {   "ndo",  "န္ဒော" }, //
+  {   "ndā",  "န္ဒာ" }, //
+  {   "ndhā",  "န္ဓာ" }, //
+
+  {   "kho",  "ခေါ" }, //
+  {   "khā",  "ခါ" }, //
+  {   "kkho",  "က္ခော" }, //
+  {   "kkhā",  "က္ခာ" }, //
+  {   "go",  "ဂေါ" }, //
+  {   "ṅo",  "ငေါ" }, //
+  {   "dho",  "ဓေါ" }, //
+  {   "do",  "ဒေါ" }, //
+  {   "po",  "ပေါ" }, //
+  {   "vo",  "ဝေါ" }, //
+  {   "gā",  "ဂါ" }, //
+  {   "ṅā",  "ငါ" }, //
+  {   "dā",  "ဒါ" }, //
+  {   "dhā",  "ဓါ" }, //
+  {   "pā",  "ပါ" }, //
+  {   "dvā",  "ဒွါ" }, //
+  {   "tvā",  "တွာ" }, //
+  {   "vā",  "ဝါ" }, //
+
+  //{   "ppho",  "ပ္ဖေါ" },
+  //{   "pphā",  "ပ္ဖါ" },
+
+  {   "ss",  "ဿ္" },
+
+  {   "vh",  "ဝှ္" },
+  {   "vy",  "ဝျ္" },
+  {   "vr",  "ဝြ္" },
+
+  {   "yh",  "ယှ္" },
+  {   "yy",  "ယျ္" },
+  {   "yr",  "ယြ္" },
+  {   "yv",  "ယွ္" },
+
+  {   "hy",  "ဟျ္" },
+  {   "hr",  "ဟြ္" },
+  {   "hv",  "ဟွ္" },
+
+  {   "rv",  "ရွ္" },
+  {   "rh",  "ရှ္" },
+  {   "ry",  "ရျ္" },
+
+  {   "kh",  "ခ္" },
+  {   "gh",  "ဃ္" },
+  {   "ch",  "ဆ္" },
+  {   "jh",  "ဈ္" },
+  {   "ññ",  "ည္" },
+  {   "ṭh",  "ဌ္" },
+  {   "ḍh",  "ဎ္" },
+  {   "th",  "ထ္" },
+  {   "dh",  "ဓ္" },
+  {   "ph",  "ဖ္" },
+  {   "bh",  "ဘ္" },
+  {   "k",  "က္" },
+  {   "g",  "ဂ္" },
+  {   "c",  "စ္" },
+  {   "j",  "ဇ္" },
+  {   "ñ",  "ဉ္" },
+  {   "ḷ",  "ဠ္" },
+  {   "ṭ",  "ဋ္" },
+  {   "ḍ",  "ဍ္" },
+  {   "ṇ",  "ဏ္" },
+  {   "t",  "တ္" },
+  {   "d",  "ဒ္" },
+  {   "n",  "န္" },
+  {   "p",  "ပ္" },
+  {   "b",  "ဗ္" },
+  {   "m",  "မ္" },
+  {   "l",  "လ္" },
+  {   "s",  "သ္" },
+  {   "ṅ",  "င်္" },
+
+  {   "္h",  "ှ္" },
+  {   "h",  "ဟ္" },
+  {   "္y",  "ျ္" },
+  {   "y",  "ယ္" },
+  {   "္r",  "ြ္" },
+  {   "r",  "ရ္" },
+  {   "္v",  "ွ္" },
+  {   "v",  "ဝ္" },
+  {   "္aṃ",  "ံ" },
+  {   "္iṃ",  "ိံ" },
+  {   "္uṃ",  "ုံ" },
+  {   "္ā",  "ာ" },
+  {   "္i",  "ိ" },
+  {   "္ī",  "ီ" },
+  {   "္u",  "ု" },
+  {   "္ū",  "ူ" },
+  {   "္e",  "ေ" },
+  {   "္o",  "ော" },
+  {   "aṃ",  "အံ" },
+  {   "iṃ",  "ဣံ" },
+  {   "uṃ",  "ဥံ" },
+  {   "a",  "အ" },
+  {   "ā",  "အာ" },
+  {   "i",  "ဣ" },
+  {   "ī",  "ဤ" },
+  {   "u",  "ဥ" },
+  {   "ū",  "ဦ" },
+  {   "e",  "ဧ" },
+  {   "o",  "ဩ" },
+  {   "်္အ",  "" },
+  {   "္အ",  "" },
+  {   "1",  "၁" }, //新增数字
+  {   "2",  "၂" },
+  {   "3",  "၃" },
+  {   "4",  "၄" },
+  {   "5",  "၅" },
+  {   "6",  "၆" },
+  {   "7",  "၇" },
+  {   "8",  "၈" },
+  {   "9",  "၉" },
+  {   "0",  "၀" },
+    };
+    Dictionary<string, string> char_unicode_to_my_reverse = new Dictionary<string, string> {
+  {   "ႁႏၵ",   "ndra" }, //後加
+  {   "ခ္",   "kh" },
+  {   "ဃ္",   "gh" },
+  {   "ဆ္",   "ch" },
+  {   "ဈ္",   "jh" },
+  {   "ည္",   "ññ" },
+  {   "ဌ္",   "ṭh" },
+  {   "ဎ္",   "ḍh" },
+  {   "ထ္",   "th" },
+  {   "ဓ္",   "dh" },
+  {   "ဖ္",   "ph" },
+  {   "ဘ္",   "bh" },
+  {   "က္",   "k" },
+  {   "ဂ္",   "g" },
+  {   "စ္",   "c" },
+  {   "ဇ္",   "j" },
+  {   "ဉ္",   "ñ" },
+  {   "ဠ္",   "ḷ" },
+  {   "ဋ္",   "ṭ" },
+  {   "ဍ္",   "ḍ" },
+  {   "ဏ္",   "ṇ" },
+  {   "တ္",   "t" },
+  {   "ဒ္",   "d" },
+  {   "န္",   "n" },
+  {   "ဟ္",   "h" },
+  {   "ပ္",   "p" },
+  {   "ဗ္",   "b" },
+  {   "မ္",   "m" },
+  {   "ယ္",   "y" },
+  {   "ရ္",   "r" },
+  {   "လ္",   "l" },
+  {   "ဝ္",   "v" },
+  {   "သ္",   "s" },
+  {   "င္",   "ṅ" },
+  {   "င်္",   "ṅ" },
+  {   "ဿ",   "ssa" },
+  {   "ခ",   "kha" },
+  {   "ဃ",   "gha" },
+  {   "ဆ",   "cha" },
+  {   "ဈ",   "jha" },
+  {   "စျ",   "jha" },
+  {   "ည",   "ñña" },
+  {   "ဌ",   "ṭha" },
+  {   "ဎ",   "ḍha" },
+  {   "ထ",   "tha" },
+  {   "ဓ",   "dha" },
+  {   "ဖ",   "pha" },
+  {   "ဘ",   "bha" },
+  {   "က",   "ka" },
+  {   "ဂ",   "ga" },
+  {   "စ",   "ca" },
+  {   "ဇ",   "ja" },
+  {   "ဉ",   "ña" },
+  {   "ဠ",   "ḷa" },
+  {   "ဋ",   "ṭa" },
+  {   "ဍ",   "ḍa" },
+  {   "ဏ",   "ṇa" },
+  {   "တ",   "ta" },
+  {   "ဒ",   "da" },
+  {   "န",   "na" },
+  {   "ဟ",   "ha" },
+  {   "ပ",   "pa" },
+  {   "ဗ",   "ba" },
+  {   "မ",   "ma" },
+  {   "ယ",   "ya" },
+  {   "ရ",   "ra" },
+  {   "႐",   "ra" }, //后加
+  {   "လ",   "la" },
+  {   "ဝ",   "va" },
+  {   "သ",   "sa" },
+  {   "aျ္",   "ya" },
+  {   "aွ္",   "va" },
+  {   "aြ္",   "ra" },
+  {   "aြ",   "ra" },
+
+  {   "ၱ",   "္ta" }, //后加
+  {   "ၳ",   "္tha" }, //后加
+  {   "ၵ",   "္da" }, //后加
+  {   "ၶ",   "္dha" }, //后加
+
+  {   "ၬ",   "္ṭa" }, //后加
+  {   "ၭ",   "္ṭha" }, //后加
+
+  {   "ၠ",   "္ka" }, //后加
+  {   "ၡ",   "္kha" }, //后加
+  {   "ၢ",   "္ga" }, //后加
+  {   "ၣ",   "္gha" }, //后加
+
+  {   "ၸ",   "္pa" }, //后加
+  {   "ၹ",   "္pha" }, //后加
+  {   "ၺ",   "္ba" }, //后加
+  {   "႓",   "္bha" }, //后加
+
+  {   "ၥ",   "္ca" }, //后加
+  {   "ၧ",   "္cha" }, //后加
+  {   "ၨ",   "္ja" }, //后加
+  {   "ၩ",   "္jha" }, //后加
+
+  {   "်",   "္a" }, //后加
+  {   "ျ",   "္ya" }, //后加
+  {   "ႅ",   "္la" }, //后加
+  {   "ၼ",   "္ma" }, //后加
+  {   "ွ",   "္va" }, //后加
+  {   "ႇ",   "္ha" }, //后加
+  {   "ႆ",   "ssa" }, //后加
+  {   "ၷ",   "na" }, //后加
+  {   "ၲ",   "ta" }, //后加
+
+  {   "႒",   "ṭṭha" }, //后加
+  {   "႗",   "ṭṭa" }, //后加
+  {   "ၯ",   "ḍḍha" }, //后加
+  {   "ၮ",   "ḍḍa" }, //后加
+  {   "႑",   "ṇḍa" }, //后加
+
+  {   "kaၤ",   "ṅka" }, //后加
+  {   "gaၤ",   "ṅga" }, //后加
+  {   "khaၤ",   "ṅkha" }, //后加
+  {   "ghaၤ",   "ṅgha" }, //后加
+
+  {   "aှ",   "ha" },
+  {   "aိံ",   "iṃ" },
+  {   "aုံ",   "uṃ" },
+  {   "aော",   "o" },
+  {   "aေါ",   "o" },
+  {   "aအံ",   "aṃ" },
+  {   "aဣံ",   "iṃ" },
+  {   "aဥံ",   "uṃ" },
+  {   "aံ",   "aṃ" },
+  {   "aာ",   "ā" },
+  {   "aါ",   "ā" },
+  {   "aိ",   "i" },
+  {   "aီ",   "ī" },
+  {   "aု",   "u" },
+  {   "aဳ",   "u" }, //後加
+  {   "aူ",   "ū" },
+  {   "aေ",   "e" },
+  {   "အါ",   "ā" },
+  {   "အာ",   "ā" },
+  {   "အ",   "a" },
+  {   "ဣ",   "i" },
+  {   "ဤ",   "ī" },
+  {   "ဥ",   "u" },
+  {   "ဦ",   "ū" },
+  {   "ဧ",   "e" },
+  {   "ဩ",   "o" },
+  {   "ႏ",   "n" }, //後加
+  {   "ၪ",   "ñ" }, //後加
+  {   "a္",   "" }, //後加
+  {   "္",   "" }, //後加
+  {   "aံ",   "aṃ" },
+
+  {   "ေss",   "sse" }, //后加
+  {   "ေkh",   "khe" }, //后加
+  {   "ေgh",   "ghe" }, //后加
+  {   "ေch",   "che" }, //后加
+  {   "ေjh",   "jhe" }, //后加
+  {   "ေññ",   "ññe" }, //后加
+  {   "ေṭh",   "ṭhe" }, //后加
+  {   "ေḍh",   "ḍhe" }, //后加
+  {   "ေth",   "the" }, //后加
+  {   "ေdh",   "dhe" }, //后加
+  {   "ေph",   "phe" }, //后加
+  {   "ေbh",   "bhe" }, //后加
+  {   "ေk",   "ke" }, //后加
+  {   "ေg",   "ge" }, //后加
+  {   "ေc",   "ce" }, //后加
+  {   "ေj",   "je" }, //后加
+  {   "ေñ",   "ñe" }, //后加
+  {   "ေḷ",   "ḷe" }, //后加
+  {   "ေṭ",   "ṭe" }, //后加
+  {   "ေḍ",   "ḍe" }, //后加
+  {   "ေṇ",   "ṇe" }, //后加
+  {   "ေt",   "te" }, //后加
+  {   "ေd",   "de" }, //后加
+  {   "ေn",   "ne" }, //后加
+  {   "ေh",   "he" }, //后加
+  {   "ေp",   "pe" }, //后加
+  {   "ေb",   "be" }, //后加
+  {   "ေm",   "me" }, //后加
+  {   "ေy",   "ye" }, //后加
+  {   "ေr",   "re" }, //后加
+  {   "ေl",   "le" }, //后加
+  {   "ေv",   "ve" }, //后加
+  {   "ေs",   "se" }, //后加
+  {   "ေy",   "ye" }, //后加
+  {   "ေv",   "ve" }, //后加
+  {   "ေr",   "re" }, //后加
+
+  {   "ea",   "e" }, //后加
+  {   "eā",   "o" }, //后加
+
+  {  "၁",   "1" },
+  {  "၂",   "2" },
+  {  "၃",   "3" },
+  {  "၄",   "4" },
+  {  "၅",   "5" },
+  {  "၆",   "6" },
+  {  "၇",   "7" },
+  {  "၈",   "8" },
+  {  "၉",   "9" },
+  {  "၀",   "0" },
+  {  "း",   "”" },
+  {  "့",   "’" },
+  {  "။",   "．" },
+  {  "၊",   "，" },
+    };
+    Dictionary<string, string> char_unicode_my_correct = new Dictionary<string, string>
+    {
+        { "ခော",  "ခေါ" }, //矫正缅文转码错误
+  { "ခာ",  "ခါ" }, //kh
+  { "က္ခေါ",  "က္ခော" }, //kkho
+  { "က္ခါ",  "က္ခာ" }, //kkhā
+  { "ဂော",  "ဂေါ" }, //go
+  { "ငော",  "ငေါ" }, //ṅo
+  { "ဓော",  "ဓေါ" }, //dho
+  { "ဒော",  "ဒေါ" }, //do
+  { "ပော",  "ပေါ" }, //po
+  { "ဝော",  "ဝေါ" }, //vo
+  { "ဂာ",  "ဂါ" }, //gā
+  { "ငာ",  "ငါ" }, //ṅā
+  { "ဒာ",  "ဒါ" }, //dā
+  { "ဓာ",  "ဓါ" }, //dhā
+  { "ပာ",  "ပါ" }, //pā
+  { "ဝာ",  "ဝါ" }, //vā
+  { "ဒွာ",  "ဒွါ" }, //dvā
+
+    };
+
 
     Dictionary<string, string> char_unicode_to_pali_int = new Dictionary<string, string>()
     {

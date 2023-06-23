@@ -69,9 +69,10 @@ public class CommonGroupView : MonoBehaviour
         aboutPage.SetActive(true);
     }
     //设置选项
-    public void InitSettingOptions(List<string> nameList,int selection,Func<object,object> fin)
+    public void InitSettingOptions(string title, List<string> nameList,int selection,Func<object,object> fin)
     {
-        settingOption.Init(nameList,selection,fin);
+        titleText.text = title;
+        settingOption.Init(nameList, selection, fin);
     }
     void Start()
     {

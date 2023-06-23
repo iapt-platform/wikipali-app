@@ -59,7 +59,7 @@ public class ItemSettingOptionView : MonoBehaviour
             if (itemList[i].isOn)
                 SettingOptionFin(i);
         }
-        Debug.LogError("!!!!!!!!!!!!!!!!!!");
+        //Debug.LogError("!!!!!!!!!!!!!!!!!!");
     }
     // Start is called before the first frame update
     void Start()

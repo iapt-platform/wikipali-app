@@ -39,7 +39,7 @@ public class StarGroupArticleView : MonoBehaviour
     //}
     public void OnVoiceBtnClick()
     {
-        string readArticle = SpeechGeneration.Instance().ReplaceWordTGL(ArticleController.Instance().testPl);
+        string readArticle = SpeechGeneration.Instance().ReplaceWord(ArticleController.Instance().testPl);
         //string test = "evaṃ me sutaṃ– ekaṃ samayaṃ bhagavā ";
         //string readArticle = SpeechGeneration.Instance().ReplaceWordTGL(test);
         if (voiceSource.clip != null && currVoiceArticle == readArticle)

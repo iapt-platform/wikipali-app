@@ -31,6 +31,7 @@ public class SettingManager
     {
         //在此处无法解压缩？？？？？？？
         //??????CalendarManager.Instance().StartLocation();
+
         //覆盖更新判断版本号重新解压压缩包
         if (PlayerPrefs.HasKey("saveVersion"))
         {
@@ -47,6 +48,9 @@ public class SettingManager
             PlayerPrefs.SetString("saveVersion", Application.version);
 
         }
+        //语速初始化
+        if (!PlayerPrefs.HasKey("PaliSpeakVoiceSpeed"))
+            PlayerPrefs.SetInt("PaliSpeakVoiceSpeed", -20);
         //初始化单词本
         if (!PlayerPrefs.HasKey("dicGroupCount"))
         {
@@ -119,7 +123,7 @@ public class SettingManager
     {
         return PlayerPrefs.GetInt("TransContent");
     }
-
+    #region 朗读选项
     public enum PaliSpeakVoiceGender
     {
         Male = 0,
@@ -129,6 +133,16 @@ public class SettingManager
     {
         Telugu = 0,//泰卢固语
         Myanmar = 1,//缅甸语
+        //Sinhala = 2,//僧伽罗语
+    }
+    public static List<int> PaliSpeakVoiceSpeedList = new List<int> { 0, -10, -20, -30, -40 };
+    public enum PaliSpeakVoiceSpeed
+    {
+        _0 = 0,
+        _10 = -10,
+        _20 = -20,
+        _30 = -30,
+        _40 = -40,
     }
     public PaliSpeakVoiceGender GetPaliVoiceGender()
     {
@@ -140,7 +154,7 @@ public class SettingManager
     }
     public string GetPaliVoiceGenderName()
     {
-        PaliSpeakVoiceGender gender =(PaliSpeakVoiceGender)PlayerPrefs.GetInt("PaliSpeakVoiceGender");
+        PaliSpeakVoiceGender gender = (PaliSpeakVoiceGender)PlayerPrefs.GetInt("PaliSpeakVoiceGender");
         if (gender == PaliSpeakVoiceGender.Male)
         {
             return "        男声";
@@ -167,10 +181,51 @@ public class SettingManager
         {
             return "        印度风格";
         }
-        else if(t == PaliSpeakVoiceType.Myanmar)
+        else if (t == PaliSpeakVoiceType.Myanmar)
         {
             return "        缅甸风格";
         }
+        //else if (t == PaliSpeakVoiceType.Sinhala)
+        //{
+        //    return "        斯里兰卡风格";
+        //}
         return "";
     }
+
+    public PaliSpeakVoiceSpeed GetPaliVoiceSpeed()
+    {
+        return (PaliSpeakVoiceSpeed)PlayerPrefs.GetInt("PaliSpeakVoiceSpeed");
+    }
+    public void SetPaliVoiceSpeed(PaliSpeakVoiceSpeed vt)
+    {
+        PlayerPrefs.SetInt("PaliSpeakVoiceSpeed", (int)vt);
+    }
+
+
+    public string GetPaliVoiceSpeedName()
+    {
+        PaliSpeakVoiceSpeed t = (PaliSpeakVoiceSpeed)PlayerPrefs.GetInt("PaliSpeakVoiceSpeed");
+        if (t == PaliSpeakVoiceSpeed._0)
+        {
+            return "        0";
+        }
+        else if (t == PaliSpeakVoiceSpeed._10)
+        {
+            return "        -10%";
+        }
+        else if (t == PaliSpeakVoiceSpeed._20)
+        {
+            return "        -20%";
+        }
+        else if (t == PaliSpeakVoiceSpeed._30)
+        {
+            return "        -30%";
+        }
+        else if (t == PaliSpeakVoiceSpeed._40)
+        {
+            return "        -40%";
+        }
+        return "";
+    }
+    #endregion
 }
