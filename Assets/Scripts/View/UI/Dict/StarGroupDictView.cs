@@ -19,7 +19,7 @@ public class StarGroupDictView : MonoBehaviour
         voiceBtn.onClick.AddListener(OnVoiceBtnClick);
 
     }
-    string currVoiceWord;
+    public static string currVoiceWord;
     public void OnVoiceBtnClick()
     {
         string readWord = SpeechGeneration.Instance().ReplaceWord(DictManager.Instance().currWord);

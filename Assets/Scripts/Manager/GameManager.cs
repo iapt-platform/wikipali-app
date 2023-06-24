@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
         CheckUpdateRedPoint();
         if (CreatQR.LoadQR())
             CreatQR.CreatQr();
+        SpeechGeneration.Instance().LoadTxt();
     }
 
     // Update is called once per frame

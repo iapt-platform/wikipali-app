@@ -20,7 +20,7 @@ public class StarGroupArticleView : MonoBehaviour
         voiceBtn.onClick.AddListener(OnVoiceBtnClick);
 
     }
-    string currVoiceArticle;
+    public static string currVoiceArticle;
     //public void OnVoiceBtnClick()
     //{
     //    string readWord = SpeechGeneration.Instance().ReplaceWord(ArticleController.Instance().testPl);
