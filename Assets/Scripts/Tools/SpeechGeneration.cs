@@ -338,7 +338,7 @@ public class SpeechGeneration
         return "";
     }
     //数字不读
-    public AudioClip SpeekSI(string word, int speed)
+    public AudioClip SpeekPali(string word, int speed = 0)
     {
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
@@ -404,7 +404,7 @@ public class SpeechGeneration
             //}
         }
     }
-    public string ReplaceWord(string word)
+   public string ReplaceWord(string word)
     {
         //不读数字
         word = RemoveNumber(word);

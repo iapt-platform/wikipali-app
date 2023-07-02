@@ -365,7 +365,10 @@ public class ArticleController
     //    }
     //    return sb.ToString();
     //}
-
+    //朗读用
+    public List<string> paliSentenceList = new List<string>();
+    public List<string> transSentenceList = new List<string>();
+    public bool trans;
     public string testPl;
     public string testCN;
     const int LINE_COUNT_LIMIT = 50;
@@ -377,7 +380,7 @@ public class ArticleController
     {
         if (book == null)
             return (null, null);
-
+        trans = isTrans;
         //译文显示pali原文选项
         bool transContent = SettingManager.Instance().GetTransContent() == 1;
         List<SentenceDBData> sentence = GetPaliSentenceByBook(book);
@@ -402,10 +405,7 @@ public class ArticleController
                 sb.AppendLine(sentenceNormalize);
                 sb.AppendLine("");
                 sentenceRes.Add(sentenceNormalize);
-                if (i == 0)
-                {
-                    testPl = sentenceNormalize;
-                }
+                paliSentenceList.Add(sentenceNormalize);
             }
             lineCount += 2;
             //todo 优化
@@ -425,6 +425,7 @@ public class ArticleController
                         sb.AppendLine("");
                         lineCount += 3;
                         sentenceRes.Add(sentenceTransNormalize);
+                        transSentenceList.Add(sentenceTransNormalize);
                         // break;
                     }
                 }

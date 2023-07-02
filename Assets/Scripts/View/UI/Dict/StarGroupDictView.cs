@@ -28,7 +28,7 @@ public class StarGroupDictView : MonoBehaviour
             voiceSource.Play();
             return;
         }
-        AudioClip ac =  SpeechGeneration.Instance().SpeekSI(readWord,-10);
+        AudioClip ac =  SpeechGeneration.Instance().SpeekPali(readWord,-10);
         if (ac != null)
         {
             currVoiceWord = readWord;

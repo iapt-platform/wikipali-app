@@ -37,23 +37,28 @@ public class StarGroupArticleView : MonoBehaviour
     //        voiceSource.Play();
     //    }
     //}
+    //public void OnVoiceBtnClick()
+    //{
+    //    string readArticle = SpeechGeneration.Instance().ReplaceWord(ArticleController.Instance().testPl);
+    //    //string test = "evaṃ me sutaṃ– ekaṃ samayaṃ bhagavā ";
+    //    //string readArticle = SpeechGeneration.Instance().ReplaceWordTGL(test);
+    //    if (voiceSource.clip != null && currVoiceArticle == readArticle)
+    //    {
+    //        voiceSource.Play();
+    //        return;
+    //    }
+    //    AudioClip ac = SpeechGeneration.Instance().SpeekPali(readArticle, -40);
+    //    if (ac != null)
+    //    {
+    //        currVoiceArticle = readArticle;
+    //        voiceSource.clip = ac;
+    //        voiceSource.Play();
+    //    }
+    //}
     public void OnVoiceBtnClick()
     {
-        string readArticle = SpeechGeneration.Instance().ReplaceWord(ArticleController.Instance().testPl);
-        //string test = "evaṃ me sutaṃ– ekaṃ samayaṃ bhagavā ";
-        //string readArticle = SpeechGeneration.Instance().ReplaceWordTGL(test);
-        if (voiceSource.clip != null && currVoiceArticle == readArticle)
-        {
-            voiceSource.Play();
-            return;
-        }
-        AudioClip ac = SpeechGeneration.Instance().SpeekSI(readArticle, -40);
-        if (ac != null)
-        {
-            currVoiceArticle = readArticle;
-            voiceSource.clip = ac;
-            voiceSource.Play();
-        }
+        SpeechManager.Instance().ReadArticleSList(ArticleController.Instance().paliSentenceList,
+            ArticleController.Instance().transSentenceList, ArticleController.Instance().trans, voiceSource);
     }
     //public void OnVoiceBtnClick()
     //{
