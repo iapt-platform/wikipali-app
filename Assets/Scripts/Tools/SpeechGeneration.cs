@@ -15,6 +15,8 @@ using System.Linq;
 using UnityEngine.UIElements;
 using Microsoft.CognitiveServices.Speech;
 using static SettingManager;
+using System.Threading.Tasks;
+using UnityEditor.VersionControl;
 
 public class Tts
 {
@@ -284,7 +286,8 @@ public class SpeechGeneration
     string language_SLK = "si-LK";
     //private string m_SpeechSynthesisVoiceName = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     //private string m_SpeechSynthesisVoiceName = "si-LK-SameeraNeural";
-    string GetVoice()
+
+    public string GetVoice()
     {
         PaliSpeakVoiceGender gender = SettingManager.Instance().GetPaliVoiceGender();
         PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
@@ -320,7 +323,7 @@ public class SpeechGeneration
         }
         return "";
     }
-    string GetLanguage()
+    public string GetLanguage()
     {
         PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
         if (vt == PaliSpeakVoiceType.Telugu)
@@ -404,7 +407,8 @@ public class SpeechGeneration
             //}
         }
     }
-   public string ReplaceWord(string word)
+
+    public string ReplaceWord(string word)
     {
         //不读数字
         word = RemoveNumber(word);

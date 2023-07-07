@@ -29,11 +29,12 @@ public class ArticleTitleReturnBtn : MonoBehaviour
     }
     public void OnBtnClick()
     {
+        SpeechManager.Instance().StopLoadSpeech();
         articleView.ReturnBtnClick();
     }
     // Update is called once per frame
-    void Update()
-    {
+    //void Update()
+    //{
 
-    }
+    //}
 }

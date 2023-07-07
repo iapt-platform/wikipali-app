@@ -380,6 +380,8 @@ public class ArticleController
     {
         if (book == null)
             return (null, null);
+        paliSentenceList.Clear();
+        transSentenceList.Clear();
         trans = isTrans;
         //译文显示pali原文选项
         bool transContent = SettingManager.Instance().GetTransContent() == 1;
@@ -416,10 +418,10 @@ public class ArticleController
                     {
                         //sb.AppendLine();
                         string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
-                        if (i == 0 && j == 0)
-                        {
-                            testCN = sentenceTransNormalize;
-                        }
+                        //if (i == 0 && j == 0)
+                        //{
+                        //    testCN = sentenceTransNormalize;
+                        //}
                         sb.AppendFormat("<color=#5895FF>{0}</color>", sentenceTransNormalize);
                         sb.AppendLine("");
                         sb.AppendLine("");
