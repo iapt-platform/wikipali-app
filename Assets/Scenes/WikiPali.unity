@@ -7551,7 +7551,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -207.76996, y: -95.681885}
+  m_AnchoredPosition: {x: -207.76997, y: -95.681885}
   m_SizeDelta: {x: -444.05, y: 176.87}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &282558950
@@ -16484,7 +16484,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -91.8999}
+  m_AnchoredPosition: {x: 0, y: -91.89993}
   m_SizeDelta: {x: 0, y: -154.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &494762241
@@ -18017,6 +18017,7 @@ MonoBehaviour:
   dicStarGroup: {fileID: 1907568868}
   articleStarGroup: {fileID: 2068250995}
   mainView: {fileID: 1146448375}
+  articleView: {fileID: 2108809201}
   appVersion: 
 --- !u!114 &534669907
 MonoBehaviour:

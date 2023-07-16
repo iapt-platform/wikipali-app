@@ -24,13 +24,20 @@ public class SpeechManager : MonoBehaviour
         return manager;
     }
     //朗读队列
-    List<string> paliList = new List<string>();
-    List<string> transList = new List<string>();
+    List<ReadTextInfo> paliList = new List<ReadTextInfo>();
+    List<ReadTextInfo> transList = new List<ReadTextInfo>();
 
-    public class ReadText
+    public class ReadTextInfo
     {
+        public ReadTextInfo(string _sentence, int _offsetIndex,int _textID)
+        {
+            sentence = _sentence;
+            offsetIndex = _offsetIndex;
+            textID = _textID;
+        }
         public string sentence;
         public int offsetIndex;
+        public int textID;//拆分隔开的textUI的数量
     }
     bool isTrans;
 
@@ -49,7 +56,7 @@ public class SpeechManager : MonoBehaviour
         transList.Clear();
     }
     //todo 播放中点播放按钮，未加载完
-    bool CheckIsSame(List<string> _paliList, List<string> _transList, bool _isTrans)
+    bool CheckIsSame(List<ReadTextInfo> _paliList, List<ReadTextInfo> _transList, bool _isTrans)
     {
         if (isTrans != _isTrans)
             return false;
@@ -61,7 +68,7 @@ public class SpeechManager : MonoBehaviour
         int checkCount = paliList.Count > 5 ? 5 : paliList.Count;
         for (int i = 0; i < checkCount; i++)
         {
-            if (paliList[i] != _paliList[i])
+            if (paliList[i].sentence != _paliList[i].sentence)
                 return false;
 
         }
@@ -74,13 +81,13 @@ public class SpeechManager : MonoBehaviour
             checkCount = transList.Count > 5 ? 5 : transList.Count;
             for (int i = 0; i < checkCount; i++)
             {
-                if (transList[i] != _transList[i])
+                if (transList[i].sentence != _transList[i].sentence)
                     return false;
             }
         }
         return true;
     }
-    public void ReadArticleSList(List<string> _paliList, List<string> _transList, bool _isTrans, AudioSource _aus)
+    public void ReadArticleSList(List<ReadTextInfo> _paliList, List<ReadTextInfo> _transList, bool _isTrans, AudioSource _aus)
     {
         waitTime = 0;
         curPaliID = 0;
@@ -144,7 +151,7 @@ public class SpeechManager : MonoBehaviour
             CoroutineFuncPali();
         }
     }
-    void DeepCopyList(List<string> origin, List<string> copy)
+    void DeepCopyList(List<ReadTextInfo> origin, List<ReadTextInfo> copy)
     {
         origin.Clear();
         int c = copy.Count;
@@ -172,7 +179,7 @@ public class SpeechManager : MonoBehaviour
         for (int i = 0; i < paliList.Count; i++)
         {
             //Debug.LogError(Time.timeSinceLevelLoad - t);
-            SpeekPaliTask(SpeechGeneration.Instance().ReplaceWord(paliList[i]), i);
+            SpeekPaliTask(SpeechGeneration.Instance().ReplaceWord(paliList[i].sentence), i);
             //paliACList.Add(SpeechGeneration.Instance().SpeekPali(SpeechGeneration.Instance().ReplaceWord(paliList[i])));
             //++loadPaliId;
             //if (i == 0)
@@ -187,6 +194,7 @@ public class SpeechManager : MonoBehaviour
         config.SpeechSynthesisVoiceName = voice;
         using (var synthsizer = new SpeechSynthesizer(config, null))
         {
+            //todo:节省azure流量，语速设置为0时，不用ssml，用普通read text
             int speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
             string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + SpeechGeneration.Instance().GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
             //var result = synthsizer.SpeakSsmlAsync(text).Result;
@@ -265,7 +273,7 @@ public class SpeechManager : MonoBehaviour
         // float t = Time.timeSinceLevelLoad;
         for (int i = 0; i < transList.Count; i++)
         {
-            SpeekTransTask(transList[i], i);
+            SpeekTransTask(transList[i].sentence, i);
             //Task.Delay(1).ContinueWith(t => { task.RunSynchronously(); });
 
         }
@@ -349,7 +357,7 @@ public class SpeechManager : MonoBehaviour
     {
         for (int i = 0; i < transList.Count; i++)
         {
-            transACList.Add(SpeechGeneration.Instance().SpeekCN(transList[i]));
+            transACList.Add(SpeechGeneration.Instance().SpeekCN(transList[i].sentence));
             ++loadTransId;
             isStartPlay = true;
             waitTime = 0;
@@ -512,9 +520,9 @@ public class SpeechManager : MonoBehaviour
             // if (transWordBoundaryList[].off)
             //50ms = 500000
             if (transWordBoundaryList[highLightTransID][i].AudioOffset < playTime)
-           // if (dur < playTime)
+            // if (dur < playTime)
             {
-                Debug.LogError("dur:" +dur);
+                Debug.LogError("dur:" + dur);
 
                 curwordBoundary = transWordBoundaryList[highLightTransID][i];
             }
@@ -525,7 +533,8 @@ public class SpeechManager : MonoBehaviour
         if (curwordBoundary != null)
         {
             Debug.LogError(curwordBoundary.Text);
-
+            ReadTextInfo info = transList[highLightTransID];
+            ArticleManager.Instance().articleView.SetTextHighLight(info.textID, info.offsetIndex + (int)curwordBoundary.TextOffset/*+15*/, (int)curwordBoundary.WordLength);
 
         }
 

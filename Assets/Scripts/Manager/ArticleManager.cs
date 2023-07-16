@@ -21,6 +21,7 @@ public class ArticleManager
         return manager;
     }
     public DBManager dbManager = DBManager.Instance();
+    public ArticleView articleView;
 
     /// <summary>
     /// 读取本地文件夹中的Json文件

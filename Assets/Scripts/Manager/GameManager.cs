@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public StarGroupDictView dicStarGroup;
     public StarGroupArticleView articleStarGroup;
     public MainView mainView;
+    public ArticleView articleView;
 
     public string appVersion;//= Application.version;
     //public bool canUpdate = false;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
         SettingManager.Instance().InitGame();
         DictManager.Instance().dicStarGroup = dicStarGroup;
         ArticleManager.Instance().articleStarGroup = articleStarGroup;
+        ArticleManager.Instance().articleView = articleView;
     }
     bool isStartUnZipDB = false;
     bool isDownLoadAPK = false;

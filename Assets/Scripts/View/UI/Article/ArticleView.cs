@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using static ArticleController;
 using static ArticleManager;
+using static System.Net.Mime.MediaTypeNames;
+using static UnityEditor.MaterialProperty;
+using Text = UnityEngine.UI.Text;
 
 public class ArticleView : MonoBehaviour
 {
@@ -325,6 +329,7 @@ public class ArticleView : MonoBehaviour
         currentChapterData = cNode;
         currentBook = book;
         (text, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
+        textBackup = text;
         articleContent = sentence;
         if (text == null)
         {
@@ -350,9 +355,35 @@ public class ArticleView : MonoBehaviour
         textRuler.gameObject.SetActive(false);
         nextAndPrevGroup.SetAsLastSibling();
 
-        ArticleManager.Instance().SetArticleStar(book.translateName,book.id,book.paragraph,book.chapter_len, channel);
+        ArticleManager.Instance().SetArticleStar(book.translateName, book.id, book.paragraph, book.chapter_len, channel);
         //PaliContentText.lin
     }
+    List<string> textBackup = new List<string>();
+    string HIGHLIGHT_COLOR = "#ffa500ff";
+    //朗读高亮用接口，重新设置UI的text
+    public void SetTextHighLight(int textID, int hlStartID, int hlLength)
+    {
+        //int l = textBackup.Count;
+        //for (int i = 0; i < l; i++)
+        //{
+        Text contentTextInst = contentList[textID].GetComponent<Text>();
+        string newText = textBackup[textID];
+        newText = newText.Substring(0, hlStartID) + "<color=" + HIGHLIGHT_COLOR + ">" +
+           newText.Substring(hlStartID, hlLength) + "</color>" + newText.Substring(hlStartID + hlLength);
+        contentTextInst.text = MarkdownText.PreprocessText(newText);
+        //}
+    }
+    //还原高亮的文字
+    public void RestoreTextHighLight()
+    {
+        int l = textBackup.Count;
+        for (int i = 0; i < l; i++)
+        {
+            Text contentTextInst = contentList[i].GetComponent<Text>();
+            contentTextInst.text = MarkdownText.PreprocessText(textBackup[i]);
+        }
+    }
+
     public void ShowPaliContentFromStar(int bookID, int bookParagraph, int bookChapterLen, string channelId)
     {
         bool isTrans = !string.IsNullOrEmpty(channelId);

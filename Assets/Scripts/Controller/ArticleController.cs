@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using static ArticleManager;
+using static SpeechManager;
 /// <summary>
 /// 圣典控制类 单例
 /// </summary>
@@ -366,8 +367,8 @@ public class ArticleController
     //    return sb.ToString();
     //}
     //朗读用
-    public List<string> paliSentenceList = new List<string>();
-    public List<string> transSentenceList = new List<string>();
+    public List<ReadTextInfo> paliSentenceList = new List<ReadTextInfo>();
+    public List<ReadTextInfo> transSentenceList = new List<ReadTextInfo>();
     public bool trans;
     public string testPl;
     public string testCN;
@@ -404,10 +405,14 @@ public class ArticleController
             if (!isTrans || transContent)
             {
                 string sentenceNormalize = MarkdownText.RemoveHTMLStyle(sentence[i].content);
+
+                ReadTextInfo paliSentenceTextInfo = new ReadTextInfo(sentenceNormalize, sb.Length, res.Count);
+                paliSentenceList.Add(paliSentenceTextInfo);
+
                 sb.AppendLine(sentenceNormalize);
                 sb.AppendLine("");
                 sentenceRes.Add(sentenceNormalize);
-                paliSentenceList.Add(sentenceNormalize);
+
             }
             lineCount += 2;
             //todo 优化
@@ -418,6 +423,9 @@ public class ArticleController
                     {
                         //sb.AppendLine();
                         string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
+
+                        ReadTextInfo transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length+ "<color=#5895FF>".Length, res.Count);
+                        transSentenceList.Add(transSentenceTextInfo);
                         //if (i == 0 && j == 0)
                         //{
                         //    testCN = sentenceTransNormalize;
@@ -427,7 +435,6 @@ public class ArticleController
                         sb.AppendLine("");
                         lineCount += 3;
                         sentenceRes.Add(sentenceTransNormalize);
-                        transSentenceList.Add(sentenceTransNormalize);
                         // break;
                     }
                 }
