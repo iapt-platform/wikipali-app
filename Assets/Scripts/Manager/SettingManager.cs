@@ -153,6 +153,7 @@ public class SettingManager
         PlayerPrefs.SetInt("PaliSpeakVoiceGender", (int)gender);
         StarGroupArticleView.currVoiceArticle = "";
         StarGroupDictView.currVoiceWord = "";
+        SpeechManager.Instance().ClearContentList();
     }
     public string GetPaliVoiceGenderName()
     {
@@ -175,6 +176,7 @@ public class SettingManager
         PlayerPrefs.SetInt("PaliSpeakVoiceType", (int)vt);
         StarGroupArticleView.currVoiceArticle = "";
         StarGroupDictView.currVoiceWord = "";
+        SpeechManager.Instance().ClearContentList();
     }
 
 
@@ -205,6 +207,7 @@ public class SettingManager
         PlayerPrefs.SetInt("PaliSpeakVoiceSpeed", (int)vt);
         StarGroupArticleView.currVoiceArticle = "";
         StarGroupDictView.currVoiceWord = "";
+        SpeechManager.Instance().ClearContentList();
     }
 
 

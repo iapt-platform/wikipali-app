@@ -270,9 +270,11 @@ public class SpeechGeneration
         //     }
 
     }
+    public static string SPEECH_KEY = "82563fdf180f434aaf8c8f14171bae6c";
+    public static string SPEECH_REGION = "eastus";
+
     //private string m_SpeechSynthesisVoiceName = "zh-CN-XiaoyouNeural";
     //private string m_SpeechSynthesisVoiceName = "si-LK-ThiliniNeural";
-    private string m_SpeechSynthesisVoiceName = "te-IN-MohanNeural";//泰卢固语（印度）男
     private string m_SpeechTLGVoiceFemale = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     private string m_SpeechTLGVoiceMale = "te-IN-MohanNeural";//泰卢固语（印度）男
     private string m_SpeechMMVoiceFemale = "my-MM-NilarNeural";//缅甸语女
@@ -281,12 +283,28 @@ public class SpeechGeneration
     private string m_SpeechSLKVoiceMale = "si-LK-SameeraNeural";//缅甸语男
 
 
+    private string m_SpeechCNVoiceFemale = "zh-CN-XiaoxiaoNeural";//中文 女
+    private string m_SpeechCNVoiceMale = "zh-CN-YunyangNeural";//中文男
+
     string language_TLG = "te-IN";
     string language_MM = "my-MM";
     string language_SLK = "si-LK";
     //private string m_SpeechSynthesisVoiceName = "te-IN-ShrutiNeural";//泰卢固语（印度）女
     //private string m_SpeechSynthesisVoiceName = "si-LK-SameeraNeural";
-
+    public string GetTransVoice()
+    {
+        PaliSpeakVoiceGender gender = SettingManager.Instance().GetPaliVoiceGender();
+        //todo 获取文章翻译language
+        if (gender == PaliSpeakVoiceGender.Male)
+        {
+            return m_SpeechCNVoiceMale;
+        }
+        else
+        {
+            return m_SpeechCNVoiceFemale;
+        }
+        return "";
+    }
     public string GetVoice()
     {
         PaliSpeakVoiceGender gender = SettingManager.Instance().GetPaliVoiceGender();
@@ -345,7 +363,7 @@ public class SpeechGeneration
     {
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
-        var config = SpeechConfig.FromSubscription("82563fdf180f434aaf8c8f14171bae6c", "eastus");
+        var config = SpeechConfig.FromSubscription(SPEECH_KEY, SPEECH_REGION);
         string voice = GetVoice();
         //config.SpeechSynthesisLanguage = m_SpeechSynthesisLanguage;
         config.SpeechSynthesisVoiceName = voice;

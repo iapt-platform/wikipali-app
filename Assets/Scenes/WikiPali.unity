@@ -7551,7 +7551,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -207.76997, y: -95.681885}
+  m_AnchoredPosition: {x: -207.76996, y: -95.681885}
   m_SizeDelta: {x: -444.05, y: 176.87}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &282558950
@@ -16484,7 +16484,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -91.89993}
+  m_AnchoredPosition: {x: 0, y: -91.8999}
   m_SizeDelta: {x: 0, y: -154.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &494762241
@@ -46181,8 +46181,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sunriseText: {fileID: 464328663}
   solarNoonText: {fileID: 1593394641}
-  latText: {fileID: 684409834}
-  lngText: {fileID: 524835129}
+  latText: {fileID: 524835129}
+  lngText: {fileID: 684409834}
   westEraText: {fileID: 4682787}
   buddhistEraText: {fileID: 531582822}
   controllerView: {fileID: 114000012041846606}
