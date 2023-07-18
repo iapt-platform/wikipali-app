@@ -404,6 +404,7 @@ public class ArticleController
         {
             if (!isTrans || transContent)
             {
+                //string sentenceNormalize = SpeechGeneration.Instance().ReplaceWord(MarkdownText.RemoveHTMLStyle(sentence[i].content));
                 string sentenceNormalize = MarkdownText.RemoveHTMLStyle(sentence[i].content);
 
                 ReadTextInfo paliSentenceTextInfo = new ReadTextInfo(sentenceNormalize, sb.Length, res.Count);
@@ -424,7 +425,7 @@ public class ArticleController
                         //sb.AppendLine();
                         string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
 
-                        ReadTextInfo transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length+ "<color=#5895FF>".Length, res.Count);
+                        ReadTextInfo transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length + "<color=#5895FF>".Length, res.Count);
                         transSentenceList.Add(transSentenceTextInfo);
                         //if (i == 0 && j == 0)
                         //{

@@ -425,11 +425,11 @@ public class SpeechGeneration
             //}
         }
     }
-
     public string ReplaceWord(string word)
     {
         //不读数字
-        word = RemoveNumber(word);
+        //要转换为小写之后替换
+        word = RemoveNumber(word.ToLower());
         PaliSpeakVoiceType vt = SettingManager.Instance().GetPaliVoiceType();
         if (vt == PaliSpeakVoiceType.Telugu)
         {
@@ -508,6 +508,7 @@ public class SpeechGeneration
             lines = File.ReadAllLines(tlg_Path);
             int c = lines.Length;
             for (int i = 0; i < c; i++)
+            //  for (int i = c-1; i >-1; i--)
             {
                 string[] temp = lines[i].Split(',');
                 if (!char_unicode_to_tlg_txt.ContainsKey(temp[0]))
