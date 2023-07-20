@@ -104,6 +104,7 @@ public class SpeechManager : MonoBehaviour
             isStartHighLight = true;
             return;
         }
+        ssmlTextLength = 0;
 
 
         paliACList.Clear();
@@ -194,6 +195,7 @@ public class SpeechManager : MonoBehaviour
         }
         //yield return null;
     }
+    int ssmlTextLength;
     public void SpeekPaliTask(string word, int id)
     {
         var config = SpeechConfig.FromSubscription(SpeechGeneration.SPEECH_KEY, SpeechGeneration.SPEECH_REGION);
@@ -203,13 +205,20 @@ public class SpeechManager : MonoBehaviour
         {
             //todo:节省azure流量，语速设置为0时，不用ssml，用普通read text
             int speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
-            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + SpeechGeneration.Instance().GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+            string text = word;
+            if (speed != 0)
+            {
+                //text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + SpeechGeneration.Instance().GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+                text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + SpeechGeneration.Instance().GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>";
+                ssmlTextLength = text.Length;
+                text += word + "</prosody></voice></speak>";
+            }
             //var task = SynthesisToSpeakerPaliAsync(config, text, id);
-            var task = SynthesisToSpeakerPaliAsync(config, word, id);
+            var task = SynthesisToSpeakerPaliAsync(config, text, id, speed);
             Task.Delay(1).ContinueWith(t => { task.RunSynchronously(); });
         }
     }
-    public /*static*/ async Task SynthesisToSpeakerPaliAsync(SpeechConfig config, string text, int id)
+    public /*static*/ async Task SynthesisToSpeakerPaliAsync(SpeechConfig config, string text, int id, int speed)
     {
         // Creates a speech synthesizer using the default speaker as audio output.
         //如果用这段代码，就直接播放，不会走unity的a
@@ -225,7 +234,8 @@ public class SpeechManager : MonoBehaviour
             };
 
             //using (var result = await synthesizer.SpeakSsmlAsync(text))
-            using (var result = await synthesizer.SpeakTextAsync(text))
+
+            using (var result = await (speed == 0 ? synthesizer.SpeakTextAsync(text) : synthesizer.SpeakSsmlAsync(text)))
             {
                 if (result.Reason == ResultReason.SynthesizingAudioCompleted)
                 {
@@ -382,7 +392,26 @@ public class SpeechManager : MonoBehaviour
             {
                 if (isTrans)
                 {
-                    HighLightWordTrans();
+                    //译文显示pali原文选项
+                    bool transContent = SettingManager.Instance().GetTransContent() == 1;
+                    if (transContent)
+                    {
+                        bool currPali = true;
+                        if (curPaliID > curTransID)
+                        {
+                            currPali = true;
+                            HighLightWordPali();
+                        }
+                        else
+                        {
+                            HighLightWordTrans();
+                            currPali = false;
+                        }
+                    }
+                    else
+                    {
+                        HighLightWordTrans();
+                    }
                 }
                 else
                 {
@@ -480,12 +509,6 @@ public class SpeechManager : MonoBehaviour
         waitTime += clipTime + 1;
     }
 
-    //返回：key
-    void ProcessWordBoundaryList()
-    {
-
-    }
-
     int highLightTransID = 0;
     int highLightPaliID = 0;
     //文字高亮方案1
@@ -580,28 +603,38 @@ public class SpeechManager : MonoBehaviour
             string[] replaceArr = info.sentenceReplace.Split(' ');
             string[] orignArr = info.sentence.Split(' ');
             int iID = 0;
-             int rID = 0;
+            int rID = 0;
             int rSpaceID = 0;
             for (int i = 0; i < replaceArr.Length; i++)
             {
                 rSpaceID = i;
                 rID += replaceArr[i].Length + 1;
-                if (curwordBoundary.TextOffset < rID)
+                if (curwordBoundary.TextOffset - ssmlTextLength < rID)
                 {
                     break;
                 }
                 iID += orignArr[i].Length + 1;
             }
-            Debug.LogError("TextOffset:" + curwordBoundary.TextOffset);
-            Debug.LogError("rSpaceID:" + rSpaceID);
-            Debug.LogError("iID:" + iID);
-            Debug.LogError("Length:" + orignArr[rSpaceID].Length);
-
+            //Debug.LogError("TextOffset:" + curwordBoundary.TextOffset);
+            //Debug.LogError("rSpaceID:" + rSpaceID);
+            //Debug.LogError("iID:" + iID);
+            //Debug.LogError("Length:" + orignArr[rSpaceID].Length);
             ArticleManager.Instance().articleView.SetTextHighLight(info.textID,
                 info.offsetIndex + iID, orignArr[rSpaceID].Length);
 
         }
-
+        //todo:
+        //--0.ssml的高亮文字偏移offset,0%速度不用ssml
+        //--1:第二次点发音，用缓存朗读
+        //--2.pali与翻译混合发音高亮
+        //bug:
+        //a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
+        //b.<b></b>html语句与高亮混在一起
+        //c.有语速时，犍度第一篇文章，高亮位置不对
+        //3.尊者需求，高亮?阅读?去掉括号内的内容
+        //4.阅读保留记录
+        //5.重新导出数据库
+        //6.上线
 
     }
 }

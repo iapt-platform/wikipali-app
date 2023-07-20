@@ -371,18 +371,11 @@ public class SpeechGeneration
         // Make sure to dispose the synthesizer after use!
         using (var synthsizer = new SpeechSynthesizer(config, null))
         {
-            //lock (threadLocker)
-            //{
-            //    waitingForSpeak = true;
-            //}
-            // string temp = "සම්පන්නපාතිමොක්ඛා ති ප‍රිපුණ්ණපාතිමොක්ඛා .";
-            speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
-            //speed = -20;
-            string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
-            // string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
-            //UnityEngine.Debug.LogError(text);
-            var result = synthsizer.SpeakSsmlAsync(text).Result;
-            // var result = synthsizer.SpeakTextAsync(word).Result;
+            //speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
+            //string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
+            //var result = synthsizer.SpeakSsmlAsync(text).Result;
+            //为了节省Azure流量，读单词不放慢语速
+             var result = synthsizer.SpeakTextAsync(word).Result;
             //print("after   " + DateTime.Now);
 
             // Checks result.
