@@ -442,13 +442,6 @@ public class SpeechManager : MonoBehaviour
                         {
                             TransUpdateFunc();
                             currPali = false;
-                            //每9帧执行一次高亮
-                            //if (temp % 9 == 0)
-                            //{
-                            //    HighLightWordTrans();
-                            //    temp = 0;
-                            //}
-                            //++temp;
                         }
                     }
                     else//不显示pali原文只读翻译部分就可以了
@@ -489,6 +482,27 @@ public class SpeechManager : MonoBehaviour
     }
     public void TransUpdateFunc()
     {
+        //翻译比pali原文少，先读完的情况
+        //译文显示pali原文选项
+        bool transContent = SettingManager.Instance().GetTransContent() == 1;
+        if (transContent)
+        {
+            if (curTransID >= transACList.Count)
+            {
+                if (curPaliID >= paliACList.Count)
+                {
+
+                    isStartPlay = false;
+                    waitTime = 0;
+                    return;
+                }
+                else
+                {
+                    ++curTransID;
+                    return;
+                }
+            }
+        }
         if (curTransID >= transACList.Count || transACList[curTransID] == null)
         {
             waitTime += 1;
@@ -501,9 +515,22 @@ public class SpeechManager : MonoBehaviour
         ++curTransID;
         if (curTransID >= transList.Count)
         {
-            isStartPlay = false;
-            waitTime = 0;
-            return;
+            if (transContent)
+            {
+                if (curPaliID >= paliACList.Count)
+                {
+                    isStartPlay = false;
+                    waitTime = 0;
+                    return;
+                }
+            }
+            else
+            {
+                isStartPlay = false;
+                waitTime = 0;
+                return;
+            }
+
         }
         float clipTime = clip.length;//秒数
         waitTime += clipTime + 1;
@@ -611,6 +638,9 @@ public class SpeechManager : MonoBehaviour
                 rID += replaceArr[i].Length + 1;
                 if (curwordBoundary.TextOffset - ssmlTextLength < rID)
                 {
+                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.TextOffset);
+                    Debug.LogError("ssmlTextLength" + ssmlTextLength);
+                    Debug.LogError("curwordBoundary.TextOffset - ssmlTextLength" + (curwordBoundary.TextOffset - ssmlTextLength));
                     break;
                 }
                 iID += orignArr[i].Length + 1;
@@ -623,18 +653,18 @@ public class SpeechManager : MonoBehaviour
                 info.offsetIndex + iID, orignArr[rSpaceID].Length);
 
         }
-        //todo:
-        //--0.ssml的高亮文字偏移offset,0%速度不用ssml
-        //--1:第二次点发音，用缓存朗读
-        //--2.pali与翻译混合发音高亮
-        //bug:
-        //a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
-        //b.<b></b>html语句与高亮混在一起
-        //c.有语速时，犍度第一篇文章，高亮位置不对
-        //3.尊者需求，高亮?阅读?去掉括号内的内容
-        //4.阅读保留记录
-        //5.重新导出数据库
-        //6.上线
 
     }
+    //todo:
+    //--0.ssml的高亮文字偏移offset,0%速度不用ssml
+    //--1:第二次点发音，用缓存朗读
+    //--2.pali与翻译混合发音高亮
+    //bug:
+    //--a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
+    //b.<b></b>html语句与高亮混在一起//因为空格在</b>左侧
+    //c.有语速时，犍度第一篇文章，高亮位置不对
+    //3.尊者需求，高亮?阅读?去掉括号内的内容
+    //4.阅读保留记录
+    //5.重新导出数据库
+    //6.上线
 }
