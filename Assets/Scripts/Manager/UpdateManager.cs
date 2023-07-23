@@ -50,7 +50,7 @@ public class UpdateManager
     {
         ////测试代码
         //UITool.ShowToastMessage(ui, Application.internetReachability.ToString(), 35);
-     
+
         //try
         //{
         //    System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
@@ -90,7 +90,7 @@ public class UpdateManager
             // return false;
         }
         GetUpdateInfoRedPoint();
-
+        GetAzureKey();
     }
     public class UpdateInfo
     {
@@ -106,6 +106,9 @@ public class UpdateManager
     //const string UPDATE_ONFO_URl_2 = "https://github.com/ariyamaggika/wikipali-app/releases/download/apk/version.txt";//国外
     const string UPDATE_ONFO_URl_2 = "https://raw.githubusercontent.com/ariyamaggika/wikipali-app/master/version.txt";//国外
 
+    const string AZURE_ONFO_URl_1 = "https://gitee.com/wolf96/wikipali-app/raw/main/font.font";//国内
+    const string AZURE_ONFO_URl_2 = "https://raw.githubusercontent.com/ariyamaggika/wikipali-app/master/font.font";//国外
+
     /// <summary>
     /// 获取更新信息显示红点
     /// 从网站上获取版本号&国内国外下载地址W
@@ -113,6 +116,13 @@ public class UpdateManager
     public void GetUpdateInfoRedPoint()
     {
         DownloadManager.Instance().DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
+    }
+    /// <summary>
+    /// 下载AzureKey
+    /// </summary>
+    public void GetAzureKey()
+    {
+        DownloadManager.Instance().DownLoad(Application.persistentDataPath, AZURE_ONFO_URl_1, OnDownLoadAzure, "font.font");
     }
     object OnDownLoadVersionOverRedPoint(object _realSavePath)
     {
@@ -147,6 +157,29 @@ public class UpdateManager
             }
         }
 
+        return null;
+    }
+    object OnDownLoadAzure(object _realSavePath)
+    {
+        string realSavePath = _realSavePath.ToString();
+
+        if (File.Exists(realSavePath))
+        {
+            string str = (string)CommonTool.DeserializeObjectFromFile(realSavePath, "wikipaliapp12345");
+            str = CommonTool.SwapString(str);
+            //Debug.LogError(str);
+            string[] splits = str.Split(',');
+            if (splits.Length > 1)
+            {
+                SpeechGeneration.SPEECH_KEY = splits[0];
+                SpeechGeneration.SPEECH_REGION = splits[1];
+            }
+            else
+            {
+                SpeechGeneration.SPEECH_KEY = null;
+                SpeechGeneration.SPEECH_REGION = null;
+            }
+        }
         return null;
     }
     /// <summary>

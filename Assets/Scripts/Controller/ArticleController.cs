@@ -27,6 +27,7 @@ public class ArticleController
     public void Init()
     {
         GetArticleTreeNodeData();
+        GetArticleCatalogueData();
         GetArticleTSData();
     }
     //圣典分类方式
@@ -36,6 +37,33 @@ public class ArticleController
         CSCD4
     }
     public Category category = Category.Defualt;
+    #region 圣典目录翻译节点
+    [Serializable]
+    public class ArticleCatalogueNode
+    {
+        public string word;
+        public string meaning;
+
+    }
+    [Serializable]
+    public class ArticleCatalogueNodes
+    {
+        public List<ArticleCatalogueNode> info;
+    }
+    public ArticleCatalogueNodes articleCatalogueNodes;
+    //Dictionary<string, string> articleCatalogueDic = new Dictionary<string, string>();
+    void GetArticleCatalogueData()
+    {
+        string json = manager.ReadArticleCatalogueJson();
+        articleCatalogueNodes = JsonUtility.FromJson<ArticleCatalogueNodes>(json);
+        int c = articleCatalogueNodes.info.Count;
+        for (int i = 0; i < c; i++)
+        {
+            //articleCatalogueDic.Add(articleCatalogueNodes.info[i].word, articleCatalogueNodes.info[i].meaning);
+            tsDic.Add(articleCatalogueNodes.info[i].word, articleCatalogueNodes.info[i].meaning);
+        }
+    }
+    #endregion
     #region 文章标题树形结构
     //文章标题树形结构
     //public class ArticleTreeNode

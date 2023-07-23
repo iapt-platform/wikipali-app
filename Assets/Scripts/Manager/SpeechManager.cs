@@ -198,6 +198,8 @@ public class SpeechManager : MonoBehaviour
     int ssmlTextLength;
     public void SpeekPaliTask(string word, int id)
     {
+        if (!SpeechGeneration.Instance().CheckKey())
+            return;
         var config = SpeechConfig.FromSubscription(SpeechGeneration.SPEECH_KEY, SpeechGeneration.SPEECH_REGION);
         string voice = SpeechGeneration.Instance().GetVoice();
         config.SpeechSynthesisVoiceName = voice;
@@ -286,6 +288,8 @@ public class SpeechManager : MonoBehaviour
     }
     public void SpeekTransTask(string word, int id)
     {
+        if (!SpeechGeneration.Instance().CheckKey())
+            return;
         var config = SpeechConfig.FromSubscription(SpeechGeneration.SPEECH_KEY, SpeechGeneration.SPEECH_REGION);
         string voice = SpeechGeneration.Instance().GetTransVoice();
         config.SpeechSynthesisVoiceName = voice;
@@ -659,12 +663,16 @@ public class SpeechManager : MonoBehaviour
     //--0.ssml的高亮文字偏移offset,0%速度不用ssml
     //--1:第二次点发音，用缓存朗读
     //--2.pali与翻译混合发音高亮
-    //bug:
+    //--3.key改为网络获取
+    //--4.圣典目录中文映射
+    //--bug:
     //--a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
-    //b.<b></b>html语句与高亮混在一起//因为空格在</b>左侧
-    //c.有语速时，犍度第一篇文章，高亮位置不对
-    //3.尊者需求，高亮?阅读?去掉括号内的内容
-    //4.阅读保留记录
-    //5.重新导出数据库
-    //6.上线
+    //bug:
+    //a.<b></b>html语句与高亮混在一起//因为空格在</b>左侧
+    //b.有语速时，犍度第一篇文章，高亮位置不对
+    //功能
+    //1.高亮阅读/去掉括号内的内容
+    //2.杀掉app后保留上次阅读位置
+    //3.重新导出数据库
+    //4.上线1.1版本
 }

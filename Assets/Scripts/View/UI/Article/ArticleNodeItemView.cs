@@ -40,7 +40,14 @@ public class ArticleNodeItemView : MonoBehaviour
             titleText.text = ts;
         else
         {
+            //尝试小写
             isHaveTs = ArticleController.Instance().tsDic.TryGetValue(aNode.name.ToLower(), out ts);
+            //尝试去掉空格的小写
+            if (!isHaveTs)
+            {
+                string temp = aNode.name.ToLower().Replace(" ","");
+                isHaveTs = ArticleController.Instance().tsDic.TryGetValue(temp, out ts);
+            }
             if (isHaveTs)
                 titleText.text = ts;
             else

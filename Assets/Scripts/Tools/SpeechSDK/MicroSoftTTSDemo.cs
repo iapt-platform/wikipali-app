@@ -75,6 +75,8 @@ public class MicroSoftTTSDemo : MonoBehaviour
         startTime = DateTime.Now;
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
+        if (!SpeechGeneration.Instance().CheckKey())
+            return;
         var config = SpeechConfig.FromSubscription(SpeechGeneration.SPEECH_KEY, SpeechGeneration.SPEECH_REGION);
         //config.SpeechSynthesisLanguage = m_SpeechSynthesisLanguage;
         config.SpeechSynthesisVoiceName = m_SpeechSynthesisVoiceName;

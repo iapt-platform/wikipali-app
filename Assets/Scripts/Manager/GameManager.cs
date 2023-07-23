@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CheckUpdateRedPoint();
+        CheckUpdate();
         if (CreatQR.LoadQR())
             CreatQR.CreatQr();
         SpeechGeneration.Instance().LoadTxt();
@@ -83,12 +83,13 @@ public class GameManager : MonoBehaviour
         }
     }
     //检测更新
-    void CheckUpdateRedPoint()
+    void CheckUpdate()
     {
-
+        //检测红点和下载AzureKey
         UpdateManager.Instance().CheckUpdateRedPoint();
-
     }
+
+
     public void ShowSettingViewUpdatePage(UpdateInfo currentUInfo)
     {
         settingView.SetUpdatePage(currentUInfo);

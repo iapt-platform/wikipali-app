@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using static ArticleController;
@@ -98,7 +101,7 @@ public class CommonTool
     {
         string path = Application.streamingAssetsPath;
 #if UNITY_EDITOR
-            path = Application.dataPath;
+        path = Application.dataPath;
 #endif
 #if UNITY_ANDROID && !UNITY_EDITOR
             path = "/sdcard/DCIM/Camera"; //设置图片保存到设备的目录.
@@ -216,4 +219,82 @@ public class CommonTool
             return null;
         }
     }
+
+    //交换数组奇偶位
+    public static byte[] SwapArray(byte[] bytes)
+    {
+        for (int i = 0; i < bytes.Length; i += 2)
+        {
+            if (i + 1 < bytes.Length)
+            {
+                byte temp = bytes[i];
+                bytes[i] = bytes[i + 1];
+                bytes[i + 1] = temp;
+            }
+        }
+        return bytes;
+    }
+    //交换string奇偶位
+    public static string SwapString(string str)
+    {
+        char[] chars = str.ToCharArray();
+        for (int i = 0; i < chars.Length; i += 2)
+        {
+            if (i + 1 < chars.Length)
+            {
+                char temp = chars[i];
+                chars[i] = chars[i + 1];
+                chars[i + 1] = temp;
+            }
+        }
+        str = new string(chars);
+        return str;
+    }
+
+    #region 加密解密
+    /// <summary>
+    /// 把对象序列化到文件(AES加密)
+    /// </summary>
+    /// <param name="keyString">密钥(16位)</param>
+    public static void SerializeObjectToFile(string fileName, object obj, string keyString)
+    {
+        using (AesCryptoServiceProvider crypt = new AesCryptoServiceProvider())
+        {
+            crypt.Key = Encoding.ASCII.GetBytes(keyString);
+            crypt.IV = Encoding.ASCII.GetBytes(keyString);
+            using (ICryptoTransform transform = crypt.CreateEncryptor())
+            {
+                FileStream fs = new FileStream(fileName, FileMode.Create);
+                using (CryptoStream cs = new CryptoStream(fs, transform, CryptoStreamMode.Write))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(cs, obj);
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// 把文件反序列化成对象(AES加密)
+    /// </summary>
+    /// <param name="keyString">密钥(16位)</param>
+    public static object DeserializeObjectFromFile(string fileName, string keyString)
+    {
+        using (AesCryptoServiceProvider crypt = new AesCryptoServiceProvider())
+        {
+            crypt.Key = Encoding.ASCII.GetBytes(keyString);
+            crypt.IV = Encoding.ASCII.GetBytes(keyString);
+            using (ICryptoTransform transform = crypt.CreateDecryptor())
+            {
+                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using (CryptoStream cs = new CryptoStream(fs, transform, CryptoStreamMode.Read))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    object obj = formatter.Deserialize(cs);
+                    return obj;
+                }
+            }
+        }
+    }
+    #endregion
+
 }

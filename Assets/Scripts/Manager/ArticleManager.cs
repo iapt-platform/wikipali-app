@@ -1,9 +1,11 @@
 ﻿using Imdork.SQLite;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using static ArticleController;
 using static SettingManager;
 
 public class ArticleManager
@@ -64,6 +66,14 @@ public class ArticleManager
     {
         return ReadJsonFromStreamingAssetsPath("Json/book_index/a/default");
     }
+    #endregion
+    #region 读取Json圣典目录翻译
+
+    public string ReadArticleCatalogueJson()
+    {
+        return ReadJsonFromStreamingAssetsPath("Json/ArticleCatalogue/term-vocabulary");
+    }
+
     #endregion
     #region 读取数据库目录树
     public class BookDBData

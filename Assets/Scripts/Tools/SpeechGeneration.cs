@@ -270,8 +270,19 @@ public class SpeechGeneration
         //     }
 
     }
-    public static string SPEECH_KEY = "82563fdf180f434aaf8c8f14171bae6c";
-    public static string SPEECH_REGION = "eastus";
+    //网上下载key和region，防止换key
+    public static string SPEECH_KEY = "";
+    public static string SPEECH_REGION = "";
+    //启动软件没联网的情况
+    public bool CheckKey()
+    {
+        if (string.IsNullOrEmpty(SPEECH_KEY) || string.IsNullOrEmpty(SPEECH_REGION))
+        {
+            UpdateManager.Instance().GetAzureKey();
+            return false;
+        }
+        return true;
+    }
 
     //private string m_SpeechSynthesisVoiceName = "zh-CN-XiaoyouNeural";
     //private string m_SpeechSynthesisVoiceName = "si-LK-ThiliniNeural";
@@ -361,6 +372,8 @@ public class SpeechGeneration
     //数字不读
     public AudioClip SpeekPali(string word, int speed = 0)
     {
+        if (!SpeechGeneration.Instance().CheckKey())
+            return null;
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
         var config = SpeechConfig.FromSubscription(SPEECH_KEY, SPEECH_REGION);
@@ -375,7 +388,7 @@ public class SpeechGeneration
             //string text = @"<speak version='1.0' xmlns='https://www.w3.org/2001/10/synthesis' xml:lang='" + GetLanguage() + "'><voice name='" + voice + "'><prosody rate='" + speed.ToString() + "%'>" + word + "</prosody></voice></speak>";
             //var result = synthsizer.SpeakSsmlAsync(text).Result;
             //为了节省Azure流量，读单词不放慢语速
-             var result = synthsizer.SpeakTextAsync(word).Result;
+            var result = synthsizer.SpeakTextAsync(word).Result;
             //print("after   " + DateTime.Now);
 
             // Checks result.
