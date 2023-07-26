@@ -16,6 +16,7 @@ public class SaveBytes : MonoBehaviour
     {
         string str = "";
         str = CommonTool.SwapString(str);
+        //todo Òş²ØÃÜÂë
         CommonTool.SerializeObjectToFile(@"Assets/Editor/font.font", str, "wikipaliapp12345");
     }
 
