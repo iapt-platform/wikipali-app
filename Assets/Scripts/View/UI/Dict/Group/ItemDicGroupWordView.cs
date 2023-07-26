@@ -73,16 +73,18 @@ public class ItemDicGroupWordView : MonoBehaviour
     }
     void Jump2Dic()
     {
-        GameManager.Instance().mainView.SetDicOn();
-        GameManager.Instance().mainView.dicView.OnItemDicClick(word);
+        GameManager.Instance().ShowDicWord(word);
+        //GameManager.Instance().mainView.SetDicOn();
+        // GameManager.Instance().mainView.dicView.OnItemDicClick(word);
         popView.OnCloseBackBtnClick();
         dicGroupView.OnCloseBtnClick();
         commonView.OnCloseBtnClick();
     }
     void Jump2Article()
     {
-        GameManager.Instance().mainView.SetArticleOn();
-        GameManager.Instance().mainView.articleView.ShowPaliContentFromStar(bookId, bookParagraph, bookChapterLen, channelID);
+        GameManager.Instance().ShowArticle(bookId, bookParagraph, bookChapterLen, channelID);
+        //GameManager.Instance().mainView.SetArticleOn();
+        //GameManager.Instance().mainView.articleView.ShowPaliContentFromStar(bookId, bookParagraph, bookChapterLen, channelID);
         popView.OnCloseBackBtnClick();
         dicGroupView.OnCloseBtnClick();
         commonView.OnCloseBtnClick();

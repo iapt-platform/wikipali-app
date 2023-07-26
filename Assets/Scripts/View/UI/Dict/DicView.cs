@@ -178,6 +178,8 @@ public class DicView : MonoBehaviour
     List<GameObject> detailDicItemList = new List<GameObject>();
     void DisplayWordDetail(string word)
     {
+        //保存上次预览记录
+        SettingManager.Instance().SaveOpenLastWord(word);
         DestroyDetailDicItemList();
         if (string.IsNullOrEmpty(word))
         {

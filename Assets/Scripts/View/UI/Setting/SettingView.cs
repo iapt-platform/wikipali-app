@@ -22,6 +22,8 @@ public class SettingView : MonoBehaviour
     public GameObject reportGO;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
+    public Button openLastSliderBtn;
+    public Slider openLastSliderToggle;
     public CommonGroupView commonGroupView;
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,9 @@ public class SettingView : MonoBehaviour
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
+        openLastSliderToggle.value = SettingManager.Instance().GetOpenLast();
+        openLastSliderToggle.onValueChanged.AddListener(OnOpenLastToggleValueChanged);
+        openLastSliderBtn.onClick.AddListener(OnOpenLastBtnClick);
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
         updateBtn.onClick.AddListener(OnUpdateBtnClick);
         reportBtn.onClick.AddListener(OnReportBtnClick);
@@ -48,6 +53,7 @@ public class SettingView : MonoBehaviour
         //Debug.LogError(value);
         SettingManager.Instance().SetTransContent((int)value);
     }
+
     void OnTransContentBtnClick()
     {
         if (transContentSliderToggle.value > 0.5f)
@@ -57,6 +63,22 @@ public class SettingView : MonoBehaviour
         else
         {
             transContentSliderToggle.value = 1;
+        }
+    }
+    void OnOpenLastToggleValueChanged(float value)
+    {
+        //Debug.LogError(value);
+        SettingManager.Instance().SetOpenLast((int)value);
+    }
+    void OnOpenLastBtnClick()
+    {
+        if (openLastSliderToggle.value > 0.5f)
+        {
+            openLastSliderToggle.value = 0;
+        }
+        else
+        {
+            openLastSliderToggle.value = 1;
         }
     }
     void OnReportBtnClick()

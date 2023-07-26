@@ -57,6 +57,9 @@ public class GameManager : MonoBehaviour
         if (CreatQR.LoadQR())
             CreatQR.CreatQr();
         SpeechGeneration.Instance().LoadTxt();
+
+        //打开上次浏览记录
+        SettingManager.Instance().OpenLast();
     }
 
     // Update is called once per frame
@@ -110,5 +113,22 @@ public class GameManager : MonoBehaviour
         isDownLoadAPK = false;
         //直接跳转到安装APK，就不关闭InitView防止误触
         //initView.gameObject.SetActive(false);
+    }
+
+    //延迟一帧
+    public void ShowArticle(int bookID, int bookParagraph, int bookChapterLen, string channelId)
+    {
+        StartCoroutine(ShowArticleC(bookID, bookParagraph, bookChapterLen, channelId));
+    }
+    IEnumerator ShowArticleC(int bookID, int bookParagraph, int bookChapterLen, string channelId)
+    {
+        yield return null;
+        mainView.SetArticleOn();
+        mainView.articleView.ShowPaliContentFromStar(bookID, bookParagraph, bookChapterLen, channelId);
+    }
+    public void ShowDicWord(string word)
+    {
+        mainView.SetDicOn();
+        mainView.dicView.OnItemDicClick(word);
     }
 }

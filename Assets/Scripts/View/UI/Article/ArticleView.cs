@@ -304,6 +304,8 @@ public class ArticleView : MonoBehaviour
             Debug.LogError("!!!!");
         if (isTrans && cNode.channelData != null && cNode.channelData.channel_id == null)
             Debug.LogError("!!!!");
+
+        //保存上次预览记录
         string channel = "";
         currentChannelName = "pāli原文";
         if (isTrans)
@@ -356,6 +358,7 @@ public class ArticleView : MonoBehaviour
         nextAndPrevGroup.SetAsLastSibling();
 
         ArticleManager.Instance().SetArticleStar(book.translateName, book.id, book.paragraph, book.chapter_len, channel);
+        SettingManager.Instance().SaveOpenLastArticle(book.id, book.paragraph, book.chapter_len, channel);
         //PaliContentText.lin
     }
     List<string> textBackup = new List<string>();
@@ -383,9 +386,10 @@ public class ArticleView : MonoBehaviour
             contentTextInst.text = MarkdownText.PreprocessText(textBackup[i]);
         }
     }
-
     public void ShowPaliContentFromStar(int bookID, int bookParagraph, int bookChapterLen, string channelId)
     {
+        //保存上次预览记录
+        SettingManager.Instance().SaveOpenLastArticle(bookID, bookParagraph, bookChapterLen, channelId);
         bool isTrans = !string.IsNullOrEmpty(channelId);
         InitPaliScroll();
         string channel = channelId;
@@ -397,28 +401,28 @@ public class ArticleView : MonoBehaviour
         contentViewGO.SetActive(true);
         listViewGO.SetActive(false);
         //每50行新建一个text
-        List<string> text;
+        List<string> starText;
         List<string> sentence;
         ChannelChapterDBData cdata = new ChannelChapterDBData();
         cdata.channel_id = channel;
-        (text, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cdata : null), isTrans);
+        (starText, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cdata : null), isTrans);
         articleContent = sentence;
-        if (text == null)
+        if (starText == null)
         {
             Debug.LogError("【预警】book id:" + book.id + "  没有文章内容 text = null");
             return;
         }
         textRuler.gameObject.SetActive(true);
-        int l = text.Count;
+        int l = starText.Count;
         for (int i = 0; i < l; i++)
         {
-            textRuler.text = text[i];
+            textRuler.text = starText[i];
             LayoutRebuilder.ForceRebuildLayoutImmediate(textRuler.rectTransform);
             GameObject inst = Instantiate(contentText.gameObject, contentText.transform.parent);
             inst.name = i.ToString();
             inst.transform.position = contentText.transform.position;
             Text contentTextInst = inst.GetComponent<Text>();
-            contentTextInst.text = MarkdownText.PreprocessText(text[i]);
+            contentTextInst.text = MarkdownText.PreprocessText(starText[i]);
             inst.SetActive(true);
             contentTextInst.rectTransform.sizeDelta = new Vector2(contentTextInst.rectTransform.sizeDelta.x, textRuler.rectTransform.sizeDelta.y);// new Vector2(PaliContentTextRect.sizeDelta.x, PaliContentText.textComponent.fontSize * (lineCount + 1));
             contentList.Add(inst);
@@ -428,6 +432,7 @@ public class ArticleView : MonoBehaviour
         nextAndPrevGroup.SetAsLastSibling();
         //PaliContentText.lin
     }
+
     //销毁Text列表GO
     private void DestroyTextList()
     {

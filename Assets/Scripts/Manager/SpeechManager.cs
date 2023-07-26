@@ -47,8 +47,17 @@ public class SpeechManager : MonoBehaviour
 
     List<AudioClip> paliACList = new List<AudioClip>();
     List<AudioClip> transACList = new List<AudioClip>();
-    List<List<SpeechSynthesisWordBoundaryEventArgs>> paliWordBoundaryList = new List<List<SpeechSynthesisWordBoundaryEventArgs>>();
-    List<List<SpeechSynthesisWordBoundaryEventArgs>> transWordBoundaryList = new List<List<SpeechSynthesisWordBoundaryEventArgs>>();
+    class SpeechWordBoundary
+    {
+        public SpeechWordBoundary(SpeechSynthesisWordBoundaryEventArgs _e)
+        {
+            e = _e;
+        }
+        public SpeechSynthesisWordBoundaryEventArgs e;
+        public int reTextOffset;
+    }
+    List<List<SpeechWordBoundary>> paliWordBoundaryList = new List<List<SpeechWordBoundary>>();
+    List<List<SpeechWordBoundary>> transWordBoundaryList = new List<List<SpeechWordBoundary>>();
     Coroutine coroutinePali;
     Coroutine coroutineTrans;
 
@@ -111,7 +120,7 @@ public class SpeechManager : MonoBehaviour
         paliACList.InsertRange(0, new AudioClip[_paliList.Count]);
 
         paliWordBoundaryList.Clear();
-        paliWordBoundaryList.InsertRange(0, new List<SpeechSynthesisWordBoundaryEventArgs>[_paliList.Count]);
+        paliWordBoundaryList.InsertRange(0, new List<SpeechWordBoundary>[_paliList.Count]);
 
         //引用类型需要深复制
         DeepCopyList(paliList, _paliList);
@@ -120,7 +129,7 @@ public class SpeechManager : MonoBehaviour
         if (_isTrans)
         {
             transACList.InsertRange(0, new AudioClip[_transList.Count]);
-            transWordBoundaryList.InsertRange(0, new List<SpeechSynthesisWordBoundaryEventArgs>[_transList.Count]);
+            transWordBoundaryList.InsertRange(0, new List<SpeechWordBoundary>[_transList.Count]);
             DeepCopyList(transList, _transList);
         }
         //paliList = _paliList;
@@ -220,6 +229,25 @@ public class SpeechManager : MonoBehaviour
             Task.Delay(1).ContinueWith(t => { task.RunSynchronously(); });
         }
     }
+    private List<SpeechWordBoundary> ReComputeWordBoundaryTextOffset(List<SpeechWordBoundary> eL, bool isHaveSpeed)
+    {
+        if (isHaveSpeed)
+        {
+            for (int i = 1; i < eL.Count; i++)
+            {
+                eL[i].reTextOffset = (int)eL[i - 1].e.TextOffset + (int)eL[i - 1].e.WordLength;
+            }
+        }
+        else
+        {
+            for (int i = 1; i < eL.Count; i++)
+            {
+                eL[i].reTextOffset = (int)eL[i - 1].e.TextOffset;
+            }
+        }
+
+        return eL;
+    }
     public /*static*/ async Task SynthesisToSpeakerPaliAsync(SpeechConfig config, string text, int id, int speed)
     {
         // Creates a speech synthesizer using the default speaker as audio output.
@@ -228,12 +256,15 @@ public class SpeechManager : MonoBehaviour
         using (var synthesizer = new SpeechSynthesizer(config, null))
         {
 
-            paliWordBoundaryList[id] = new List<SpeechSynthesisWordBoundaryEventArgs>();
+            paliWordBoundaryList[id] = new List<SpeechWordBoundary>();
             synthesizer.WordBoundary += (s, e) =>
             {
-                paliWordBoundaryList[id].Add(e);
+
+                //如果用ssml重新计算textoffset
+                paliWordBoundaryList[id].Add(new SpeechWordBoundary(e));
 
             };
+            paliWordBoundaryList[id] = ReComputeWordBoundaryTextOffset(paliWordBoundaryList[id], speed != 0);
 
             //using (var result = await synthesizer.SpeakSsmlAsync(text))
 
@@ -318,13 +349,13 @@ public class SpeechManager : MonoBehaviour
             //    window.console.log(e);
             //    wordBoundaryList.push(e);
             //};
-            transWordBoundaryList[id] = new List<SpeechSynthesisWordBoundaryEventArgs>();
+            transWordBoundaryList[id] = new List<SpeechWordBoundary>();
             synthesizer.WordBoundary += (s, e) =>
             {
                 // The unit of e.AudioOffset is tick (1 tick = 100 nanoseconds), divide by 10,000 to convert to milliseconds.
                 //Debug.LogError($"Word boundary event received. Audio offset: " +
                 //    $"{(e.AudioOffset + 5000) / 10000}ms, text offset: {e.TextOffset}, word length: {e.WordLength}.");
-                transWordBoundaryList[id].Add(e);
+                transWordBoundaryList[id].Add(new SpeechWordBoundary(e));
             };
             using (var result = await synthesizer.SpeakTextAsync(text))
             {
@@ -572,12 +603,12 @@ public class SpeechManager : MonoBehaviour
             //dur += (float)transWordBoundaryList[highLightTransID][i].Duration.Milliseconds * 0.001f;
             // if (transWordBoundaryList[].off)
             //50ms = 500000
-            if (transWordBoundaryList[highLightTransID][i].AudioOffset < playTime)
+            if (transWordBoundaryList[highLightTransID][i].e.AudioOffset < playTime)
             // if (dur < playTime)
             {
                 //Debug.LogError("dur:" + dur);
 
-                curwordBoundary = transWordBoundaryList[highLightTransID][i];
+                curwordBoundary = transWordBoundaryList[highLightTransID][i].e;
             }
             else
                 break;
@@ -617,11 +648,11 @@ public class SpeechManager : MonoBehaviour
         for (int i = 0; i < c; i++)
         {
 
-            if (paliWordBoundaryList[highLightPaliID][i].AudioOffset < playTime)
+            if (paliWordBoundaryList[highLightPaliID][i].e.AudioOffset < playTime)
             // if (dur < playTime)
             {
                 //Debug.LogError("dur:" + dur);
-                curwordBoundary = paliWordBoundaryList[highLightPaliID][i];
+                curwordBoundary = paliWordBoundaryList[highLightPaliID][i].e;
             }
             else
                 break;
@@ -642,6 +673,7 @@ public class SpeechManager : MonoBehaviour
                 rID += replaceArr[i].Length + 1;
                 if (curwordBoundary.TextOffset - ssmlTextLength < rID)
                 {
+                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.Text);
                     Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.TextOffset);
                     Debug.LogError("ssmlTextLength" + ssmlTextLength);
                     Debug.LogError("curwordBoundary.TextOffset - ssmlTextLength" + (curwordBoundary.TextOffset - ssmlTextLength));
@@ -665,6 +697,7 @@ public class SpeechManager : MonoBehaviour
     //--2.pali与翻译混合发音高亮
     //--3.key改为网络获取
     //--4.圣典目录中文映射
+    //--5.杀掉app后保留上次阅读位置
     //--bug:
     //--a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
     //bug:
@@ -672,7 +705,6 @@ public class SpeechManager : MonoBehaviour
     //b.有语速时，犍度第一篇文章，高亮位置不对
     //功能
     //1.高亮阅读/去掉括号内的内容
-    //2.杀掉app后保留上次阅读位置
-    //3.重新导出数据库
-    //4.上线1.1版本
+    //2.重新导出数据库
+    //3.上线1.1版本
 }

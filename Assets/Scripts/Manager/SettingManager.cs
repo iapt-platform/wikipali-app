@@ -123,6 +123,82 @@ public class SettingManager
     {
         return PlayerPrefs.GetInt("TransContent");
     }
+    #region 打开先前的浏览内容
+    //设置打开先前的浏览内容
+    public void SetOpenLast(int boolean)
+    {
+        PlayerPrefs.SetInt("OpenLast", boolean);
+    }
+    //获取打开先前的浏览内容
+    public int GetOpenLast()
+    {
+        return PlayerPrefs.GetInt("OpenLast");
+    }
+    //0:词典
+    //1:圣典
+    public void SetOpenLastType(int olType)
+    {
+        PlayerPrefs.SetInt("OpenLastType", olType);
+    }
+    public int GetOpenLastType()
+    {
+        return PlayerPrefs.GetInt("OpenLastType");
+    }
+    public void SetOpenLastDicWord(string word)
+    {
+        PlayerPrefs.SetString("OpenLastDicWord", word);
+    }
+    public string GetOpenLastDicWord()
+    {
+        return PlayerPrefs.GetString("OpenLastDicWord");
+    }
+    //组合bookId, bookParagraph, bookChapterLen, channelID
+    public void SetOpenLastDicArticle(string article)
+    {
+        PlayerPrefs.SetString("OpenLastDicArticle", article);
+    }
+    public string GetOpenLastDicArticle()
+    {
+        return PlayerPrefs.GetString("OpenLastDicArticle");
+    }
+
+    public void SaveOpenLastWord(string word)
+    {
+        if (GetOpenLast() == 1)
+        {
+            SetOpenLastType(0);
+            SetOpenLastDicWord(word);
+        }
+    }
+    public void SaveOpenLastArticle(int bookID, int bookParagraph, int bookChapterLen, string channelId)
+    {
+        if (GetOpenLast() == 1)
+        {
+            SetOpenLastType(1);
+            string save = bookID + "," + bookParagraph + "," + bookChapterLen + "," + channelId;
+            SetOpenLastDicArticle(save);
+        }
+    }
+    public void OpenLast()
+    {
+        if (GetOpenLast() == 1)
+        {
+            if (GetOpenLastType() == 0)//词典
+            {
+                string w = GetOpenLastDicWord();
+                GameManager.Instance().ShowDicWord(w);
+            }
+            else//文章
+            {
+                string a = GetOpenLastDicArticle();
+                string[] split = a.Split(',');
+                if (split.Length > 3)
+                    GameManager.Instance().ShowArticle(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]), split[3]);
+            }
+        }
+    }
+
+    #endregion
     #region 朗读选项
     public enum PaliSpeakVoiceGender
     {
