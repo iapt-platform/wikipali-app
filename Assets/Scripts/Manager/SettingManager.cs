@@ -112,7 +112,16 @@ public class SettingManager
     {
         return PlayerPrefs.GetInt("CalType");
     }
-
+    //设置pali不朗读括号内容
+    public void SetPaliRemoveBracket(int boolean)
+    {
+        PlayerPrefs.SetInt("PaliRemoveBracket", boolean);
+    }
+    //获取pali不朗读括号内容
+    public int GetPaliRemoveBracket()
+    {
+        return PlayerPrefs.GetInt("PaliRemoveBracket");
+    }
     //设置译文显示pali原文
     public void SetTransContent(int boolean)
     {

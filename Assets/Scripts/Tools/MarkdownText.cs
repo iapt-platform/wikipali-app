@@ -251,6 +251,23 @@ public class MarkdownText
     {
         return text.Replace("<br />", "");
     }
+    //去除括号及其中内容
+    public static string RemoveBracket(string text)
+    {
+        text = Regex.Replace(text, @"\(.*\)", "");//过滤()
+        text = Regex.Replace(text, @"\[.*\]", "");//过滤[]
+        text = Regex.Replace(text, @"\{.*\}", "");//过滤{}
+        return text;
+    }
+    public static List<string> RemoveBracketStringList(List<string> textL)
+    {
+        int c = textL.Count;
+        for (int i = 0; i < c; i++)
+        {
+            textL[i] = RemoveBracket(textL[i]);
+        }
+        return textL;
+    }
     //public void OnPointerClick(PointerEventData eventData)
     //{
     //    if (PointerIsOverURL(eventData, out int linkIndex))

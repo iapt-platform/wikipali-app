@@ -423,6 +423,8 @@ public class ArticleController
         List<string> res = new List<string>();
         List<string> sentenceRes = new List<string>();
         StringBuilder sb = new StringBuilder("");
+        //去掉括号
+        StringBuilder sbRemoveBracket = new StringBuilder("");
         int l = sentence.Count;
         int tl = 0;
         if (isTrans)
@@ -434,8 +436,21 @@ public class ArticleController
             {
                 //string sentenceNormalize = SpeechGeneration.Instance().ReplaceWord(MarkdownText.RemoveHTMLStyle(sentence[i].content));
                 string sentenceNormalize = MarkdownText.RemoveHTMLStyle(sentence[i].content);
+                string sentenceRead = sentenceNormalize;
+                //if写在for里了，浪费性能，但是没办法，代码太ugly了
+                ReadTextInfo paliSentenceTextInfo = null;
+                if (SettingManager.Instance().GetPaliRemoveBracket() == 1)
+                {
+                    sentenceRead = MarkdownText.RemoveBracket(sentenceRead);
+                    paliSentenceTextInfo = new ReadTextInfo(sentenceRead, sbRemoveBracket.Length, res.Count);
+                    sbRemoveBracket.AppendLine(sentenceRead);
+                    sbRemoveBracket.AppendLine("");
+                }
+                else
+                {
+                    paliSentenceTextInfo = new ReadTextInfo(sentenceRead, sb.Length, res.Count);
+                }
 
-                ReadTextInfo paliSentenceTextInfo = new ReadTextInfo(sentenceNormalize, sb.Length, res.Count);
                 paliSentenceList.Add(paliSentenceTextInfo);
 
                 sb.AppendLine(sentenceNormalize);
@@ -452,8 +467,24 @@ public class ArticleController
                     {
                         //sb.AppendLine();
                         string sentenceTransNormalize = MarkdownText.RemoveHTMLStyle(sentenceTrans[i].content);
+                        //string sentenceRead = sentenceTransNormalize;
+                        //if写在for里了，浪费性能，但是没办法，代码太ugly了
+                        ReadTextInfo transSentenceTextInfo = null;
+                        if (SettingManager.Instance().GetPaliRemoveBracket() == 1)
+                        {
+                            //sentenceRead = MarkdownText.RemoveBracket(sentenceRead);
+                            transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sbRemoveBracket.Length + "<color=#5895FF>".Length, res.Count);
+                            sbRemoveBracket.AppendFormat("<color=#5895FF>{0}</color>", sentenceTransNormalize);
+                            sbRemoveBracket.AppendLine("");
+                            sbRemoveBracket.AppendLine("");
+                        }
+                        else
+                        {
+                            transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length + "<color=#5895FF>".Length, res.Count);
+                        }
 
-                        ReadTextInfo transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length + "<color=#5895FF>".Length, res.Count);
+
+                        //ReadTextInfo transSentenceTextInfo = new ReadTextInfo(sentenceTransNormalize, sb.Length + "<color=#5895FF>".Length, res.Count);
                         transSentenceList.Add(transSentenceTextInfo);
                         //if (i == 0 && j == 0)
                         //{

@@ -8,6 +8,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using static ArticleController;
+using static SpeechManager;
 
 public class CommonTool
 {
@@ -296,5 +297,13 @@ public class CommonTool
         }
     }
     #endregion
-
+   public static void DeepCopyStringList(List<string> origin, List<string> copy)
+    {
+        origin.Clear();
+        int c = copy.Count;
+        for (int i = 0; i < c; i++)
+        {
+            origin.Add(copy[i]);
+        }
+    }
 }

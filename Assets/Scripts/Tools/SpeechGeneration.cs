@@ -16,7 +16,7 @@ using UnityEngine.UIElements;
 using Microsoft.CognitiveServices.Speech;
 using static SettingManager;
 using System.Threading.Tasks;
-using UnityEditor.VersionControl;
+//using UnityEditor.VersionControl;
 
 public class Tts
 {

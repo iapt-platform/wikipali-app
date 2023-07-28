@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 using static ArticleController;
 using static ArticleManager;
 using static System.Net.Mime.MediaTypeNames;
-using static UnityEditor.MaterialProperty;
+//using static UnityEditor.MaterialProperty;
 using Text = UnityEngine.UI.Text;
 
 public class ArticleView : MonoBehaviour
@@ -331,7 +331,11 @@ public class ArticleView : MonoBehaviour
         currentChapterData = cNode;
         currentBook = book;
         (text, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cNode.channelData : null), isTrans);
-        textBackup = text;
+        CommonTool.DeepCopyStringList(textBackup, text);
+        CommonTool.DeepCopyStringList(textBackupOrign, text);
+        if (SettingManager.Instance().GetPaliRemoveBracket() == 1)
+            textBackup = MarkdownText.RemoveBracketStringList(textBackup);
+        //textBackup = text;
         articleContent = sentence;
         if (text == null)
         {
@@ -361,7 +365,10 @@ public class ArticleView : MonoBehaviour
         SettingManager.Instance().SaveOpenLastArticle(book.id, book.paragraph, book.chapter_len, channel);
         //PaliContentText.lin
     }
+    //去掉括号的
     List<string> textBackup = new List<string>();
+    //没去掉括号的
+    List<string> textBackupOrign = new List<string>();
     string HIGHLIGHT_COLOR = "#ffa500ff";
     //朗读高亮用接口，重新设置UI的text
     public void SetTextHighLight(int textID, int hlStartID, int hlLength)
@@ -379,11 +386,11 @@ public class ArticleView : MonoBehaviour
     //还原高亮的文字
     public void RestoreTextHighLight()
     {
-        int l = textBackup.Count;
+        int l = textBackupOrign.Count;
         for (int i = 0; i < l; i++)
         {
             Text contentTextInst = contentList[i].GetComponent<Text>();
-            contentTextInst.text = MarkdownText.PreprocessText(textBackup[i]);
+            contentTextInst.text = MarkdownText.PreprocessText(textBackupOrign[i]);
         }
     }
     public void ShowPaliContentFromStar(int bookID, int bookParagraph, int bookChapterLen, string channelId)
@@ -406,6 +413,10 @@ public class ArticleView : MonoBehaviour
         ChannelChapterDBData cdata = new ChannelChapterDBData();
         cdata.channel_id = channel;
         (starText, sentence) = controller.GetPaliContentTransText(book, (isTrans ? cdata : null), isTrans);
+        CommonTool.DeepCopyStringList(textBackup, starText);
+        CommonTool.DeepCopyStringList(textBackupOrign, starText);
+        if (SettingManager.Instance().GetPaliRemoveBracket() == 1)
+            textBackup = MarkdownText.RemoveBracketStringList(textBackup);
         articleContent = sentence;
         if (starText == null)
         {

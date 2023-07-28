@@ -5,8 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEditor.PackageManager.UI;
-using UnityEditor.VersionControl;
+//using UnityEditor.PackageManager.UI;
+//using UnityEditor.VersionControl;
 using UnityEngine;
 using Task = System.Threading.Tasks.Task;
 
@@ -29,9 +29,14 @@ public class SpeechManager : MonoBehaviour
 
     public class ReadTextInfo
     {
-        public ReadTextInfo(string _sentence, int _offsetIndex, int _textID)
+        public ReadTextInfo(string _sentence, int _offsetIndex, int _textID)//, bool isTransString)
         {
+
             sentence = _sentence;
+            //只去掉pali原文的括号
+            //if (!isTransString)
+            //    if (SettingManager.Instance().GetPaliRemoveBracket() == 1)
+            //        sentence = MarkdownText.RemoveBracket(sentence);
             offsetIndex = _offsetIndex;
             textID = _textID;
             sentenceReplace = _sentence;
@@ -233,16 +238,18 @@ public class SpeechManager : MonoBehaviour
     {
         if (isHaveSpeed)
         {
+            eL[0].reTextOffset = (int)eL[0].e.TextOffset;
+            // eL[1].reTextOffset = (int)eL[0].e.TextOffset + (int)eL[0].e.WordLength;
             for (int i = 1; i < eL.Count; i++)
             {
-                eL[i].reTextOffset = (int)eL[i - 1].e.TextOffset + (int)eL[i - 1].e.WordLength;
+                eL[i].reTextOffset = eL[i - 1].reTextOffset + (int)eL[i - 1].e.WordLength + 1;
             }
         }
         else
         {
-            for (int i = 1; i < eL.Count; i++)
+            for (int i = 0; i < eL.Count; i++)
             {
-                eL[i].reTextOffset = (int)eL[i - 1].e.TextOffset;
+                eL[i].reTextOffset = (int)eL[i].e.TextOffset;
             }
         }
 
@@ -264,7 +271,6 @@ public class SpeechManager : MonoBehaviour
                 paliWordBoundaryList[id].Add(new SpeechWordBoundary(e));
 
             };
-            paliWordBoundaryList[id] = ReComputeWordBoundaryTextOffset(paliWordBoundaryList[id], speed != 0);
 
             //using (var result = await synthesizer.SpeakSsmlAsync(text))
 
@@ -289,6 +295,7 @@ public class SpeechManager : MonoBehaviour
                         isStartHighLight = true;
                     }
                     ++loadPaliId;
+
                 }
                 else if (result.Reason == ResultReason.Canceled)
                 {
@@ -505,6 +512,10 @@ public class SpeechManager : MonoBehaviour
         highLightPaliID = curPaliID;
         aus.clip = clip;
         aus.Play();
+        //处理有语速的高亮
+        int speed = (int)SettingManager.Instance().GetPaliVoiceSpeed();
+        paliWordBoundaryList[highLightPaliID] = ReComputeWordBoundaryTextOffset(paliWordBoundaryList[highLightPaliID], speed != 0);
+
         ++curPaliID;
         if (!isTrans && curPaliID >= paliList.Count)
         {
@@ -637,13 +648,14 @@ public class SpeechManager : MonoBehaviour
                 return;
             }
         }
+
         //Debug.LogError("ausTime:" + aus.time);
         //Debug.LogError("ausTimeP:" + (int)(aus.time * 1000000));
         //Debug.LogError("curPalisID:" + highLightPaliID);
         float playTime = aus.time * 10000000f;
         int c = paliWordBoundaryList[highLightPaliID].Count;
         int curID = 0;
-        SpeechSynthesisWordBoundaryEventArgs curwordBoundary = null;
+        SpeechWordBoundary curwordBoundary = null;
         float dur = 0;
         for (int i = 0; i < c; i++)
         {
@@ -652,7 +664,7 @@ public class SpeechManager : MonoBehaviour
             // if (dur < playTime)
             {
                 //Debug.LogError("dur:" + dur);
-                curwordBoundary = paliWordBoundaryList[highLightPaliID][i].e;
+                curwordBoundary = paliWordBoundaryList[highLightPaliID][i];
             }
             else
                 break;
@@ -671,12 +683,12 @@ public class SpeechManager : MonoBehaviour
             {
                 rSpaceID = i;
                 rID += replaceArr[i].Length + 1;
-                if (curwordBoundary.TextOffset - ssmlTextLength < rID)
+                if (curwordBoundary.reTextOffset - ssmlTextLength < rID)
                 {
-                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.Text);
-                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.TextOffset);
-                    Debug.LogError("ssmlTextLength" + ssmlTextLength);
-                    Debug.LogError("curwordBoundary.TextOffset - ssmlTextLength" + (curwordBoundary.TextOffset - ssmlTextLength));
+                    //Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.e.Text);
+                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.reTextOffset);
+                    //Debug.LogError("ssmlTextLength" + ssmlTextLength);
+                    Debug.LogError(".TextOffset - ssmlTextLength" + (curwordBoundary.reTextOffset - ssmlTextLength));
                     break;
                 }
                 iID += orignArr[i].Length + 1;
@@ -700,9 +712,8 @@ public class SpeechManager : MonoBehaviour
     //--5.杀掉app后保留上次阅读位置
     //--bug:
     //--a.pali与翻译混合发音，翻译数量少时，不继续往下读pali
-    //bug:
-    //a.<b></b>html语句与高亮混在一起//因为空格在</b>左侧
-    //b.有语速时，犍度第一篇文章，高亮位置不对
+    //?--b.<b></b>html语句与高亮混在一起//因为空格在</b>左侧
+    //?--c.有语速时，犍度第一篇文章，高亮位置不对
     //功能
     //1.高亮阅读/去掉括号内的内容
     //2.重新导出数据库

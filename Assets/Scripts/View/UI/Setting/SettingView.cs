@@ -20,6 +20,8 @@ public class SettingView : MonoBehaviour
     public Text versionText;
     public GameObject updateRedPoint;
     public GameObject reportGO;
+    public Button paliRemoveBracketSliderBtn;
+    public Slider paliRemoveBracketSliderToggle;
     public Button transContentSliderBtn;
     public Slider transContentSliderToggle;
     public Button openLastSliderBtn;
@@ -33,6 +35,9 @@ public class SettingView : MonoBehaviour
         paliVoiceSpeedText.text = SettingManager.Instance().GetPaliVoiceSpeedName();
         paliVoiceTypeText.text = SettingManager.Instance().GetPaliVoiceTypeName();
         paliVoiceGenderText.text = SettingManager.Instance().GetPaliVoiceGenderName();
+        paliRemoveBracketSliderToggle.value = SettingManager.Instance().GetPaliRemoveBracket();
+        paliRemoveBracketSliderToggle.onValueChanged.AddListener(OnPaliRemoveBracketToggleValueChanged);
+        paliRemoveBracketSliderBtn.onClick.AddListener(OnPaliRemoveBracketBtnClick);
         transContentSliderToggle.value = SettingManager.Instance().GetTransContent();
         transContentSliderToggle.onValueChanged.AddListener(OnTransContentToggleValueChanged);
         transContentSliderBtn.onClick.AddListener(OnTransContentBtnClick);
@@ -47,6 +52,23 @@ public class SettingView : MonoBehaviour
         paliVoiceGenderBtn.onClick.AddListener(OnPaliVoiceGenderBtnClick);
         articleClassifyBtn.onClick.AddListener(OnArticleClassifyBtnClick);
         versionText.text = "        v" + Application.version;
+    }
+    void OnPaliRemoveBracketToggleValueChanged(float value)
+    {
+        //Debug.LogError(value);
+        SettingManager.Instance().SetPaliRemoveBracket((int)value);
+    }
+
+    void OnPaliRemoveBracketBtnClick()
+    {
+        if (paliRemoveBracketSliderToggle.value > 0.5f)
+        {
+            paliRemoveBracketSliderToggle.value = 0;
+        }
+        else
+        {
+            paliRemoveBracketSliderToggle.value = 1;
+        }
     }
     void OnTransContentToggleValueChanged(float value)
     {
