@@ -18109,6 +18109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f52c14ed2b7304f4f8a8c3d2203329cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pali2My: {fileID: 4900000, guid: 6c8c3ff037c6c134284f552b455905f4, type: 3}
+  pali2Tlg: {fileID: 4900000, guid: 2c271d395d1f3d446aa7c32301e12cd4, type: 3}
 --- !u!1 &538492052
 GameObject:
   m_ObjectHideFlags: 0

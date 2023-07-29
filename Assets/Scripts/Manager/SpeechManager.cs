@@ -12,6 +12,8 @@ using Task = System.Threading.Tasks.Task;
 
 public class SpeechManager : MonoBehaviour
 {
+    public TextAsset pali2My;
+    public TextAsset pali2Tlg;
     private SpeechManager() { }
     private static SpeechManager manager = null;
     //静态工厂方法 
@@ -686,9 +688,9 @@ public class SpeechManager : MonoBehaviour
                 if (curwordBoundary.reTextOffset - ssmlTextLength < rID)
                 {
                     //Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.e.Text);
-                    Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.reTextOffset);
+                   // Debug.LogError("curwordBoundary.TextOffset" + curwordBoundary.reTextOffset);
                     //Debug.LogError("ssmlTextLength" + ssmlTextLength);
-                    Debug.LogError(".TextOffset - ssmlTextLength" + (curwordBoundary.reTextOffset - ssmlTextLength));
+                   // Debug.LogError(".TextOffset - ssmlTextLength" + (curwordBoundary.reTextOffset - ssmlTextLength));
                     break;
                 }
                 iID += orignArr[i].Length + 1;

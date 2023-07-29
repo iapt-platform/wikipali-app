@@ -508,27 +508,33 @@ public class SpeechGeneration
     string my_Path = Application.streamingAssetsPath + "/my.txt";
     public void LoadTxt()
     {
-        if (File.Exists(tlg_Path))
+       // if (File.Exists(tlg_Path))
         {
-            string[] lines = null;
-            lines = File.ReadAllLines(tlg_Path);
-            int c = lines.Length;
+            //string[] lines = null;
+            TextAsset pali2Tlg = SpeechManager.Instance().pali2Tlg;
+            string tlg = pali2Tlg.text;
+            string[] tlgSplit = tlg.Split("\r\n");
+            //lines = File.ReadAllLines(tlg_Path);
+            int c = tlgSplit.Length;
             for (int i = 0; i < c; i++)
             //  for (int i = c-1; i >-1; i--)
             {
-                string[] temp = lines[i].Split(',');
+                string[] temp = tlgSplit[i].Split(',');
                 if (!char_unicode_to_tlg_txt.ContainsKey(temp[0]))
                     char_unicode_to_tlg_txt.Add(temp[0], temp[1]);
             }
         }
-        if (File.Exists(my_Path))
+        //if (File.Exists(my_Path))
         {
-            string[] lines = null;
-            lines = File.ReadAllLines(my_Path);
-            int c = lines.Length;
-            for (int i = 0; i < c; i++)
+            //string[] lines = null;
+            //lines = File.ReadAllLines(my_Path);
+            TextAsset pali2My = SpeechManager.Instance().pali2My;
+            string my = pali2My.text;
+            string[] mySplit = my.Split("\r\n");
+            int cM = mySplit.Length;
+            for (int i = 0; i < cM; i++)
             {
-                string[] temp = lines[i].Split(',');
+                string[] temp = mySplit[i].Split(',');
                 if (!char_unicode_to_my_txt.ContainsKey(temp[0]))
                     char_unicode_to_my_txt.Add(temp[0], temp[1]);
             }
