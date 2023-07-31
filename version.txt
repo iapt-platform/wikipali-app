@@ -3,6 +3,7 @@
 https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
 https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
 https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
-1.功能更新
-2.修改bug
-3.性能优化
+1.圣典与词典朗读与高亮功能
+2.恢复上次浏览位置功能
+3.圣典目录中文翻译
+4.相关bug修复与性能优化
