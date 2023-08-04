@@ -69,7 +69,7 @@ public class CommonGroupView : MonoBehaviour
         aboutPage.SetActive(true);
     }
     //设置选项
-    public void InitSettingOptions(string title, List<string> nameList,int selection,Func<object,object> fin)
+    public void InitSettingOptions(string title, List<string> nameList, int selection, Func<object, object> fin)
     {
         titleText.text = title;
         settingOption.Init(nameList, selection, fin);
@@ -95,7 +95,9 @@ public class CommonGroupView : MonoBehaviour
     public void OnUpdateBtnClick()
     {
         //下载
-        DownloadManager.Instance().DownloadAPK(this);
+        DownloadManager dm = new DownloadManager();
+        GameManager.Instance().apk_dm = dm;
+        dm.DownloadAPK(this);
     }
     public void DelAllListGO()
     {

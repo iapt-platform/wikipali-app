@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -304,6 +305,35 @@ public class CommonTool
         for (int i = 0; i < c; i++)
         {
             origin.Add(copy[i]);
+        }
+    }
+
+    public static class ByteToJsonUtil
+    {
+        public static string ByteToJson(byte[] bytes)
+        {
+            if (bytes == null)
+            {
+                return string.Empty;
+            }
+            return JsonConvert.SerializeObject(bytes);
+        }
+        //public static byte[] JsonToByte(string json)
+        //{
+        //    if (string.IsNullOrEmpty(json))
+        //    {
+        //        return null;
+        //    }
+        //    return JsonConvert.DeserializeObject(json);
+        //}
+    }
+    public static byte[] ObjectToByteArray(object obj)
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        using (var ms = new MemoryStream())
+        {
+            bf.Serialize(ms, obj);
+            return ms.ToArray();
         }
     }
 }

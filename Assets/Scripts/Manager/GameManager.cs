@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         //打开上次浏览记录
         SettingManager.Instance().OpenLast();
     }
-
+    public DownloadManager apk_dm = null;
     // Update is called once per frame
     void Update()
     {
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
         }
         if (isDownLoadAPK)
         {
-            SetInitViewProgress(DownloadManager.Instance().progress * 0.01f);
+            SetInitViewProgress(apk_dm.progress * 0.01f);
         }
     }
     //检测更新

@@ -14,6 +14,7 @@ public class CalendarView : MonoBehaviour
 {
     public Text sunriseText;
     public Text solarNoonText;
+    public Text sunsetText;
     public Text latText;
     public Text lngText;
     public Text westEraText;
@@ -32,6 +33,7 @@ public class CalendarView : MonoBehaviour
         lngText.text = "请您打开手机GPS定位";
         sunriseText.text = "请您打开手机GPS定位";
         solarNoonText.text = "请您打开手机GPS定位";
+        sunsetText.text = "请您打开手机GPS定位";
 
     }
     void Start()
@@ -109,6 +111,7 @@ public class CalendarView : MonoBehaviour
     public void GetSunTime(DateTime time)
     {
         SunPhase solarNoon = new SunPhase(SunPhaseName.SolarNoon, time);
+        SunPhase sunset = new SunPhase(SunPhaseName.Sunset, time);//日落
         SunPhase sunrise = new SunPhase(SunPhaseName.Sunrise, time);//日出
         SunPhase dawn = new SunPhase(SunPhaseName.Dawn, time);//曙光升起
         SunPhase nauticalDawn = new SunPhase(SunPhaseName.NauticalDawn, time);//航海曙光
@@ -131,14 +134,17 @@ public class CalendarView : MonoBehaviour
         var sunPhaseValueSunrise = sunPhases.First(x => x.Name.Value == sunrise.Name.Value);
         var sunPhaseValueDawn = sunPhases.First(x => x.Name.Value == dawn.Name.Value);
         var sunPhaseValueNauticalDawn = sunPhases.First(x => x.Name.Value == nauticalDawn.Name.Value);
+        var sunPhaseValueSunSet= sunPhases.First(x => x.Name.Value == sunset.Name.Value);
         //航海曙光+日出-曙光升起
         TimeSpan tsd = new TimeSpan(sunPhaseValueSunrise.PhaseTime.Ticks - sunPhaseValueDawn.PhaseTime.Ticks);
         DateTime lightTime = sunPhaseValueNauticalDawn.PhaseTime + tsd;// sunPhaseValueSunrise.PhaseTime - sunPhaseValueDawn.PhaseTime;
         //var sunPhaseTime = sunPhaseValue.PhaseTime.ToString("yyyy-MM-dd hh:mm:ss");
         string sunPhaseTimeSolarNoon = sunPhaseValueSolarNoon.PhaseTime.ToString("HH:mm:ss");
         string sunPhaseTimeSunrise = lightTime.ToString("HH:mm:ss");
+        string sunPhaseTimeSunSet = sunPhaseValueSunSet.PhaseTime.ToString("HH:mm:ss");
         sunriseText.text = sunPhaseTimeSunrise;
         solarNoonText.text = sunPhaseTimeSolarNoon;
+        sunsetText.text = sunPhaseTimeSunSet;
     }
     //public void GetSunTime(DateTime time)
     //{
@@ -172,8 +178,8 @@ public class CalendarView : MonoBehaviour
             float lat = 24;
             float lng = 103;
             (lat, lng) = CalendarManager.Instance().GetLocation();
-            latText.text = lat.ToString();
-            lngText.text = lng.ToString();
+            latText.text = lat.ToString("#0.0");// lat.ToString();
+            lngText.text = lng.ToString("#0.0");
             locationed = true;
             GetSunTime(new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 0, 1, 0));
             //todo

@@ -115,14 +115,16 @@ public class UpdateManager
     /// </summary>
     public void GetUpdateInfoRedPoint()
     {
-        DownloadManager.Instance().DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
+        DownloadManager dm = new DownloadManager();
+        dm.DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOverRedPoint, "version.txt");
     }
     /// <summary>
     /// 下载AzureKey
     /// </summary>
     public void GetAzureKey()
     {
-        DownloadManager.Instance().DownLoad(Application.persistentDataPath, AZURE_ONFO_URl_1, OnDownLoadAzure, "font.font");
+        DownloadManager dm = new DownloadManager();
+        dm.DownLoad(Application.persistentDataPath, AZURE_ONFO_URl_1, OnDownLoadAzure, "font.font");
     }
     object OnDownLoadVersionOverRedPoint(object _realSavePath)
     {
@@ -189,7 +191,8 @@ public class UpdateManager
     public UpdateInfo GetUpdateInfo()
     {
         UpdateInfo uInfo = new UpdateInfo();
-        DownloadManager.Instance().DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
+        DownloadManager dm = new DownloadManager();
+        dm.DownLoad(Application.persistentDataPath, UPDATE_ONFO_URl_1, OnDownLoadVersionOver, "version.txt");
         //下载版本信息
         return uInfo;
     }
@@ -237,7 +240,7 @@ public class UpdateManager
     }
     public void UpdateAPK()
     {
-        DownloadManager.Instance().DownLoad("", "", OnDownLoadApkOver, "");
+       // DownloadManager.Instance().DownLoad("", "", OnDownLoadApkOver, "");
     }
     object OnDownLoadApkOver(object obj)
     {

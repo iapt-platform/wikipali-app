@@ -14,17 +14,17 @@ using System.Threading;
 
 public class DownloadManager
 {
-    private DownloadManager() { }
-    private static DownloadManager manager = null;
-    //静态工厂方法 
-    public static DownloadManager Instance()
-    {
-        if (manager == null)
-        {
-            manager = new DownloadManager();
-        }
-        return manager;
-    }
+    //private DownloadManager() { }
+    //private static DownloadManager manager = null;
+    ////静态工厂方法
+    //public static DownloadManager Instance()
+    //{
+    //    if (manager == null)
+    //    {
+    //        manager = new DownloadManager();
+    //    }
+    //    return manager;
+    //}
     #region 公开方法
     public void DownloadAPK(MonoBehaviour ui)
     {
