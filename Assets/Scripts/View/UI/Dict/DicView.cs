@@ -61,8 +61,18 @@ public class DicView : MonoBehaviour
             SetDelBtn(false);
             return;
         }
+        bool isChinese = CommonTool.CheckStringIsChinese(inputStr);
+        MatchedWord[] matchedWordArr = null;
+        //反向查询，中文
+        if (isChinese)
+        {
+            matchedWordArr = dicManager.MatchWordChinese(inputStr);
+        }
+        else//正向查询
+        {
+            matchedWordArr = dicManager.MatchWord(inputStr);
+        }
         SetDelBtn(true);
-        MatchedWord[] matchedWordArr = dicManager.MatchWord(inputStr);
         //限制了//由于混入多个词典与英文和pali问查找结果，个数没做限制，在此处做限制
         int length = matchedWordArr.Length;// matchedWordArr.Length > DictManager.LIMIT_COUNT ? LIMIT_COUNT : matchedWordArr.Length;
         float height = itemDicBtn.GetComponent<RectTransform>().sizeDelta.y;

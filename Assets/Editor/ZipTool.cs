@@ -9,7 +9,13 @@ using UnityEngine;
 
 public class ZipTool
 {
-
+    [MenuItem("Assets/Tools/TestZip")]
+    public static void PrintDateString()
+    {
+        //ZipManager.Instance().UnZipDB();
+        Debug.LogError(lzma.LzmaUtilDecode(Application.dataPath + "/StreamingAssets/Dict.lzma",
+              Application.dataPath + "/StreamingAssets/Dict.db"));
+    }
 
 
 }

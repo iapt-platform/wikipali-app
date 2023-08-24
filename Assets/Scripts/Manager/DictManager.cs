@@ -46,6 +46,8 @@ public class DictManager
         public string word_en;
         public string word;
         public string meaning;
+        //反向查找用，查词义的位置
+        public int chineseNoteIndex;
     }
     List<MatchedWord> SelectDictLike(DbAccess db, Dictionary<string, MatchedWord> matchedWordDic, string tableName, string inputStr)
     {
@@ -113,6 +115,54 @@ public class DictManager
                 break;
         }
     }
+    //反向搜索
+    List<MatchedWord> SelectDictLikeChinese(DbAccess db, Dictionary<string, MatchedWord> matchedWordDic, string tableName, string inputStr)
+    {
+        List<MatchedWord> matchedWordList = new List<MatchedWord>();
+        var reader = db.SelectDictLikeChinese(tableName, inputStr, "note", LIMIT_COUNT);
+
+        //调用SQLite工具  解析对应数据
+        Dictionary<string, object>[] pairs = SQLiteTools.GetValues(reader);
+        if (pairs != null)
+        {
+            int length = pairs.Length;
+            for (int i = 0; i < length; i++)
+            {
+                string word = pairs[i]["word"].ToString();
+                if (!matchedWordDic.ContainsKey(word))
+                {
+                    MatchedWord m = new MatchedWord()
+                    {
+                        id = pairs[i]["id"].ToString(),
+                        word = word,
+                        //反向查找的高亮
+                        meaning = pairs[i]["note"].ToString(),
+                        dicID = pairs[i]["dict_id"].ToString(),
+                    };
+                    //减去词头长度(因为note字段含义会把单词拼写放在前面)
+                    m.chineseNoteIndex = m.meaning.IndexOf(inputStr)-word.Length;
+                    m.meaning = m.meaning.Replace(inputStr, "<color=#5895FF>" + inputStr + "</color>");
+
+                    matchedWordList.Add(m);
+                    matchedWordDic.Add(m.word, m);
+                }
+            };
+        }
+
+        return matchedWordList;
+    }
+    //反向搜索
+    void GetDictLikeChinese(List<MatchedWord> matchedWordList, DbAccess db, Dictionary<string, MatchedWord> matchedWordDic, string inputStr)
+    {
+        string[] dicIDArr = DicLangDic[Language.ZH_CN];
+        for (int i = 0; i < dicIDArr.Length; i++)
+        {
+            //todo:AddRange性能问题
+            matchedWordList.AddRange(SelectDictLikeChinese(db, matchedWordDic, dicIDArr[i], inputStr));
+            if (matchedWordList.Count >= LIMIT_COUNT)
+                break;
+        }
+    }
     /// <summary>
     /// 根据用户输入搜索数据库，返回显示需要的结果
     /// 逻辑根据选择语言，优先选择筛选的数据库
@@ -157,6 +207,31 @@ public class DictManager
         }
         return res;
     }
+    //根据词义反向查词
+    public MatchedWord[] MatchWordChinese(string inputStr)
+    {
+        if (string.IsNullOrEmpty(inputStr))
+            return new MatchedWord[0];
+        List<MatchedWord> matchedWordList = new List<MatchedWord>();
+
+        dbManager.Getdb(db =>
+        {
+            //key: word,value: MatchedWord
+            Dictionary<string, MatchedWord> matchedWordDic = new Dictionary<string, MatchedWord>();
+            GetDictLikeChinese(matchedWordList, db, matchedWordDic, inputStr);
+            //matchedWordList = SelectDictLike(db, matchedWordDic,"", inputStr);
+        }, DBManager.DictDBurl);
+        //排序方式，词意中，匹配的词越靠前，说明该单词越可能是该意思
+        MatchedWord[] resT = SortWordChineseList(matchedWordList.ToArray());
+        int length = resT.Length > LIMIT_COUNT ? LIMIT_COUNT : resT.Length;
+        //裁剪List到LIMIT_COUNT以下
+        MatchedWord[] res = new MatchedWord[length];
+        for (int i = 0; i < length; i++)
+        {
+            res[i] = resT[i];
+        }
+        return res;
+    }
     /// <summary>
     /// 根据word字数从小到大排序
     /// </summary>
@@ -165,36 +240,54 @@ public class DictManager
         if (array.Length == 0)
             return array;
 
-        QuickSort(array, 0, array.Length - 1);
+        QuickSort(array, 0, array.Length - 1, false);
         return array;
     }
     //快速排序
-    public void QuickSort(MatchedWord[] array, int start, int end)
+    public void QuickSort(MatchedWord[] array, int start, int end, bool isChinese)
     {
         if (start < end)
         {
-            int mid = Partition(array, start, end);
-            QuickSort(array, start, mid - 1);
-            QuickSort(array, mid + 1, end);
+            int mid = Partition(array, start, end, isChinese);
+            QuickSort(array, start, mid - 1, isChinese);
+            QuickSort(array, mid + 1, end, isChinese);
         }
     }
 
     //分治方法 把数组中一个数放置在确定的位置
-    public int Partition(MatchedWord[] array, int start, int end)
+    public int Partition(MatchedWord[] array, int start, int end, bool isChinese)
     {
         MatchedWord x = array[end];//选取一个判定值(一般选取最后一个)
         int i = start;
-        for (int j = start; j < end; j++)
+        if (isChinese)
         {
-            if (array[j].word.Length < x.word.Length)
+            for (int j = start; j < end; j++)
             {
-                //将下标j的值与下标i的值交换 保证i的前面都小于判定值
-                MatchedWord temp = array[j];
-                array[j] = array[i];
-                array[i] = temp;
-                i++;
+                if (array[j].chineseNoteIndex < x.chineseNoteIndex)
+                {
+                    //将下标j的值与下标i的值交换 保证i的前面都小于判定值
+                    MatchedWord temp = array[j];
+                    array[j] = array[i];
+                    array[i] = temp;
+                    i++;
+                }
             }
         }
+        else
+        {
+            for (int j = start; j < end; j++)
+            {
+                if (array[j].word.Length < x.word.Length)
+                {
+                    //将下标j的值与下标i的值交换 保证i的前面都小于判定值
+                    MatchedWord temp = array[j];
+                    array[j] = array[i];
+                    array[i] = temp;
+                    i++;
+                }
+            }
+        }
+
 
         //将下标i的值与判定值交换
         array[end] = array[i];
@@ -202,7 +295,17 @@ public class DictManager
 
         return i;
     }
-
+    /// <summary>
+    /// 排序方式，词意中，匹配的词越靠前，说明该单词越可能是该意思
+    /// 根据关键字在词义的序位来排序
+    /// </summary>
+    MatchedWord[] SortWordChineseList(MatchedWord[] array)
+    {
+        if (array.Length == 0)
+            return array;
+        QuickSort(array, 0, array.Length - 1, true);
+        return array;
+    }
     #endregion
     #region detail 查词 各个词典
     //todo 改为从数据库Dict index里读取

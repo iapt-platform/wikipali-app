@@ -336,4 +336,14 @@ public class CommonTool
             return ms.ToArray();
         }
     }
+
+    //判断首字母是否是中文
+    public static bool CheckStringIsChinese(string str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return false;
+        if (str[0] >= 0x4e00 && str[0] <= 0x9fbb)
+            return true;
+        return false;
+    }
 }

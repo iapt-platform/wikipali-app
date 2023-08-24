@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class SettingManager
@@ -31,7 +35,7 @@ public class SettingManager
     {
         //在此处无法解压缩？？？？？？？
         //??????CalendarManager.Instance().StartLocation();
-
+        DateTime channelSaveTime = LoadChannelSaveTime();
         //覆盖更新判断版本号重新解压压缩包
         if (PlayerPrefs.HasKey("saveVersion"))
         {
@@ -321,5 +325,47 @@ public class SettingManager
         }
         return "";
     }
+    #endregion
+    #region 服务器同步部分
+    #region channel
+    public DateTime GetChannelDataSaveTime()
+    {
+        string res = PlayerPrefs.GetString("ChannelDataSaveTime");
+        return DateTime.Parse(res);
+    }
+    public void SetChannelDataSaveTime(DateTime time)
+    {
+        PlayerPrefs.SetString("ChannelDataSaveTime", time.ToString());
+    }
+    public DateTime LoadChannelSaveTime()
+    {
+        TextAsset t = Resources.Load<TextAsset>("Text/InitInfo");
+        string s = t.text;
+        return DateTime.Parse(s);
+    }
+    #endregion
+    #region 离线压缩包信息
+    //存储：1.chapter数量
+    //2.更新时间
+
+    //数据包解压时间
+    public DateTime GetDBPackTime()
+    {
+        string res = PlayerPrefs.GetString("DBPackTime");
+        return DateTime.Parse(res);
+    }
+    public void SetDBPackTime(string time)
+    {
+        PlayerPrefs.SetString("DBPackTime", time);
+    }
+    public int GetDBPackChapterCount()
+    {
+        return PlayerPrefs.GetInt("DBPackChapterCount");
+    }
+    public void SetDBPackChapterCount(int count)
+    {
+        PlayerPrefs.SetInt("DBPackChapterCount", count);
+    }
+    #endregion
     #endregion
 }

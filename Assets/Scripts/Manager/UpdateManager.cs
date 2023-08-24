@@ -19,6 +19,7 @@ public class UpdateManager
         }
         return manager;
     }
+    #region 更新APK与版本与Azure等
     //安装APK
     public bool InstallApk(string apkPath)
     {
@@ -248,4 +249,45 @@ public class UpdateManager
 
         return null;
     }
+    #endregion
+    #region 更新服务端数据
+    //更新Channel
+    //流程
+    //1.本地存一个时间点，和channel安装包
+    //2.每次更新channl，更新时间点到现在的所有数据
+    //3.成功保存数据后，同步时间点为现在时间
+    #region channel部分
+
+    #endregion
+    #region 离线数据库包
+    //流程
+    //1.进app时下载json，比对时间和chapter数量，不一致就标红点
+    //2.点进去标注包体大小与chapter数量比对，
+    //3.点击下载后，如果有就删除上次压缩包，下载压缩包
+    //4.解压压缩包替换到数据库位置
+    //5.删除压缩包
+
+    //第3&4步骤，下载与解压
+    public void UpdateDBPack()
+    {
+        //下载
+        DownloadManager dm = new DownloadManager();
+        GameManager.Instance().public_dm = dm;
+        dm.DownloadPack(GameManager.Instance(), DownLoadDBPackOver,
+            Application.persistentDataPath,"url", "DB.gz");
+    }
+    object DownLoadDBPackOver(object obj)
+    {
+        GameManager.Instance().DownLoadProgressOver();
+        //解压压缩包
+       // UpdateManager.Instance().InstallApk(realSavePath);
+        //覆盖原始压缩包
+        return null;
+    }
+
+    #endregion
+
+
+
+    #endregion
 }

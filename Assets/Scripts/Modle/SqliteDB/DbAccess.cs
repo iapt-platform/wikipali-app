@@ -369,6 +369,17 @@ namespace Imdork.SQLite
         #region 功能性扩展
         /// <summary>
         /// 模糊查询，查词用
+        /// 反向查询
+        /// </summary>
+        public SqliteDataReader SelectDictLikeChinese(string tableName, string inputStr, string word, int limit)
+        {
+            //inputStr = "成就";
+            string query = "SELECT `id`,`word`,`note`,`dict_id` FROM " + "'" + tableName + "'" + " WHERE " + word + " LIKE " + "'%" + inputStr + "%' limit " + limit.ToString();
+            //query = "SELECT `id`,`word`,`note`,`dict_id` FROM 'bh-paper' WHERE note LIKE '%成就%' limit 30";
+            return ExecuteQuery(query);
+        }
+        /// <summary>
+        /// 模糊查询，查词用
         /// </summary>
         public SqliteDataReader SelectDictLike(string tableName, string inputStr, string word, int limit)
         {

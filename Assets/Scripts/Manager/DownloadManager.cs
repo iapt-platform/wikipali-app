@@ -25,7 +25,7 @@ public class DownloadManager
     //    }
     //    return manager;
     //}
-    #region 公开方法
+    #region 外部方法
     public void DownloadAPK(MonoBehaviour ui)
     {
         //判断是否有网
@@ -40,17 +40,40 @@ public class DownloadManager
         string url = isOutNet ? UpdateManager.Instance().currentUInfo.downLoadUrl2
             : UpdateManager.Instance().currentUInfo.downLoadUrl1;
 
-        DownLoadWithAPKUI(Application.persistentDataPath, url, DownLoadApkOver, "wpa.apk");
+        DownLoadWithUI(Application.persistentDataPath, url, DownLoadApkOver, "wpa.apk");
 
     }
 
     object DownLoadApkOver(object obj)
     {
-        GameManager.Instance().DownLoadAPKOver();
+        GameManager.Instance().DownLoadProgressOver();
         //安装APK
         UpdateManager.Instance().InstallApk(realSavePath);
         return null;
     }
+
+    //通用下载方法
+    //todo 将下载apk改为通用下载方法
+    public void DownloadPack(MonoBehaviour ui,Func<object,object> callbackFunc,string savePath,string url,string fileName)
+    {
+        //判断是否有网
+        if (!NetworkMangaer.Instance().PingNetAddress())
+        {
+            UITool.ShowToastMessage(ui, "无网络连接", 35);
+            return;
+            // return false;
+        }
+        //判断网络环境是内网外网
+        //bool isOutNet = NetworkMangaer.Instance().PingOuterNet();
+
+        DownLoadWithUI(savePath, url, callbackFunc, fileName);
+
+    }
+
+
+    #endregion
+
+    #region 公开方法
 
 
     //同时只能下载一个文件
@@ -61,10 +84,10 @@ public class DownloadManager
         Init(_savePath, _downLoadUrl, fileName, false);
         DownloadFile();
     }
-    public void DownLoadWithAPKUI(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
+    public void DownLoadWithUI(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
     {
         //打开下载UI
-        GameManager.Instance().StartDownLoadAPK();
+        GameManager.Instance().StartDownLoadProgress();
 
         downLoadFinFunc = _downLoadFinFunc;
         Init(_savePath, _downLoadUrl, fileName, false);

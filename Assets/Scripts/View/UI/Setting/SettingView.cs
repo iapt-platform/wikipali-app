@@ -10,6 +10,7 @@ public class SettingView : MonoBehaviour
     public Button aboutBtn;
     public Button reportBtn;
     public Button updateBtn;
+    public Button offlinePackDownloadBtn;
     public Button paliVoiceTypeBtn;
     public Text paliVoiceTypeText;
     public Button paliVoiceGenderBtn;
@@ -19,6 +20,7 @@ public class SettingView : MonoBehaviour
     public Button articleClassifyBtn;
     public Text versionText;
     public GameObject updateRedPoint;
+    public GameObject offlinePackDownloadRedPoint;
     public GameObject reportGO;
     public Button paliRemoveBracketSliderBtn;
     public Slider paliRemoveBracketSliderToggle;
@@ -45,6 +47,7 @@ public class SettingView : MonoBehaviour
         openLastSliderToggle.onValueChanged.AddListener(OnOpenLastToggleValueChanged);
         openLastSliderBtn.onClick.AddListener(OnOpenLastBtnClick);
         aboutBtn.onClick.AddListener(OnAboutBtnClick);
+        offlinePackDownloadBtn.onClick.AddListener(OnOfflinePackDownloadBtnClick);
         updateBtn.onClick.AddListener(OnUpdateBtnClick);
         reportBtn.onClick.AddListener(OnReportBtnClick);
         paliVoiceSpeedBtn.onClick.AddListener(OnPaliVoiceSpeedBtnClick);
@@ -149,6 +152,10 @@ public class SettingView : MonoBehaviour
     {
         commonGroupView.InitAboutView();
         commonGroupView.gameObject.SetActive(true);
+    }
+    void OnOfflinePackDownloadBtnClick()
+    {
+
     }
     void OnUpdateBtnClick()
     {

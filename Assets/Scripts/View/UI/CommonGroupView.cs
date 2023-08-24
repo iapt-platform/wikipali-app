@@ -96,7 +96,7 @@ public class CommonGroupView : MonoBehaviour
     {
         //下载
         DownloadManager dm = new DownloadManager();
-        GameManager.Instance().apk_dm = dm;
+        GameManager.Instance().public_dm = dm;
         dm.DownloadAPK(this);
     }
     public void DelAllListGO()

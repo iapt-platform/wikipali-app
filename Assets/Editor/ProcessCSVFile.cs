@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -98,5 +99,10 @@ public class ProcessCSVFile
 
         //}
     }
-
+    //输出日期文字格式
+    [MenuItem("Assets/Tools/PrintDateString")]
+    public static void PrintDateString()
+    {
+        Debug.LogError(DateTime.Now.ToString());
+    }
 }

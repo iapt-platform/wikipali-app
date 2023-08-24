@@ -153,7 +153,7 @@ public class ArticleManager
                 }
             }
 
-        }, DBManager.SentenceDBurl);
+        }, DBManager.SentenceStaticDBurl);
         return (bookList, bookIDList);
     }
     /// <summary>
@@ -192,7 +192,7 @@ public class ArticleManager
                 }
             }
 
-        }, DBManager.SentenceDBurl);
+        }, DBManager.SentenceStaticDBurl);
         return bookList;
     }
     /// <summary>
@@ -224,7 +224,7 @@ public class ArticleManager
                 res = book;
             }
 
-        }, DBManager.SentenceDBurl);
+        }, DBManager.SentenceStaticDBurl);
         return res;
     }
 
@@ -295,7 +295,7 @@ public class ArticleManager
                 }
             }
 
-        }, DBManager.SentenceDBurl);
+        }, DBManager.SentenceStaticDBurl);
         return cList;
     }
     public List<ChapterDBData> GetChaptersFromBookID(int bookID)
@@ -340,7 +340,7 @@ public class ArticleManager
                 }
             }
 
-        }, DBManager.SentenceDBurl);
+        }, DBManager.SentenceStaticDBurl);
         return cList;
     }
     /// <summary>

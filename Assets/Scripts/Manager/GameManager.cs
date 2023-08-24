@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UpdateManager;
@@ -32,23 +33,29 @@ public class GameManager : MonoBehaviour
         ArticleManager.Instance().articleStarGroup = articleStarGroup;
         ArticleManager.Instance().articleView = articleView;
     }
-    bool isStartUnZipDB = false;
-    bool isDownLoadAPK = false;
-    public void StartUnZipDB()
+    bool isStartUnZipProgress = false;
+    bool isDownLoadProgress = false;
+    Func<object> unZipCallback;
+    public void StartUnZipProgress(Func<object> callback, string title = "正在解压")
     {
         initView.gameObject.SetActive(true);
-        initView.Init("初始化进度");
-        isStartUnZipDB = true;
+        initView.Init(title);
+        isStartUnZipProgress = true;
+        unZipCallback = callback;
     }
     public void SetInitViewProgress(float progress)
     {
         initView.SetProgess(progress);
     }
-    public void EndUnZipDB()
+    public void EndUnZipProgress()
     {
         initView.gameObject.SetActive(false);
-        isStartUnZipDB = false;
+        isStartUnZipProgress = false;
+    }
+    public object EndUnZipDB()
+    {
         SettingManager.Instance().UnZipFin();
+        return null;
     }
     // Start is called before the first frame update
     void Start()
@@ -61,13 +68,13 @@ public class GameManager : MonoBehaviour
         //打开上次浏览记录
         SettingManager.Instance().OpenLast();
     }
-    public DownloadManager apk_dm = null;
+    public DownloadManager public_dm = null;
     // Update is called once per frame
     void Update()
     {
-        if (isStartUnZipDB)
+        if (isStartUnZipProgress)
         {
-            int progressFin = ZipManager.Instance().fileProgress[0];
+            int progressFin = ZipManager.Instance().lzmafileProgress[0];
 
             ulong sizeOfEntry = ZipManager.Instance().sizeOfEntry;
             ulong bwrite = lzma.getBytesWritten();
@@ -77,12 +84,13 @@ public class GameManager : MonoBehaviour
             SetInitViewProgress(progress);
             if (100 == progressFin)
             {
-                EndUnZipDB();
+                EndUnZipProgress();
+                unZipCallback();
             }
         }
-        if (isDownLoadAPK)
+        if (isDownLoadProgress)
         {
-            SetInitViewProgress(apk_dm.progress * 0.01f);
+            SetInitViewProgress(public_dm.progress * 0.01f);
         }
     }
     //检测更新
@@ -102,15 +110,15 @@ public class GameManager : MonoBehaviour
         //canUpdate = true;
         settingView.SetUpdateRedPoint();
     }
-    public void StartDownLoadAPK()
+    public void StartDownLoadProgress()
     {
         initView.gameObject.SetActive(true);
         initView.Init("下载进度");
-        isDownLoadAPK = true;
+        isDownLoadProgress = true;
     }
-    public void DownLoadAPKOver()
+    public void DownLoadProgressOver()
     {
-        isDownLoadAPK = false;
+        isDownLoadProgress = false;
         //直接跳转到安装APK，就不关闭InitView防止误触
         //initView.gameObject.SetActive(false);
     }
