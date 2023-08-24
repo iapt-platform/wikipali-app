@@ -1,7 +1,7 @@
-1.0.0
-94M
-https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
-https://gitee.com/wolf96/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
+1.1.0
+96M
+https://gitee.com/wolf96/wikipali-app/releases/download/apk1.1.0/wpa_R_1.1.0.apk
+https://gitee.com/wolf96/wikipali-app/releases/download/apk1.1.0/wpa_R_1.1.0.apk
 https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
 1.圣典与词典朗读与高亮功能
 2.恢复上次浏览位置功能
