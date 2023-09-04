@@ -251,6 +251,10 @@ public class MarkdownText
     {
         return text.Replace("<br />", "");
     }
+    public static string ReplaceHTMLStyle(string text)
+    {
+        return text.Replace("<br>", "\r\n"); 
+    }
     //去除括号及其中内容
     public static string RemoveBracket(string text)
     {

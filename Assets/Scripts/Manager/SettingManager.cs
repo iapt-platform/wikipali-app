@@ -35,7 +35,6 @@ public class SettingManager
     {
         //在此处无法解压缩？？？？？？？
         //??????CalendarManager.Instance().StartLocation();
-        DateTime channelSaveTime = LoadChannelSaveTime();
         //覆盖更新判断版本号重新解压压缩包
         if (PlayerPrefs.HasKey("saveVersion"))
         {
@@ -45,12 +44,15 @@ public class SettingManager
             {
                 PlayerPrefs.SetString("saveVersion", Application.version);
                 PlayerPrefs.SetInt("isUnZiped", 0);
+                //覆盖Init文件内容
+                LoadInitInfo();
             }
         }
         else
         {
             PlayerPrefs.SetString("saveVersion", Application.version);
-
+            //覆盖Init文件内容
+            LoadInitInfo();
         }
         //语速初始化
         if (!PlayerPrefs.HasKey("PaliSpeakVoiceSpeed"))
@@ -337,11 +339,17 @@ public class SettingManager
     {
         PlayerPrefs.SetString("ChannelDataSaveTime", time.ToString());
     }
-    public DateTime LoadChannelSaveTime()
+    public void LoadInitInfo()
     {
         TextAsset t = Resources.Load<TextAsset>("Text/InitInfo");
-        string s = t.text;
-        return DateTime.Parse(s);
+        string[] lines = t.text.Split("\r\n");
+        string channelTime = lines[0];
+        string offlinePackTime = lines[1];
+        int offlinePackChapter = int.Parse(lines[2]);
+        //每次安装直接覆盖内容
+        SetChannelDataSaveTime(DateTime.Parse(channelTime));
+        SetDBPackTime(offlinePackTime);
+        SetDBPackChapterCount(offlinePackChapter);
     }
     #endregion
     #region 离线压缩包信息
@@ -349,10 +357,9 @@ public class SettingManager
     //2.更新时间
 
     //数据包解压时间
-    public DateTime GetDBPackTime()
+    public string GetDBPackTime()
     {
-        string res = PlayerPrefs.GetString("DBPackTime");
-        return DateTime.Parse(res);
+        return PlayerPrefs.GetString("DBPackTime");
     }
     public void SetDBPackTime(string time)
     {

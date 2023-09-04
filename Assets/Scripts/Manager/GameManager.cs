@@ -100,15 +100,34 @@ public class GameManager : MonoBehaviour
         UpdateManager.Instance().CheckUpdateRedPoint();
     }
 
-
+    public void ShowSettingViewOfflineDBPackPage(OtherInfo currentOInfo)
+    {
+        settingView.SetOfflinePackPage(currentOInfo);
+    }
+    public void HideSettingViewOfflineDBPackPage()
+    {
+        settingView.HideCommonGroupView();
+    }
+    public void UpdateSettingViewOfflineDBTimeText()
+    { 
+        settingView.UpdateSettingViewOfflineDBTimeText();
+    }
     public void ShowSettingViewUpdatePage(UpdateInfo currentUInfo)
     {
         settingView.SetUpdatePage(currentUInfo);
     }
-    public void ShowSettingViewRedPoint()
+    public void ShowSettingViewUpdateRedPoint()
     {
         //canUpdate = true;
         settingView.SetUpdateRedPoint();
+    }
+    public void ShowSettingViewOfflinePackRedPoint()
+    {
+        settingView.SetOfflinePackRedPoint(true);
+    }
+    public void HideSettingViewOfflinePackRedPoint()
+    {
+        settingView.SetOfflinePackRedPoint(false);
     }
     public void StartDownLoadProgress()
     {

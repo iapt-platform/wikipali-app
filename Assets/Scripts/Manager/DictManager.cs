@@ -338,7 +338,7 @@ public class DictManager
             "buddhist_paper",//923
             "pali_root_paper",//词根 1698
             "speed_up_paper",//词根 300
-            //"pm_grammar1",//巴缅词典???? 157271
+            
     };
     //日语
     static string[] dicIDArr_JP = new string[]
@@ -349,7 +349,8 @@ public class DictManager
     //缅语
     static string[] dicIDArr_MY = new string[]
 {
-            "pmt_paper",//巴缅词典 157271
+            "pm_grammar1",//巴缅词典???? 157271
+            "pmt_paper",//T巴缅词典 157271
             "u_hau_sein_my_papter",//60751
             "pali_roots_paper",//词根 1894
 };
@@ -402,6 +403,7 @@ public class DictManager
                 meaning = pairs["note"].ToString(),
                 dicID = pairs["dict_id"].ToString(),
             };
+            m.meaning = MarkdownText.ReplaceHTMLStyle(m.meaning);
             var readerDic = db.SelectDic(m.dicID);
             Dictionary<string, object> dicPairs = SQLiteTools.GetValue(readerDic);
             m.dicName = dicPairs["dictname"].ToString();

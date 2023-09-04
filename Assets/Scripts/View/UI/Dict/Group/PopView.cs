@@ -12,6 +12,7 @@ public enum PopViewType
     About = 3,
     Update = 4,
     SettingOption = 5,
+    OfflinePack = 6,
 }
 public class PopView : MonoBehaviour
 {

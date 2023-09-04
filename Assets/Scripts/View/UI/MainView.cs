@@ -49,14 +49,10 @@ public class MainView : MonoBehaviour
     void OnUserToggleValueChanged(bool value)
     {
         userView.gameObject.SetActive(value);
-
-
     }
     void OnSettingToggleValueChanged(bool value)
     {
         settingView.gameObject.SetActive(value);
-
-
     }
     // Update is called once per frame
     void Update()

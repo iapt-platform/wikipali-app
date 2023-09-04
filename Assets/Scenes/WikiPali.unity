@@ -42424,6 +42424,7 @@ MonoBehaviour:
   paliVoiceSpeedText: {fileID: 81840876}
   articleClassifyBtn: {fileID: 222358001}
   versionText: {fileID: 1841193738}
+  offlinePackTimeText: {fileID: 1350570336}
   updateRedPoint: {fileID: 1999484489}
   offlinePackDownloadRedPoint: {fileID: 1215355261}
   reportGO: {fileID: 293835030}

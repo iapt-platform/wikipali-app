@@ -160,7 +160,7 @@ public class ZipManager
     //解压安装包中的7z压缩包
     public void UnZipDB()
     {
-        GameManager.Instance().StartUnZipProgress(GameManager.Instance().EndUnZipDB,"初始化进度");
+        GameManager.Instance().StartUnZipProgress(GameManager.Instance().EndUnZipDB, "初始化进度");
         //安卓中需要把StreamingAsset路径下数据库压缩包拷贝到PersistentAsset下面，因为前者文件夹只读不能解压，后者文件夹读写都可以
 #if UNITY_ANDROID && !UNITY_EDITOR
         filepath = CommonTool.CopyAndroidPathToPersistent("DB.7z");
@@ -175,17 +175,30 @@ public class ZipManager
     //下载到位置Application.persistentDataPath(可读写)
     public void UnZipDBPack()
     {
-        GameManager.Instance().StartUnZipProgress(null);
+        GameManager.Instance().StartUnZipProgress(UnZipDBPackOver);
         //文件下载到Persistent目录，直接解压
 #if UNITY_ANDROID && !UNITY_EDITOR
         //filepath = CommonTool.CopyAndroidPathToPersistent("DB.7z");
         //filepath = filepath.Replace("DB.7z","");
         //Debug.LogError("复制到" + filepath);
 #endif
-        UnzipLZMAFile(Application.persistentDataPath + "/DB.lzma", Application.persistentDataPath + "/DB/" + "Sentence.db");
+        Debug.LogError(Application.persistentDataPath + "/Sentence.lzma");
+        UnzipLZMAFile(Application.persistentDataPath + "/Sentence.lzma", Application.persistentDataPath + "/DB/" + "Sentence.db");
         //sizeOfEntry = lzma.get7zSize(filepath + "DB.7z");
         //Debug.LogError("大小" + sizeOfEntry);
         //DecompressDBLZMA();
+    }
+    object UnZipDBPackOver()
+    {
+        //删除压缩包
+        File.Delete(Application.persistentDataPath + "/Sentence.lzma");
+        //更新时间，退出下载界面
+        SettingManager.Instance().SetDBPackTime(UpdateManager.Instance().currentOInfo.json.create_at);
+        SettingManager.Instance().SetDBPackChapterCount(UpdateManager.Instance().currentOInfo.json.chapter);
+        GameManager.Instance().UpdateSettingViewOfflineDBTimeText();
+        GameManager.Instance().HideSettingViewOfflinePackRedPoint();
+        GameManager.Instance().HideSettingViewOfflineDBPackPage();
+        return null;
     }
     public int[] lzmafileProgress = new int[1];
     //public ulong[] gzFileProgress = new ulong[1];
@@ -212,7 +225,7 @@ public class ZipManager
         //GameManager.Instance().EndUnZipDB();
     }
     //解压.gz文件
-    public void UnzipGZFile(string inPath,string outPath)
+    public void UnzipGZFile(string inPath, string outPath)
     {
         Debug.LogError("开始解压gz");
         //gzFileProgress[0] = 0;
@@ -222,12 +235,16 @@ public class ZipManager
     //解压.lzma文件
     public void UnzipLZMAFile(string inPath, string outPath)
     {
+        sizeOfEntry = (ulong)lzma.getFileSize(inPath);///1024;//???????????????
         Debug.LogError("开始解压.lzma");
         //gzFileProgress[0] = 0;
         lzmafileProgress[0] = 0;
-        th = new Thread(()=> { Debug.LogError("线程开始");
-            lzma.LzmaUtilDecode(inPath, outPath); 
+        th = new Thread(() =>
+        {
+            Debug.LogError("线程开始");
+            lzma.LzmaUtilDecode(inPath, outPath);
             DeCompressFin();
+
             //删除压缩包文件
             if (File.Exists(inPath))
                 File.Delete(inPath);

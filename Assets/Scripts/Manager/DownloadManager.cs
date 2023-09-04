@@ -76,7 +76,7 @@ public class DownloadManager
     #region 公开方法
 
 
-    //同时只能下载一个文件
+    //同时只能下载一个文件？
     Func<object, object> downLoadFinFunc;
     public void DownLoad(string _savePath, string _downLoadUrl, Func<object, object> _downLoadFinFunc, string fileName = "")
     {

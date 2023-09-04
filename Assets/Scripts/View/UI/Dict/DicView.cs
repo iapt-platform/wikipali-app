@@ -85,7 +85,6 @@ public class DicView : MonoBehaviour
         //    inst.SetActive(true);
         //    itemDicList.Add(inst);
         //    summaryScrollContent.sizeDelta = new Vector2(summaryScrollContent.sizeDelta.x, height * 1);
-
         //}
         //else
         //{

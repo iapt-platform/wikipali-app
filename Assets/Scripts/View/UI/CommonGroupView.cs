@@ -46,6 +46,22 @@ public class CommonGroupView : MonoBehaviour
         titleText.text = articleGroupInfo.groupName;
         RefreshGroupList();
     }
+    //离线包
+    public void InitOfflinePackView(OtherInfo currentOInfo)
+    {
+        currViewType = PopViewType.OfflinePack;
+        string uStr = "";
+        uStr += "当前离线包更新时间：" + SettingManager.Instance().GetDBPackTime() + "\r\n";
+        uStr += "最新离线包更新时间：" + currentOInfo.json.create_at + "\r\n\r\n";
+        uStr += "章节数对比："+ SettingManager.Instance().GetDBPackChapterCount()+ "→<color=Red>"+ currentOInfo.json.chapter+ "</color>\r\n\r\n";
+        uStr += "更新请预留出1G存储空间";
+        updateText.text = uStr;
+        addBtn.gameObject.SetActive(false);
+        titleText.text = "离线包更新";
+        updatePage.SetActive(true);
+        int fileSize = (int)((float)currentOInfo.json.filesize / 1024 / 1024);
+        updateBtnText.text = "点击更新(" + fileSize + "M)";
+    }
     //更新说明
     public void InitUpdateView(UpdateInfo currentUInfo)
     {
@@ -94,10 +110,17 @@ public class CommonGroupView : MonoBehaviour
     }
     public void OnUpdateBtnClick()
     {
-        //下载
-        DownloadManager dm = new DownloadManager();
-        GameManager.Instance().public_dm = dm;
-        dm.DownloadAPK(this);
+        if (currViewType == PopViewType.Update)
+        { //下载
+            DownloadManager dm = new DownloadManager();
+            GameManager.Instance().public_dm = dm;
+            dm.DownloadAPK(this);
+        }
+        else if (currViewType == PopViewType.OfflinePack)
+        {
+            string url = UpdateManager.Instance().currentOInfo.offlinePackUrl + UpdateManager.Instance().currentOInfo.json.filename;
+            UpdateManager.Instance().UpdateDBPack(url);
+        }
     }
     public void DelAllListGO()
     {

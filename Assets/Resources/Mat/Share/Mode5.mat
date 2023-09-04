@@ -85,6 +85,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 0.38431373}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ImgSizeXY: {r: 720, g: 720, b: 1, a: 1}
-    - _SizeXY: {r: 1126.2, g: 575, b: 1, a: 1}
+    - _SizeXY: {r: 1126.2, g: 792.5, b: 1, a: 1}
     - _Test: {r: 0.48, g: 2.07, b: 2, a: 2}
   m_BuildTextureStacks: []

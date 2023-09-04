@@ -19,6 +19,7 @@ public class SettingView : MonoBehaviour
     public Text paliVoiceSpeedText;
     public Button articleClassifyBtn;
     public Text versionText;
+    public Text offlinePackTimeText;
     public GameObject updateRedPoint;
     public GameObject offlinePackDownloadRedPoint;
     public GameObject reportGO;
@@ -55,6 +56,7 @@ public class SettingView : MonoBehaviour
         paliVoiceGenderBtn.onClick.AddListener(OnPaliVoiceGenderBtnClick);
         articleClassifyBtn.onClick.AddListener(OnArticleClassifyBtnClick);
         versionText.text = "        v" + Application.version;
+        offlinePackTimeText.text = "        " + SettingManager.Instance().GetDBPackTime();
     }
     void OnPaliRemoveBracketToggleValueChanged(float value)
     {
@@ -155,7 +157,19 @@ public class SettingView : MonoBehaviour
     }
     void OnOfflinePackDownloadBtnClick()
     {
-
+        if (UpdateManager.Instance().currentOInfo == null || UpdateManager.Instance().currentOInfo.json == null)
+        {
+            UpdateManager.Instance().GetOtherInfo();
+        }
+        if (UpdateManager.Instance().currentOInfo == null || UpdateManager.Instance().currentOInfo.json == null)
+            return;
+        if (UpdateManager.Instance().currentOInfo.json.create_at == SettingManager.Instance().GetDBPackTime())
+        {
+            UITool.ShowToastMessage(GameManager.Instance(), "当前已是最新版本", 35);
+            return;
+        }
+        //打开详情页
+        GameManager.Instance().ShowSettingViewOfflineDBPackPage(UpdateManager.Instance().currentOInfo);
     }
     void OnUpdateBtnClick()
     {
@@ -171,6 +185,23 @@ public class SettingView : MonoBehaviour
     public void SetUpdateRedPoint()
     {
         updateRedPoint.SetActive(true);
+    }
+    public void UpdateSettingViewOfflineDBTimeText()
+    {
+        offlinePackTimeText.text = "        " + SettingManager.Instance().GetDBPackTime();
+    }
+    public void SetOfflinePackPage(OtherInfo currentOInfo)
+    {
+        commonGroupView.InitOfflinePackView(currentOInfo);
+        commonGroupView.gameObject.SetActive(true);
+    }
+    public void HideCommonGroupView()
+    {
+        commonGroupView.gameObject.SetActive(false);
+    }
+    public void SetOfflinePackRedPoint(bool active)
+    {
+        offlinePackDownloadRedPoint.SetActive(active);
     }
     // Update is called once per frame
     void Update()
