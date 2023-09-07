@@ -235,7 +235,7 @@ public class ZipManager
     //解压.lzma文件
     public void UnzipLZMAFile(string inPath, string outPath)
     {
-        sizeOfEntry = (ulong)lzma.getFileSize(inPath);///1024;//???????????????
+        sizeOfEntry = (ulong)lzma.getFileSize(inPath)*10;///1024;//???????????????
         Debug.LogError("开始解压.lzma");
         //gzFileProgress[0] = 0;
         lzmafileProgress[0] = 0;

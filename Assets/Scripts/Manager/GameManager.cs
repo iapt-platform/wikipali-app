@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
             ulong sizeOfEntry = ZipManager.Instance().sizeOfEntry;
             ulong bwrite = lzma.getBytesWritten();
-            float progress = (bwrite / sizeOfEntry);
+            float progress = ((float)bwrite / (float)sizeOfEntry);
             //Debug.LogError("s:" + sizeOfEntry);
             //Debug.LogError("b:" + bwrite);
             SetInitViewProgress(progress);

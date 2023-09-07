@@ -486,7 +486,7 @@ namespace Imdork.SQLite
         }
         public SqliteDataReader SelectChannel(string channelID)
         {
-            string query = "SELECT * FROM channel WHERE id = '" + channelID+ "'";//
+            string query = "SELECT * FROM channel WHERE id = '" + channelID + "'";//
             return ExecuteQuery(query);
         }
         public SqliteDataReader SelectSentence(int bookID, string min, string max)
@@ -504,6 +504,27 @@ namespace Imdork.SQLite
         /// <summary>
         /// 匹配查询,通用
         /// </summary>
+        //public SqliteDataReader SelectIn(string tableName, string word, string[] inStr)
+        //{
+        //    string select = "";
+        //    int length = inStr.Length;
+        //    for (int i = 0; i < length; i++)
+        //    {
+        //        if (i > 0)
+        //            select += ",";
+        //        //select += string.Format("`{0}`", selects[i]);
+        //        select += "`";
+        //        select += inStr[i];
+        //        select += "`";
+        //    }
+        //    //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
+        //    //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
+        //    string query = "SELECT id FROM tag WHERE name = 'sutta' OR name = 'dīghanikāya' OR name = 'sīlakkhandhavagga'";// "' limit " + limit.ToString();
+        //    return ExecuteQuery(query);
+        //}
+        /// <summary>
+        /// 查询多个
+        /// </summary>
         public SqliteDataReader SelectIn(string tableName, string word, string[] inStr)
         {
             string select = "";
@@ -511,15 +532,20 @@ namespace Imdork.SQLite
             for (int i = 0; i < length; i++)
             {
                 if (i > 0)
-                    select += ",";
+                    select += " OR ";
+                select += word + " = '";
+
                 //select += string.Format("`{0}`", selects[i]);
-                select += "`";
+                //select += "`";
                 select += inStr[i];
-                select += "`";
+                select += "'";
+                //select += "`";
+
             }
             //string query = "SELECT `id` FROM " + "`" + tableName + "`" + " WHERE " + word + " IN(" + select + ");";// "' limit " + limit.ToString();
             //string query = "SELECT `id` FROM `tag` WHERE `name` IN (`sutta`,`dīghanikāya`,`sīlakkhandhavagga`)";// "' limit " + limit.ToString();
-            string query = "SELECT id FROM tag WHERE name = 'sutta' OR name = 'dīghanikāya' OR name = 'sīlakkhandhavagga'";// "' limit " + limit.ToString();
+            //string query = "SELECT count FROM word_count WHERE word = 'sutta' OR name = 'dīghanikāya' OR name = 'sīlakkhandhavagga'";// "' limit " + limit.ToString();
+            string query = "SELECT * FROM word_count WHERE " + select;
             return ExecuteQuery(query);
         }
         #endregion

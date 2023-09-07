@@ -47,7 +47,7 @@ public class DictManager
         public string word;
         public string meaning;
         //反向查找用，查词义的位置
-        public int chineseNoteIndex;
+        public float chineseNoteIndex;
     }
     List<MatchedWord> SelectDictLike(DbAccess db, Dictionary<string, MatchedWord> matchedWordDic, string tableName, string inputStr)
     {
@@ -119,8 +119,8 @@ public class DictManager
     List<MatchedWord> SelectDictLikeChinese(DbAccess db, Dictionary<string, MatchedWord> matchedWordDic, string tableName, string inputStr)
     {
         List<MatchedWord> matchedWordList = new List<MatchedWord>();
+        List<string> wordList = new List<string>();
         var reader = db.SelectDictLikeChinese(tableName, inputStr, "note", LIMIT_COUNT);
-
         //调用SQLite工具  解析对应数据
         Dictionary<string, object>[] pairs = SQLiteTools.GetValues(reader);
         if (pairs != null)
@@ -140,13 +140,30 @@ public class DictManager
                         dicID = pairs[i]["dict_id"].ToString(),
                     };
                     //减去词头长度(因为note字段含义会把单词拼写放在前面)
-                    m.chineseNoteIndex = m.meaning.IndexOf(inputStr)-word.Length;
+                    m.chineseNoteIndex = m.meaning.IndexOf(inputStr) - word.Length;
                     m.meaning = m.meaning.Replace(inputStr, "<color=#5895FF>" + inputStr + "</color>");
-
+                    wordList.Add(m.word);
                     matchedWordList.Add(m);
                     matchedWordDic.Add(m.word, m);
                 }
             };
+        }
+        //查单词出现次数
+        if (wordList.Count > 0)
+        { 
+            var reader2 = db.SelectIn("word_count", "word", wordList.ToArray());
+            //调用SQLite工具  解析对应数据
+            Dictionary<string, object>[] pairs2 = SQLiteTools.GetValues(reader2);
+            if (pairs2 != null)
+            {
+                int length = pairs2.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    string word = pairs2[i]["word"].ToString();
+                    int count = int.Parse(pairs2[i]["count"].ToString());
+                    matchedWordDic[word].chineseNoteIndex /= (float)(count + 1);
+                }
+            }
         }
 
         return matchedWordList;
