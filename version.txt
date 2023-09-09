@@ -2,7 +2,7 @@
 99M
 https://gitee.com/wolf96/wikipali-app/releases/download/app120/wpa_R_1.2.0.apk
 https://gitee.com/wolf96/wikipali-app/releases/download/app120/wpa_R_1.2.0.apk
-https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
+https://github.com/ariyamaggika/wikipali-app/releases/download/apk_120/wpa_R_1.2.0.apk
 1.词典中文查找巴利
 2.圣典离线包更新下载
 3.星宿历真实月相时间
