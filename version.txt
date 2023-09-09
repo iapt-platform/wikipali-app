@@ -1,9 +1,9 @@
-1.1.0
-96M
-https://gitee.com/wolf96/wikipali-app/releases/download/apk1.1.0/wpa_R_1.1.0.apk
-https://gitee.com/wolf96/wikipali-app/releases/download/apk1.1.0/wpa_R_1.1.0.apk
+1.2.0
+99M
+https://gitee.com/wolf96/wikipali-app/releases/download/app120/wpa_R_1.2.0.apk
+https://gitee.com/wolf96/wikipali-app/releases/download/app120/wpa_R_1.2.0.apk
 https://github.com/ariyamaggika/wikipali-app/releases/download/apk/wpa_R_1.0.0.apk
-1.圣典与词典朗读与高亮功能
-2.恢复上次浏览位置功能
-3.圣典目录中文翻译
+1.词典中文查找巴利
+2.圣典离线包更新下载
+3.星宿历真实月相时间
 4.相关bug修复与性能优化
