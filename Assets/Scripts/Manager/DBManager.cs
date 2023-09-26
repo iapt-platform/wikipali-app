@@ -5,24 +5,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DBManager : MonoBehaviour
+public class DBManager
 {
-    public string dictDBurl = "DB/Dict";
+    //懒汉式单例类.在第一次调用的时候实例化自己 
+    private DBManager() { }
+    private static DBManager manager = null;
+    //静态工厂方法 
+    public static DBManager Instance()
+    {
+        if (manager == null)
+        {
+            manager = new DBManager();
+        }
+        return manager;
+    }
+
+    public static string DictDBurl = "DB/Dict";
+    public static string SentenceDBurl = "DB/Sentence";
+    public static string SentenceStaticDBurl = "DB/Sentence";//"DB/Sentence_Static";
     public SQLiteHelper dbHelper;
-    void Awake()
-    {
 
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-    public void Getdb(Action<DbAccess> action)
+    public void Getdb(Action<DbAccess> action,string dburl)
     {
         //Path数据库文件，一定是StreamingAssets文件夹下 填写的路径文件不需要填写.db后缀
         //创建数据库读取类
-        SQLiteHelper helper = new SQLiteHelper(dictDBurl);
+        SQLiteHelper helper = new SQLiteHelper(dburl);
         //打开数据库 存储数据库操作类
         using (var db = helper.Open())
         {
